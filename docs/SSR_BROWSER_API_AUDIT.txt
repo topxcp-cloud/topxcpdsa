@@ -1,0 +1,16 @@
+TOP-X SSR browser API audit
+===========================
+
+Fixed:
+- AdminView: sessionStorage is read after mount, not in a useState initializer.
+- RoadmapsView: localStorage checklist state hydrates after mount and persists only after hydration.
+- VaultView: solved-problem state hydrates after mount and persists only after hydration.
+- API/auth/theme storage access is guarded when browser storage is unavailable.
+- Added SSR browser API regression checks to `npm run check`.
+
+Verification performed in the packaging environment:
+- `npm run check`: passed (10 tests).
+- PostgreSQL integration test: skipped because DATABASE_URL was not configured.
+- Full Next.js production build: not run in this environment; run `npm run build` on the target Windows machine after extracting and installing dependencies.
+
+This archive intentionally excludes node_modules and .next. Run `npm install` before building.

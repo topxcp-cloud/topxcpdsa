@@ -1,0 +1,1 @@
+Supabase is not configured for this project. PostgreSQL via the existing backend remains the source of truth; this directory is reserved only to mirror the requested architecture if Supabase is adopted later.

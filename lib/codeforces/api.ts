@@ -1,0 +1,1 @@
+export async function getCodeforcesUser(handle:string){const r=await fetch(`https://codeforces.com/api/user.info?handles=${encodeURIComponent(handle)}`,{cache:'no-store'});if(!r.ok)throw new Error('Codeforces API request failed');return r.json()}

@@ -1,0 +1,1 @@
+export default function Sidebar(){return <aside aria-label="Dashboard sidebar"><nav><a href="/dashboard">Dashboard</a><a href="/roadmap">Roadmap</a><a href="/problems">Problems</a><a href="/leaderboard">Leaderboard</a></nav></aside>}
