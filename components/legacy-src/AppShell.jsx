@@ -58,8 +58,11 @@ export default function AppShell() {
     const nav = target.closest('[data-tab]');
     if (nav) { event.preventDefault(); navigate(nav.dataset.tab); return; }
     if (target.closest('#theme-toggle-btn')) {
-      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next); try { window.localStorage.setItem('topx-theme', next); } catch {}
+      const current = document.documentElement.getAttribute('data-theme') || (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      document.documentElement.classList.toggle('dark', next === 'dark');
+      try { window.localStorage.setItem('topx-theme', next); } catch {}
       notify(`${next === 'dark' ? 'Dark' : 'Light'} theme enabled`); return;
     }
     if (target.closest('#header-logout-btn') || target.closest('#page-profile-logout')) {

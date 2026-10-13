@@ -44,7 +44,7 @@ export default function ProfileModal() {
                 <b>LeetCode</b>
                 <span className="sm">Live API · sync on request</span>
                 </div>
-              <input id="input-handle-leetcode" placeholder="Your LeetCode username" value="" />
+              <input id="input-handle-leetcode" placeholder="Your LeetCode username" defaultValue="" />
               <div className="cp-card-stat-box" id="stats-box-leetcode">
                 <div><span>Solved:</span><b id="lc-stat-solved">—</b></div>
                 <div><span>Easy / Med / Hard:</span><b id="lc-stat-ratio">Connect handle</b></div>
@@ -57,7 +57,7 @@ export default function ProfileModal() {
                 <b>Codeforces</b>
                 <span className="sm">Live API · sync on request</span>
                 </div>
-              <input id="input-handle-codeforces" placeholder="Your Codeforces handle" value="" />
+              <input id="input-handle-codeforces" placeholder="Your Codeforces handle" defaultValue="" />
               <div className="cp-card-stat-box" id="stats-box-codeforces">
                 <div><span>Rating:</span><b id="cf-stat-rating" style={{color: 'var(--ac)'}}>—</b></div>
                 <div><span>Rank Title:</span><b id="cf-stat-rank">Connect handle</b></div>
@@ -70,7 +70,7 @@ export default function ProfileModal() {
                 <b>CodeChef</b>
                 <span className="sm">Live API · sync on request</span>
                 </div>
-              <input id="input-handle-codechef" placeholder="Your CodeChef handle" value="" />
+              <input id="input-handle-codechef" placeholder="Your CodeChef handle" defaultValue="" />
               <div className="cp-card-stat-box" id="stats-box-codechef">
                 <div><span>Rating:</span><b id="cc-stat-rating">—</b></div>
                 <div><span>Stars:</span><b id="cc-stat-stars">Connect handle</b></div>
@@ -88,7 +88,7 @@ export default function ProfileModal() {
           <div style={{maxWidth: '420px', margin: '10px auto'}}>
             
             <button className="btn-google" id="btn-login-google">
-              <svg className="google-icon" viewbox="0 0 24 24">
+              <svg className="google-icon" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z" />
                 <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.15C3.26 21.36 7.33 24 12 24z" />
                 <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.24C.45 8.15 0 9.92 0 12s.45 3.85 1.24 5.42l4.04-3.15z" />
@@ -104,15 +104,15 @@ export default function ProfileModal() {
             <form id="form-auth-credentials">
               <div className="auth-field">
                 <label>Full Name (for new account)</label>
-                <input id="auth-name-input" placeholder="Your full name" />
+                <input id="auth-name-input" placeholder="Your full name" defaultValue="" />
                 </div>
               <div className="auth-field">
                 <label>Email Address</label>
-                <input type="email" id="auth-email-input" placeholder="you@university.edu" value="" required="" />
+                <input type="email" id="auth-email-input" placeholder="you@university.edu" defaultValue="" required />
                 </div>
               <div className="auth-field">
                 <label>Password</label>
-                <input type="password" id="auth-password-input" placeholder="••••••••" value="" required="" />
+                <input type="password" id="auth-password-input" placeholder="••••••••" defaultValue="" required />
                 </div>
               <div style={{display: 'flex', gap: '10px', marginTop: '20px'}}>
                 <button type="submit" className="btn-primary" id="btn-submit-login" style={{flex: '1', justifyContent: 'center'}}>Sign In</button>

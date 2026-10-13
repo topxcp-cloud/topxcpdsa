@@ -76,7 +76,7 @@ export default function DashboardView({ active = false }) {
             <h3>Curriculum Roadmap</h3>
             <a href="#roadmaps">Explore all tracks →</a>
             </div>
-          <svg id="rp-svg" viewbox="0 -10 780 340" />
+          <svg id="rp-svg" viewBox="0 -10 780 340" />
           <div id="dag-tip" />
           <p className="sm" style={{marginTop: '14px', display: 'flex', justifyContent: 'space-between'}}>
             <span>Hover nodes for syllabus breakdown</span>
@@ -152,7 +152,7 @@ export default function DashboardView({ active = false }) {
           <div className="stat-num num"><span id="dash-act-active">0</span><small>active days</small></div>
           <div className="stat-num num"><span id="dash-act-solved">0</span><small>problems solved</small></div>
           </div>
-        <svg id="act-svg" viewbox="0 0 1200 172" />
+        <svg id="act-svg" viewBox="0 0 1200 172" />
         <div id="act-tip" />
         <div className="act-legend">
           <span><b>Problems solved:</b></span>

@@ -8,7 +8,8 @@ const assert = require('node:assert/strict');
 process.env.NODE_ENV = 'test';
 process.env.ADMIN_KEY = 'test-admin-key-that-is-long-enough-123456';
 process.env.SESSION_SECRET = 'test-session-secret-that-is-long-enough-123456789';
-const app = require('../server');
+const http = require('node:http');
+const app = require('../lib/api/route-registry.cjs');
 let server;
 let baseUrl;
 let memberToken;
@@ -24,7 +25,22 @@ async function request(pathname, options = {}) {
 
 before(async (t) => {
   if (!process.env.DATABASE_URL) { t.skip('Set DATABASE_URL to a disposable PostgreSQL test database.'); return; }
-  server = app.listen(0);
+  server = http.createServer(async (req, res) => {
+    const url = `http://${req.headers.host || '127.0.0.1'}${req.url}`;
+    const chunks = [];
+    for await (const chunk of req) chunks.push(chunk);
+    const body = ['GET', 'HEAD'].includes(req.method) ? undefined : Buffer.concat(chunks);
+    const webRequest = new Request(url, {
+      method: req.method,
+      headers: req.headers,
+      body
+    });
+    const webResponse = await app.handleRequest(webRequest);
+    res.writeHead(webResponse.status, Object.fromEntries(webResponse.headers.entries()));
+    const arrayBuffer = await webResponse.arrayBuffer();
+    res.end(Buffer.from(arrayBuffer));
+  });
+  server.listen(0);
   await new Promise(resolve => server.once('listening', resolve));
   baseUrl = `http://127.0.0.1:${server.address().port}`;
   const health = await request('/api/health');

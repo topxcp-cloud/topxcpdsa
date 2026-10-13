@@ -1,9 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap');
 
-/* React application defaults and feature-specific overrides. The original TOP-X design system is loaded from styles/legacy.css. */
-:root { font-family: Geist, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+/* My Topics Club - Global Design Tokens and React Layout Defaults */
+:root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
 html, body, #root { min-height: 100%; margin: 0; }
-body { min-width: 320px; }
+body { min-width: 320px; font-feature-settings: "cv02", "cv03", "cv04", "cv11"; }
 button, input, select, textarea { font: inherit; }
 
 /* React-owned feature interaction styles */

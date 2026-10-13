@@ -1,1 +1,0 @@
-export const navigation = [{title:'Dashboard',href:'/dashboard'},{title:'Roadmap',href:'/roadmap'},{title:'Problems',href:'/problems'},{title:'Progress',href:'/progress'},{title:'Leaderboard',href:'/leaderboard'},{title:'Contests',href:'/contests'},{title:'Profile',href:'/profile'}] as const;
