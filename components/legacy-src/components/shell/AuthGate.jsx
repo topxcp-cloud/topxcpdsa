@@ -70,7 +70,7 @@ export default function AuthGate({
               <circle cx="6" cy="20" r="3.2" fill="currentColor" />
               <circle cx="20" cy="20" r="3.2" fill="#FF5A36" />
             </svg>
-            <span>MY TOPICS <i>CLUB</i></span>
+            <span>TOP X <i>CLUB</i></span>
           </div>
           <h1>Code. Compete.<br />Conquer.</h1>
           <p>The student-driven competitive programming platform.<br />Track LeetCode, Codeforces &amp; CodeChef with campus peers.</p>

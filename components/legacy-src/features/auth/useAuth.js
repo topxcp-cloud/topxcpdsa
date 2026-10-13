@@ -62,7 +62,13 @@ function initSession() {
             const idToken = await fbUser.getIdToken();
             const res = await api('/api/auth/google', {
               method: 'POST',
-              body: JSON.stringify({ credential: idToken })
+              body: JSON.stringify({
+                credential: idToken,
+                uid: fbUser.uid,
+                photoURL: fbUser.photoURL || '',
+                name: fbUser.displayName || '',
+                email: fbUser.email || ''
+              })
             });
             saveSession(res);
             setGlobalState({ user: res.user, loading: false, error: '' });
@@ -122,7 +128,13 @@ export function useAuth() {
       const idToken = await result.user.getIdToken();
       const res = await api('/api/auth/google', {
         method: 'POST',
-        body: JSON.stringify({ credential: idToken })
+        body: JSON.stringify({
+          credential: idToken,
+          uid: result.user.uid,
+          photoURL: result.user.photoURL || '',
+          name: result.user.displayName || '',
+          email: result.user.email || ''
+        })
       });
       saveSession(res);
       setGlobalState({ user: res.user, loading: false, error: '' });

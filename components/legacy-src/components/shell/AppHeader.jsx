@@ -2,6 +2,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '../../features/auth/useAuth.js';
+import {
+  Search,
+  Flame,
+  Sun,
+  Moon,
+  Menu,
+  X,
+  ChevronDown,
+  User,
+  LogOut,
+  Sparkles,
+  Layers,
+  Compass,
+  BookOpen
+} from 'lucide-react';
 
 export default function AppHeader({ onOpenAuth }) {
   const router = useRouter();
@@ -10,18 +25,24 @@ export default function AppHeader({ onOpenAuth }) {
   const { user, logout } = auth;
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [notificationsMenuOpen, setNotificationsMenuOpen] = useState(false);
   const [resourcesMenuOpen, setResourcesMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const headerRef = useRef(null);
+
+  // Sync theme state on mount
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark') ||
+      document.documentElement.getAttribute('data-theme') === 'dark';
+    setIsDarkMode(isDark);
+  }, []);
 
   // Close menus when clicking outside
   useEffect(() => {
     const handleDocumentClick = (e) => {
       if (headerRef.current && !headerRef.current.contains(e.target)) {
         setProfileMenuOpen(false);
-        setNotificationsMenuOpen(false);
         setResourcesMenuOpen(false);
       }
     };
@@ -34,7 +55,6 @@ export default function AppHeader({ onOpenAuth }) {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setProfileMenuOpen(false);
-        setNotificationsMenuOpen(false);
         setResourcesMenuOpen(false);
         setMobileDrawerOpen(false);
       }
@@ -45,7 +65,6 @@ export default function AppHeader({ onOpenAuth }) {
 
   const navigateTo = (path) => {
     setProfileMenuOpen(false);
-    setNotificationsMenuOpen(false);
     setResourcesMenuOpen(false);
     setMobileDrawerOpen(false);
     router.push(path);
@@ -56,6 +75,7 @@ export default function AppHeader({ onOpenAuth }) {
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     document.documentElement.classList.toggle('dark', next === 'dark');
+    setIsDarkMode(next === 'dark');
     try { window.localStorage.setItem('topx-theme', next); } catch (_) {}
   };
 
@@ -90,27 +110,28 @@ export default function AppHeader({ onOpenAuth }) {
 
   return (
     <header className="app-header" ref={headerRef}>
-      {/* Brand logo */}
+      {/* Brand Logo with Editorial Refinement */}
       <div className="brand-wrap">
         <a
           className="brand-logo"
           href="/"
           onClick={(e) => { e.preventDefault(); navigateTo('/'); }}
-          aria-label="My Topics Club Home"
+          aria-label="Top X Club Home"
         >
-          <svg className="topx-rebuilt-mark" viewBox="0 0 48 48" aria-hidden="true">
-            <path d="M5 13 L15 3 L24 12 L15 21 Z" fill="currentColor" opacity=".95" />
-            <path d="M43 13 L33 3 L24 12 L33 21 Z" fill="currentColor" opacity=".95" />
-            <path d="M5 35 L15 45 L24 36 L15 27 Z" fill="currentColor" opacity=".78" />
-            <path d="M43 35 L33 45 L24 36 L33 27 Z" fill="currentColor" opacity=".78" />
-            <path d="M9 39 L39 9" stroke="#ff6a2a" strokeWidth="3.8" strokeLinecap="square" />
-            <path d="M20 15 L28 23 L20 31 L28 39" fill="none" stroke="#ff8b55" strokeWidth="3" opacity=".9" />
-          </svg>
-          <span>TOPICS<i>CLUB</i></span>
+          {/* Geometric Asterisk / Diamond Logo matching Locomotive Editorial Reference */}
+          <span className="brand-star-mark" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="2" x2="12" y2="22" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+              <line x1="19.07" y1="4.93" x2="4.93" y2="19.07" />
+            </svg>
+          </span>
+          <span className="brand-text">TOP X <i>CLUB</i></span>
         </a>
       </div>
 
-      {/* Primary navigation tabs */}
+      {/* Primary Navigation Tabs */}
       <nav className="app-nav-tabs" aria-label="Main navigation">
         <button
           type="button"
@@ -150,6 +171,15 @@ export default function AppHeader({ onOpenAuth }) {
 
         <button
           type="button"
+          className={`nav-tab-btn ${isProfileActive ? 'active' : ''}`}
+          data-tab="profile"
+          onClick={() => navigateTo(user ? '/profile' : '/login')}
+        >
+          My Profile
+        </button>
+
+        <button
+          type="button"
           className={`nav-tab-btn ${isGuidesActive ? 'active' : ''}`}
           data-tab="guides"
           onClick={() => navigateTo('/contests')}
@@ -157,7 +187,7 @@ export default function AppHeader({ onOpenAuth }) {
           Guides
         </button>
 
-        {/* Resources dropdown */}
+        {/* Resources Dropdown */}
         <div className="resources-dropdown" style={{ position: 'relative' }}>
           <button
             className={`nav-tab-btn resources-trigger ${isResourcesActive ? 'active' : ''}`}
@@ -167,30 +197,31 @@ export default function AppHeader({ onOpenAuth }) {
             id="resources-menu-trigger"
             onClick={() => setResourcesMenuOpen(!resourcesMenuOpen)}
           >
-            Resources <span className="resources-chevron">▾</span>
+            <span>Resources</span>
+            <ChevronDown size={14} className="resources-chevron" />
           </button>
           {resourcesMenuOpen && (
             <div className="resources-menu" id="resources-menu" style={{ display: 'block' }}>
               <button type="button" className="nav-tab-btn" onClick={() => navigateTo('/roadmap')}>
-                Blueprints
+                <Layers size={14} style={{ marginRight: '6px' }} /> Blueprints
               </button>
               <button type="button" className="nav-tab-btn" onClick={() => navigateTo('/problems')}>
-                Problem Vault <span className="badge-pill">16</span>
+                <BookOpen size={14} style={{ marginRight: '6px' }} /> Problem Vault <span className="badge-pill">16</span>
               </button>
               <button type="button" className="nav-tab-btn" onClick={() => navigateTo('/roadmap')}>
-                3D Labs
+                <Sparkles size={14} style={{ marginRight: '6px' }} /> 3D Labs
               </button>
               <button type="button" className="nav-tab-btn" onClick={() => navigateTo('/roadmap')}>
-                Roadmaps
+                <Compass size={14} style={{ marginRight: '6px' }} /> Roadmaps
               </button>
             </div>
           )}
         </div>
       </nav>
 
-      {/* Header right utility controls */}
+      {/* Header Right Utility Controls */}
       <div className="header-right">
-        {/* Search button */}
+        {/* Search Palette Opener */}
         <button
           type="button"
           className="search-pill-btn"
@@ -198,15 +229,12 @@ export default function AppHeader({ onOpenAuth }) {
           title="Open Command Palette (Cmd+K or /)"
           onClick={() => window.dispatchEvent(new Event('topx:open-search'))}
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+          <Search size={14} className="search-icon" aria-hidden="true" />
           <span>Search anything...</span>
           <kbd>/</kbd>
         </button>
 
-        {/* Streak chip (clickable -> /progress) */}
+        {/* Consistency Streak Chip */}
         <div
           className="streak-chip"
           id="header-streak-chip"
@@ -216,64 +244,24 @@ export default function AppHeader({ onOpenAuth }) {
           onClick={() => navigateTo('/progress')}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateTo('/progress'); } }}
         >
-          <i aria-hidden="true" />
+          <Flame size={15} style={{ color: 'var(--ac)' }} aria-hidden="true" />
           <span className="num" id="header-streak-num">{streakCount}</span>
-          <span>day streak</span>
+          <span>streak</span>
         </div>
 
-        {/* Top-X Pro button */}
+        {/* Theme Toggle */}
         <button
           type="button"
-          className="nav-tab-btn topx-pro-button"
-          data-tab="pro"
-          onClick={() => navigateTo('/profile')}
-        >
-          ⚡ Top-X Pro
-        </button>
-
-        {/* Notifications toggle */}
-        <div style={{ position: 'relative' }}>
-          <button
-            type="button"
-            className="icon-btn"
-            id="notifications-toggle-btn"
-            aria-label="Notifications"
-            onClick={() => {
-              setNotificationsMenuOpen(!notificationsMenuOpen);
-              setProfileMenuOpen(false);
-            }}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-          </button>
-          {notificationsMenuOpen && (
-            <div className="menu-dropdown open" id="menu-notifications" style={{ display: 'block' }}>
-              <div className="menu-header">Notifications</div>
-              <div className="menu-item">
-                <strong>No notifications yet</strong>
-                <span>Account and challenge updates will appear here.</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Theme toggle */}
-        <button
-          type="button"
-          className="icon-btn"
+          className="icon-btn theme-toggle-btn"
           id="theme-toggle-btn"
-          title="Toggle Dark/Light Mode"
+          title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           aria-label="Toggle Dark/Light Mode"
           onClick={toggleTheme}
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-          </svg>
+          {isDarkMode ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
         </button>
 
-        {/* Mobile menu hamburger button */}
+        {/* Mobile Hamburger Menu */}
         <button
           type="button"
           className="topx-mobile-menu"
@@ -282,95 +270,177 @@ export default function AppHeader({ onOpenAuth }) {
           aria-expanded={mobileDrawerOpen}
           onClick={() => setMobileDrawerOpen(true)}
         >
-          <span />
-          <span />
-          <span />
+          <Menu size={20} aria-hidden="true" />
         </button>
 
-        {/* Authentication: Sign In button if unauthenticated */}
+        {/* Authentication: Sign In if unauthenticated */}
         {!user && (
           <button
             type="button"
-            className="header-signin-btn"
+            className="btn-primary header-signin-btn"
             id="header-signin-btn"
             onClick={handleOpenAuth}
+            style={{ padding: '7px 18px', fontSize: '13px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
-            </svg>
-            Sign In
+            <span>Sign In</span>
+            <span style={{ fontSize: '14px', lineHeight: 1 }}>→</span>
           </button>
         )}
 
-        {/* Profile Pill & Dropdown if authenticated */}
+        {/* Authenticated User Avatar & Dropdown */}
         {user && (
           <div style={{ position: 'relative' }}>
             <button
               type="button"
               className={`profile-pill-btn ${isProfileActive ? 'active' : ''}`}
               id="header-profile-btn"
-              aria-label="Profile menu"
+              aria-label="User account actions"
               aria-haspopup="true"
               aria-expanded={profileMenuOpen}
-              onClick={() => {
-                setProfileMenuOpen(!profileMenuOpen);
-                setNotificationsMenuOpen(false);
-              }}
+              onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 8px 4px 4px', borderRadius: '999px', border: '1px solid var(--line)', background: 'var(--card)' }}
             >
               <div
                 className="profile-avatar"
                 id="header-user-avatar"
-                style={user.avatar ? { backgroundImage: `url(${user.avatar})`, backgroundSize: 'cover' } : {}}
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'var(--surface-alt)',
+                  fontWeight: 700,
+                  fontSize: '12px',
+                  color: 'var(--ink)'
+                }}
               >
-                {!user.avatar && (user.name ? user.name[0].toUpperCase() : 'U')}
+                {user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name || 'Member'}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  (user.name || 'U').slice(0, 1).toUpperCase()
+                )}
               </div>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+              <ChevronDown size={14} style={{ opacity: 0.7 }} aria-hidden="true" />
             </button>
 
             {profileMenuOpen && (
-              <div className="menu-dropdown open" id="menu-profile" style={{ width: '270px', display: 'block' }}>
-                <div className="menu-header" id="menu-profile-header">
-                  <div style={{ fontWeight: '700', color: 'var(--ink)' }}>{user.name || 'Member'}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--mute)', wordBreak: 'break-all' }}>{user.email || ''}</div>
+              <div
+                className="menu-dropdown open"
+                id="menu-profile"
+                style={{
+                  width: '260px',
+                  position: 'absolute',
+                  top: 'calc(100% + 8px)',
+                  right: 0,
+                  background: 'var(--card)',
+                  border: '1px solid var(--line)',
+                  borderRadius: '12px',
+                  boxShadow: 'var(--sh-lg)',
+                  padding: '8px',
+                  zIndex: 200
+                }}
+              >
+                <div
+                  className="menu-header"
+                  id="menu-profile-header"
+                  style={{
+                    padding: '8px 10px 10px',
+                    borderBottom: '1px solid var(--line)',
+                    marginBottom: '6px'
+                  }}
+                >
+                  <div style={{ fontWeight: '700', fontSize: '14px', color: 'var(--ink)' }}>{user.name || 'Member'}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--mute)', wordBreak: 'break-all' }}>{user.email || ''}</div>
+                  {user.branch && (
+                    <div style={{ marginTop: '4px', fontSize: '11px', color: 'var(--ac)', fontWeight: 600 }}>
+                      {user.branch} {user.academicYear ? `• Year ${user.academicYear}` : ''}
+                    </div>
+                  )}
                 </div>
+
                 <button
                   type="button"
                   className="menu-item"
                   id="open-profile-modal-link"
                   data-tab="profile"
                   onClick={() => navigateTo('/profile')}
+                  style={{
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '8px 10px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    cursor: 'pointer',
+                    color: 'var(--ink)'
+                  }}
                 >
-                  <b>My Profile &amp; CP Sync</b>
-                  <span>LeetCode, CF &amp; CodeChef Handles</span>
+                  <User size={15} style={{ color: 'var(--ac)' }} />
+                  <div>
+                    <strong style={{ display: 'block', fontSize: '13px' }}>My Profile</strong>
+                    <span style={{ fontSize: '11px', color: 'var(--mute)' }}>Academic &amp; Coding Handles</span>
+                  </div>
                 </button>
-                <button
-                  type="button"
-                  className="menu-item"
-                  data-tab="pro"
-                  onClick={() => navigateTo('/profile')}
-                >
-                  <b>⚡ Top-X Pro Status</b>
-                  <span>40 CodeChef Tasks Track</span>
-                </button>
+
                 <button
                   type="button"
                   className="menu-item"
                   data-tab="tasks"
                   onClick={() => navigateTo('/progress')}
+                  style={{
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '8px 10px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    cursor: 'pointer',
+                    color: 'var(--ink)'
+                  }}
                 >
-                  <b>Daily Tasks</b>
-                  <span>Track Streaks &amp; Solves</span>
+                  <Flame size={15} style={{ color: 'var(--ac)' }} />
+                  <div>
+                    <strong style={{ display: 'block', fontSize: '13px' }}>Daily Tasks &amp; Streak</strong>
+                    <span style={{ fontSize: '11px', color: 'var(--mute)' }}>Track Daily Consistency</span>
+                  </div>
                 </button>
+
+                <div style={{ borderTop: '1px solid var(--line)', margin: '6px 0' }} />
+
                 <button
                   type="button"
                   className="menu-item"
                   id="header-logout-btn"
                   onClick={handleLogout}
-                  style={{ borderTop: '1px solid var(--line)', marginTop: '4px', paddingTop: '10px' }}
+                  style={{
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '8px 10px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    cursor: 'pointer',
+                    color: 'var(--hard)'
+                  }}
                 >
-                  <span style={{ color: 'var(--hard)', fontWeight: '600' }}>Log Out</span>
+                  <LogOut size={15} />
+                  <span style={{ fontSize: '13px', fontWeight: 600 }}>Sign Out</span>
                 </button>
               </div>
             )}
@@ -387,7 +457,7 @@ export default function AppHeader({ onOpenAuth }) {
         />
       )}
 
-      {/* Mobile Drawer */}
+      {/* Mobile Navigation Drawer */}
       <aside
         className={`topx-mobile-drawer ${mobileDrawerOpen ? 'is-open' : ''}`}
         id="topx-mobile-drawer"
@@ -395,14 +465,14 @@ export default function AppHeader({ onOpenAuth }) {
         aria-hidden={!mobileDrawerOpen}
       >
         <div className="topx-drawer-heading">
-          <strong>My Topics Club</strong>
+          <strong>Top X Club</strong>
           <button
             type="button"
             id="topx-drawer-close"
             aria-label="Close navigation"
             onClick={() => setMobileDrawerOpen(false)}
           >
-            ×
+            <X size={18} />
           </button>
         </div>
 
@@ -415,10 +485,7 @@ export default function AppHeader({ onOpenAuth }) {
             window.dispatchEvent(new Event('topx:open-search'));
           }}
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+          <Search size={14} aria-hidden="true" />
           <span>Search anything...</span>
           <kbd>/</kbd>
         </button>
@@ -436,6 +503,9 @@ export default function AppHeader({ onOpenAuth }) {
           <button type="button" className={`nav-tab-btn ${isLeaderboardActive ? 'active' : ''}`} onClick={() => navigateTo('/leaderboard')}>
             Leaderboard
           </button>
+          <button type="button" className={`nav-tab-btn ${isProfileActive ? 'active' : ''}`} onClick={() => navigateTo(user ? '/profile' : '/login')}>
+            My Profile
+          </button>
           <button type="button" className={`nav-tab-btn ${isGuidesActive ? 'active' : ''}`} onClick={() => navigateTo('/contests')}>
             Guides
           </button>
@@ -443,10 +513,7 @@ export default function AppHeader({ onOpenAuth }) {
             Problem Vault
           </button>
           <button type="button" className="nav-tab-btn" onClick={() => navigateTo('/roadmap')}>
-            Roadmaps
-          </button>
-          <button type="button" className={`nav-tab-btn ${isProfileActive ? 'active' : ''}`} onClick={() => navigateTo(user ? '/profile' : '/login')}>
-            My Profile
+            Roadmaps &amp; 3D Labs
           </button>
 
           {user ? (
@@ -454,16 +521,16 @@ export default function AppHeader({ onOpenAuth }) {
               type="button"
               className="nav-tab-btn"
               onClick={handleLogout}
-              style={{ color: 'var(--hard)', marginTop: '12px' }}
+              style={{ color: 'var(--hard)', marginTop: '16px' }}
             >
-              Log Out
+              Sign Out ({user.name || 'Member'})
             </button>
           ) : (
             <button
               type="button"
               className="nav-tab-btn"
               onClick={handleOpenAuth}
-              style={{ color: 'var(--ac)', marginTop: '12px', fontWeight: '700' }}
+              style={{ color: 'var(--ac)', marginTop: '16px', fontWeight: '700' }}
             >
               Sign In
             </button>

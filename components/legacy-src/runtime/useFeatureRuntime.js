@@ -24,6 +24,7 @@ export function useFeatureRuntime() {
         const init = (method, ...args) => { try { v[method]?.(...args); } catch (error) { console.warn(`Visualizer ${method} unavailable`, error); } };
         init('initBinarySearch', 'dash-gl-canvas', 'dash-ro-hud');
         init('initBubbleSort', 'lb-bs-canvas', 'lb-bs-ro', 'lb-bs-pz', 'lb-bs-sp', 'lb-bs-sh');
+        init('initBubbleSort', 'home-sort-canvas', 'home-sort-ro', 'home-sort-pz', 'home-sort-sp', 'home-sort-sh');
         init('initPathfinding', 'lab-pf-canvas', 'lab-pf-table', 'lab-pf-msg', 'lab-pf-pz', 'lab-pf-sp', 'lab-pf-nm', '.lab-pf-algo-btn');
         init('initBinarySearch', 'lab-bs-canvas', 'lab-bs-ro');
         init('initBubbleSort', 'lab-sort-canvas', 'lab-sort-ro', 'lab-sort-pz', 'lab-sort-sp', 'lab-sort-sh');

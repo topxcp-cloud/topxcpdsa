@@ -2,20 +2,20 @@
 export default function AppFooter() {
   return (
 <footer className="app-footer">
-    <div>
-      <b>Top-X</b> · Code. Compete. Conquer. Unified Platform.
-    </div>
-    <div className="footer-links">
-      <a href="#dashboard">Dashboard</a>
-      <a href="#leaderboard">Leaderboard</a>
-      <a href="#vault">Problem Vault</a>
-      <a href="#blueprints">Blueprints</a>
-      <a href="#roadmaps">Roadmaps</a>
-      <a href="#lab">3D Lab</a>
-      <a href="#guides">Guides</a>
+      <div>
+        <b>Top X Club</b> · Code. Compete. Conquer.
       </div>
-    <div>
-      <span>Engineered with Three.js & Geist Typography</span>
+      <div className="footer-links">
+        <a href="/">Home</a>
+        <a href="/leaderboard">Leaderboard</a>
+        <a href="/profile">My Profile</a>
+        <a href="/problems">Problem Vault</a>
+        <a href="/roadmap">Roadmaps</a>
+        <a href="/progress">Daily Tasks</a>
+        <a href="/contests">Guides</a>
+      </div>
+      <div>
+        <span>Student-Driven Competitive Programming</span>
       </div>
     </footer>
   );

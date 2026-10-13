@@ -3,16 +3,21 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../legacy-src/features/auth/useAuth.js';
+import { useFeatureRuntime } from '../legacy-src/runtime/useFeatureRuntime.js';
 import AuthGate from '../legacy-src/components/shell/AuthGate.jsx';
 import AppHeader from '../legacy-src/components/shell/AppHeader.jsx';
 import AppFooter from '../legacy-src/components/shell/AppFooter.jsx';
-import ContributionHeatmap from '../profile/ContributionHeatmap.jsx';
 import { api } from '../legacy-src/lib/api.js';
+import { Sparkles, Play, RefreshCw, BarChart2, Zap, Shield, ArrowRight } from 'lucide-react';
 
 export default function HomePageView() {
   const auth = useAuth();
   const router = useRouter();
   const [topMembers, setTopMembers] = useState([]);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  // Initialize 3D algorithm visualizers
+  useFeatureRuntime();
 
   useEffect(() => {
     api('/api/leaderboard?metric=streak')
@@ -23,8 +28,6 @@ export default function HomePageView() {
       })
       .catch(() => {});
   }, []);
-
-  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   return (
     <div className="topx-react-app home-page-app">
@@ -56,7 +59,7 @@ export default function HomePageView() {
             </h1>
 
             <p className="home-hero-description">
-              My Topics Club is where curious minds become consistent problem solvers. Track your coding journey,
+              Top X Club is where curious minds become consistent problem solvers. Track your coding journey,
               challenge your friends, climb the leaderboard, and turn everyday practice into lasting progress.
             </p>
 
@@ -132,11 +135,179 @@ export default function HomePageView() {
           </div>
         </section>
 
+        {/* PROMINENT SORTING ALGORITHMS & DSA SECTION */}
+        <section className="home-section home-sorting-section" style={{ padding: '60px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', background: 'var(--card)' }}>
+          <div className="view-wrap" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 var(--pad)' }}>
+            <div className="home-section-header" style={{ marginBottom: '32px' }}>
+              <span className="section-eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <Sparkles size={14} style={{ color: 'var(--ac)' }} />
+                Interactive 3D DSA Visualizer
+              </span>
+              <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, letterSpacing: '-0.03em', margin: '8px 0 12px' }}>
+                Orbital Sorting Physics &amp; Algorithm Invariants
+              </h2>
+              <p className="sub" style={{ maxWidth: '720px', fontSize: '16px', lineHeight: 1.6, color: 'var(--mute)' }}>
+                Step through live adjacent comparisons, watch real-time orbital swap physics in physical 3D space, and develop an intuitive mental model for fundamental competitive programming algorithms.
+              </p>
+            </div>
+
+            {/* Main Interactive Stage Box */}
+            <div
+              className="home-algo-stage-card"
+              style={{
+                border: '1px solid var(--line)',
+                borderRadius: '16px',
+                background: 'var(--bg)',
+                overflow: 'hidden',
+                boxShadow: 'var(--sh-lg)',
+                marginBottom: '28px'
+              }}
+            >
+              {/* Visualizer Control Header */}
+              <div
+                style={{
+                  padding: '16px 24px',
+                  borderBottom: '1px solid var(--line)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '14px',
+                  background: 'var(--card)'
+                }}
+              >
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>
+                    Bubble Sort 3D Simulator
+                  </h3>
+                  <span className="sm" style={{ color: 'var(--mute)' }}>
+                    Watch adjacent score elements compare and swap until the highest ranking rises to the top.
+                  </span>
+                </div>
+
+                <div className="bs-sort-controls" style={{ margin: 0 }}>
+                  <button className="bs-ctl-btn" id="home-sort-pz" type="button" style={{ fontWeight: 600 }}>
+                    Pause
+                  </button>
+                  <button className="bs-ctl-btn" id="home-sort-sp" type="button">
+                    Speed 1x
+                  </button>
+                  <button className="bs-ctl-btn" id="home-sort-sh" type="button" style={{ borderColor: 'var(--ac)', color: 'var(--ac)' }}>
+                    Shuffle
+                  </button>
+                </div>
+              </div>
+
+              {/* Large 3D WebGL Stage Wrap */}
+              <div
+                className="bs-stage-wrap"
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '460px',
+                  minHeight: '420px',
+                  background: 'radial-gradient(ellipse at center, rgba(255,90,54,0.03) 0%, transparent 70%)'
+                }}
+              >
+                <canvas className="bs-stage-canvas" id="home-sort-canvas" />
+                <div
+                  className="bs-readout"
+                  id="home-sort-ro"
+                  style={{
+                    position: 'absolute',
+                    top: '16px',
+                    right: '20px',
+                    background: 'var(--card)',
+                    border: '1px solid var(--line)',
+                    borderRadius: '8px',
+                    padding: '6px 14px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    boxShadow: 'var(--sh-sm)'
+                  }}
+                >
+                  ready
+                </div>
+              </div>
+            </div>
+
+            {/* Algorithmic Properties & Complexity Cards Grid */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: '16px',
+                marginBottom: '28px'
+              }}
+            >
+              <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: '12px', padding: '18px' }}>
+                <span className="sm" style={{ color: 'var(--mute)', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '0.05em' }}>
+                  Worst &amp; Average Time
+                </span>
+                <div style={{ fontSize: '24px', fontWeight: 800, margin: '6px 0', color: 'var(--ink)' }}>
+                  O(N²)
+                </div>
+                <p className="sm" style={{ margin: 0, color: 'var(--mute)', lineHeight: 1.5 }}>
+                  Performs N·(N-1)/2 adjacent comparisons across inverted pairs before fully converging.
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: '12px', padding: '18px' }}>
+                <span className="sm" style={{ color: 'var(--mute)', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '0.05em' }}>
+                  Best Case (Adaptive)
+                </span>
+                <div style={{ fontSize: '24px', fontWeight: 800, margin: '6px 0', color: '#16a34a' }}>
+                  O(N)
+                </div>
+                <p className="sm" style={{ margin: 0, color: 'var(--mute)', lineHeight: 1.5 }}>
+                  Early exit flag terminates immediately when an outer pass finishes with zero swaps.
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: '12px', padding: '18px' }}>
+                <span className="sm" style={{ color: 'var(--mute)', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '0.05em' }}>
+                  Auxiliary Space
+                </span>
+                <div style={{ fontSize: '24px', fontWeight: 800, margin: '6px 0', color: 'var(--ink)' }}>
+                  O(1)
+                </div>
+                <p className="sm" style={{ margin: 0, color: 'var(--mute)', lineHeight: 1.5 }}>
+                  In-place algorithm swapping memory cells with strictly constant supplementary overhead.
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--bg)', border: '1px solid var(--line)', borderRadius: '12px', padding: '18px' }}>
+                <span className="sm" style={{ color: 'var(--mute)', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '0.05em' }}>
+                  Loop Invariant
+                </span>
+                <div style={{ fontSize: '20px', fontWeight: 800, margin: '6px 0', color: 'var(--ac)' }}>
+                  Prefix Locked
+                </div>
+                <p className="sm" style={{ margin: 0, color: 'var(--mute)', lineHeight: 1.5 }}>
+                  After pass k, the top k ranked elements are permanently sorted in their final positions.
+                </p>
+              </div>
+            </div>
+
+            {/* Call to action linking to 3D Lab */}
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <Link
+                href="/roadmap"
+                className="btn-secondary"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 24px', fontSize: '14px' }}
+              >
+                <span>Explore Full 3D Algorithm Lab (Binary Search, Dijkstra, A*)</span>
+                <ArrowRight size={15} />
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* MISSION & VALUES */}
         <section className="home-section home-values-section">
           <div className="home-section-header">
             <span className="section-eyebrow">Core Principles</span>
-            <h2>Why My Topics Club Exists</h2>
+            <h2>Why Top X Club Exists</h2>
             <p className="sub">
               Built for students who want genuine technical growth without generic corporate landing pages or artificial metrics.
             </p>
@@ -208,7 +379,7 @@ export default function HomePageView() {
 
             <div className="home-step-card">
               <div className="step-num">03</div>
-              <h4>Track Problems & Streaks</h4>
+              <h4>Track Problems &amp; Streaks</h4>
               <p>Hit Sync to pull your verified accepted submissions. Watch your contribution calendar light up in green.</p>
             </div>
 
@@ -235,7 +406,9 @@ export default function HomePageView() {
                   <div className="podium-badge">Rank #{idx + 1}</div>
                   <h4>{m.n}</h4>
                   <span className="sm" style={{ color: 'var(--mute)' }}>
-                    {m.branch || 'CSE'} • Year {m.academicYear || 1} • Sec {m.section || 'A'}
+                    {m.branch ? `${m.branch} • ` : ''}
+                    {m.academicYear ? `Year ${m.academicYear} • ` : ''}
+                    {m.section ? `Sec ${m.section}` : 'Cohort not set'}
                   </span>
                   <div className="podium-streak-tag">
                     🔥 {m.streak || 0} day streak

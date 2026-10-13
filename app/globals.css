@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap');
 
-/* My Topics Club - Global Design Tokens and React Layout Defaults */
+/* Top X Club - Global Design Tokens and React Layout Defaults */
 :root {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -45,3 +45,42 @@ button, input, select, textarea { font: inherit; }
 .cc-problem-item.solved .cc-check-icon { color:var(--easy, #159947); }
 .pro-solve-link { display:inline-flex; align-items:center; gap:4px; white-space:nowrap; }
 @media (max-width:700px) { .roadmap-progress-card { align-items:stretch; gap:12px; } .roadmap-progress-controls { justify-content:space-between; } .roadmap-phase-card { padding:16px; } .bp-split-grid { grid-template-columns:minmax(0,1fr); } }
+
+/* Premium Editorial Design Tokens (Locomotive-inspired) */
+.brand-star-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ac);
+  margin-right: 8px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.brand-logo:hover .brand-star-mark {
+  transform: rotate(45deg) scale(1.1);
+}
+.brand-text {
+  font-family: var(--font-display, sans-serif);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-size: 17px;
+  color: var(--ink);
+}
+.brand-text i {
+  font-style: normal;
+  color: var(--ac);
+  margin-left: 2px;
+}
+.spin-icon {
+  animation: topx-spin 1s linear infinite;
+}
+@keyframes topx-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.profile-cohort-chip {
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.profile-cohort-chip:hover {
+  border-color: var(--ink);
+}
+

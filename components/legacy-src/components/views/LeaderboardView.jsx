@@ -73,6 +73,32 @@ export default function LeaderboardView({ active = false }) {
     return 'lb-rank-badge rank-default';
   };
 
+  const formatCohort = (m) => {
+    if (!m) return 'Not set';
+    const parts = [];
+    if (m.branch) parts.push(m.branch);
+    if (m.academicYear) {
+      const yrMap = { 'First': '1st Year', 'Second': '2nd Year', 'Third': '3rd Year', 'Fourth': '4th Year', '1': '1st Year', '2': '2nd Year', '3': '3rd Year', '4': '4th Year' };
+      parts.push(yrMap[m.academicYear] || `Year ${m.academicYear}`);
+    }
+    if (m.section) parts.push(`Sec ${m.section}`);
+    return parts.length > 0 ? parts.join(' • ') : 'Not set';
+  };
+
+  const handleSelectStudent = async (member) => {
+    setSelectedStudent(member);
+    try {
+      const publicData = await api(`/api/user/public/${encodeURIComponent(member.id)}`);
+      if (publicData) {
+        setSelectedStudent((prev) => ({
+          ...prev,
+          ...publicData,
+          dailyActivity: publicData.dailyActivity || {}
+        }));
+      }
+    } catch (_) {}
+  };
+
   return (
     <section className={`tab-view ${active ? 'active' : ''}`} id="view-leaderboard">
       {/* Visualizer Banner */}
@@ -95,7 +121,7 @@ export default function LeaderboardView({ active = false }) {
       <div className="view-wrap" style={{ maxWidth: '1200px' }}>
         <div className="section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '14px' }}>
           <div>
-            <h2>My Topics Club Leaderboard</h2>
+            <h2>Top X Club Leaderboard</h2>
             <p className="sub">
               Live college rankings backed by real verified platform activity. Compete with peers across batches, branches, and sections.
             </p>
@@ -234,13 +260,13 @@ export default function LeaderboardView({ active = false }) {
               <div
                 className={`lb-podium-card podium-${index + 1}`}
                 key={member.id}
-                onClick={() => setSelectedStudent(member)}
+                onClick={() => handleSelectStudent(member)}
                 style={{ cursor: 'pointer' }}
               >
                 <span className="lb-podium-rank">#{index + 1}</span>
                 <strong style={{ fontSize: '17px' }}>{member.n}</strong>
                 <span className="sm" style={{ color: 'var(--mute)' }}>
-                  {member.branch || 'CSE'} • Year {member.academicYear || 1} • Sec {member.section || 'A'}
+                  {formatCohort(member)}
                 </span>
                 <span style={{ fontWeight: 700, color: 'var(--ink)', marginTop: '4px' }}>
                   {metricFilter === 'streak' ? `🔥 ${member.streak} day streak` : `${Number(member.s) || 0} solved`}
@@ -254,8 +280,18 @@ export default function LeaderboardView({ active = false }) {
         )}
 
         {/* Error or Loading state */}
-        {loading && <p className="sm" role="status">Loading live leaderboard...</p>}
-        {error && <p className="sm" style={{ color: 'var(--hard)' }} role="alert">{error}</p>}
+        {loading && (
+          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--mute)' }}>
+            <span className="pulse-dot" style={{ display: 'inline-block', marginRight: '8px' }} />
+            <span>Fetching live verified rankings...</span>
+          </div>
+        )}
+        {error && (
+          <div className="profile-feedback error" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', borderRadius: '10px', background: 'rgba(239,68,68,0.1)', color: '#dc2626', border: '1px solid rgba(239,68,68,0.2)', marginBottom: '20px' }}>
+            <span>{error}</span>
+            <button type="button" className="bs-ctl-btn" onClick={fetchLeaderboard} style={{ fontSize: '12px', padding: '4px 10px' }}>Retry</button>
+          </div>
+        )}
 
         {/* Leaderboard Table */}
         {!loading && filteredMembers.length > 0 ? (
@@ -274,7 +310,7 @@ export default function LeaderboardView({ active = false }) {
               </thead>
               <tbody id="lb-tbody">
                 {filteredMembers.map((member, index) => (
-                  <tr key={member.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedStudent(member)}>
+                  <tr key={member.id} style={{ cursor: 'pointer' }} onClick={() => handleSelectStudent(member)}>
                     <td>
                       <span className={getRankBadgeClass(index)}>
                         {member.rank || index + 1}
@@ -282,11 +318,11 @@ export default function LeaderboardView({ active = false }) {
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--surface-alt)', border: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: 'var(--ink)', flexShrink: 0 }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--surface-alt)', border: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: 'var(--ink)', flexShrink: 0, overflow: 'hidden' }}>
                           {member.avatar ? (
-                            <img src={member.avatar} alt={member.n} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                            <img src={member.avatar} alt={member.n || 'Member'} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                           ) : (
-                            member.n.slice(0, 1).toUpperCase()
+                            (member.n || 'M').slice(0, 1).toUpperCase()
                           )}
                         </div>
                         <div>
@@ -297,7 +333,7 @@ export default function LeaderboardView({ active = false }) {
                     </td>
                     <td>
                       <span className="sm">
-                        {member.branch || 'CSE'} • {member.academicYear || '1st'} • Sec {member.section || 'A'}
+                        {formatCohort(member)}
                       </span>
                     </td>
                     <td>
@@ -329,7 +365,7 @@ export default function LeaderboardView({ active = false }) {
                         className="bs-ctl-btn"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedStudent(member);
+                          handleSelectStudent(member);
                         }}
                         style={{ fontSize: '12px', padding: '4px 10px' }}
                       >
@@ -342,15 +378,28 @@ export default function LeaderboardView({ active = false }) {
             </table>
           </div>
         ) : !loading ? (
-          <div className="lb-empty-state">
-            <h3>No students match the selected filters</h3>
-            <p>
-              Try adjusting your Academic Year, Branch, or Section filter to see students from other cohorts.
-            </p>
-            <button type="button" className="btn-primary" onClick={resetFilters}>
-              Reset Filters
-            </button>
-          </div>
+          members.length === 0 ? (
+            <div className="lb-empty-state" style={{ padding: '60px 20px', textAlign: 'center' }}>
+              <div style={{ fontSize: '36px', marginBottom: '12px' }}>🏆</div>
+              <h3 style={{ fontSize: '20px', fontWeight: 700 }}>No members on the leaderboard yet</h3>
+              <p style={{ maxWidth: '480px', margin: '8px auto 20px', color: 'var(--mute)' }}>
+                Connect your LeetCode, Codeforces, or CodeChef handles in My Profile and click Sync to lead the college ranking!
+              </p>
+              <a href="/profile" className="btn-primary" style={{ display: 'inline-flex', padding: '10px 24px', textDecoration: 'none' }}>
+                Go to My Profile →
+              </a>
+            </div>
+          ) : (
+            <div className="lb-empty-state">
+              <h3>No students match the selected filters</h3>
+              <p>
+                Try adjusting your Academic Year, Branch, or Section filter to see students from other cohorts.
+              </p>
+              <button type="button" className="btn-primary" onClick={resetFilters}>
+                Reset All Filters
+              </button>
+            </div>
+          )
         ) : null}
       </div>
 
@@ -368,15 +417,15 @@ export default function LeaderboardView({ active = false }) {
               <div className="student-modal-identity">
                 <div className="student-modal-avatar">
                   {selectedStudent.avatar ? (
-                    <img src={selectedStudent.avatar} alt={selectedStudent.n} />
+                    <img src={selectedStudent.avatar} alt={selectedStudent.n || selectedStudent.name || 'Student'} />
                   ) : (
-                    selectedStudent.n.slice(0, 1).toUpperCase()
+                    (selectedStudent.n || selectedStudent.name || 'M').slice(0, 1).toUpperCase()
                   )}
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '18px' }}>{selectedStudent.n}</h3>
+                  <h3 style={{ margin: 0, fontSize: '18px' }}>{selectedStudent.n || selectedStudent.name || 'Student Member'}</h3>
                   <span className="sm" style={{ color: 'var(--mute)' }}>
-                    {selectedStudent.branch || 'CSE'} • Year {selectedStudent.academicYear || '1'} • Sec {selectedStudent.section || 'A'}
+                    {formatCohort(selectedStudent)}
                   </span>
                 </div>
               </div>
