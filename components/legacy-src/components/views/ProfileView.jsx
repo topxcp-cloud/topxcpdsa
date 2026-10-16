@@ -79,6 +79,15 @@ export default function ProfileView({ active = false, user: initialUser = null }
     } else setUser(null);
   }, [initialUser, editingProfile]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window.location.hash === '#streak' || window.location.hash === '#current-streak')) {
+      const el = document.getElementById('streak') || document.getElementById('current-streak');
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
+      }
+    }
+  }, []);
+
   const handleSaveProfile = async (e) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
     if (!user?.id) {
@@ -270,13 +279,15 @@ export default function ProfileView({ active = false, user: initialUser = null }
 
         {/* Identity & Status Card */}
         <div className="profile-banner" style={{ marginBottom: '24px', background: 'var(--card)', border: '1px solid var(--line)', borderRadius: '16px', padding: '24px' }}>
-          <div className="profile-banner-avatar-wrap">
+          <div className="profile-banner-avatar-wrap" style={{ width: '80px', height: '80px', borderRadius: '50%', border: 'none', padding: 0, margin: 0, flex: 'none', position: 'relative' }}>
             <div
               className="profile-banner-avatar"
               id="page-profile-avatar"
               style={{
                 width: '80px',
                 height: '80px',
+                minWidth: '80px',
+                minHeight: '80px',
                 borderRadius: '50%',
                 overflow: 'hidden',
                 display: 'flex',
@@ -287,7 +298,9 @@ export default function ProfileView({ active = false, user: initialUser = null }
                 background: 'var(--surface-alt)',
                 border: '2px solid var(--line)',
                 color: 'var(--ink)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.06)'
+                boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                aspectRatio: '1 / 1',
+                boxSizing: 'border-box'
               }}
             >
               {user?.avatar ? (
@@ -295,7 +308,7 @@ export default function ProfileView({ active = false, user: initialUser = null }
                   src={user.avatar}
                   alt={user?.name || 'Member'}
                   referrerPolicy="no-referrer"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block', aspectRatio: '1 / 1' }}
                 />
               ) : (
                 (user?.name || 'M').slice(0, 1).toUpperCase()
@@ -418,14 +431,14 @@ export default function ProfileView({ active = false, user: initialUser = null }
         </div>
 
         {/* Consistency Streak & Metrics Grid */}
-        <div style={{ marginBottom: '28px' }}>
+        <div id="streak" className="profile-streak-section" style={{ marginBottom: '28px', scrollMarginTop: '100px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
             <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 700 }}>Coding Consistency &amp; Momentum</h3>
             <span className="sm" style={{ color: 'var(--mute)' }}>Backed by verified platform submissions</span>
           </div>
 
           <div className="profile-stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '14px' }}>
-            <div className="profile-metric-card" style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: '12px', padding: '18px' }}>
+            <div className="profile-metric-card" id="current-streak" style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: '12px', padding: '18px', scrollMarginTop: '100px' }}>
               <div className="metric-label" style={{ fontSize: '12px', color: 'var(--mute)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Current Streak</div>
               <div className="metric-value-row" style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginTop: '8px' }}>
                 <Flame size={22} style={{ color: 'var(--ac)' }} />
@@ -531,21 +544,6 @@ export default function ProfileView({ active = false, user: initialUser = null }
               >
                 <option value="">Not set</option>
                 {STUDENT_PROFILE_SECTIONS.map((value) => <option key={value} value={value}>Section {value}</option>)}
-              </select>
-            </div>
-
-            <div className="auth-field">
-              <label htmlFor="page-profile-division-input">Class Division</label>
-              <select
-                id="page-profile-division-input"
-                disabled={!editingProfile}
-                value={classDivision}
-                onChange={(e) => setClassDivision(e.target.value)}
-              >
-                <option value="">Not set</option>
-                <option value="A">Division A</option>
-                <option value="B">Division B</option>
-                <option value="C">Division C</option>
               </select>
             </div>
 
@@ -748,6 +746,32 @@ export default function ProfileView({ active = false, user: initialUser = null }
               <RefreshCw size={14} className={syncing ? 'spin-icon' : ''} />
               {syncing ? 'Synchronizing Handles...' : 'Sync All Platforms Now'}
             </button>
+          </div>
+
+          {/* Strict Platform Account Ownership & Anti-Abuse Warning */}
+          <div
+            className="profile-warning-notice"
+            role="alert"
+            style={{
+              marginTop: '20px',
+              padding: '16px 20px',
+              borderRadius: 'var(--radius-md, 10px)',
+              background: 'rgba(239, 68, 68, 0.05)',
+              border: '1px solid rgba(239, 68, 68, 0.22)',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '14px',
+            }}
+          >
+            <AlertCircle size={20} style={{ color: '#EF4444', flexShrink: 0, marginTop: '2px' }} aria-hidden="true" />
+            <div>
+              <strong style={{ display: 'block', fontSize: '13.5px', fontWeight: 700, color: '#B91C1C', letterSpacing: '-0.01em', marginBottom: '4px' }}>
+                Account Integrity Notice
+              </strong>
+              <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.55, color: 'var(--ink-soft)' }}>
+                Users must sync <strong>only their own</strong> LeetCode, CodeChef, and Codeforces accounts. Misuse or syncing other people&apos;s accounts may result in blacklisting from the platform.
+              </p>
+            </div>
           </div>
         </div>
       </div>

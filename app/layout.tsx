@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import './legacy.css';
 import './globals.css';
 export const metadata: Metadata = {
-  title: 'Top X Club | Write Code. Build Consistency. Push Your Limits.',
-  description: 'Top X Club is where curious minds become consistent problem solvers. Track your coding journey, challenge your friends, climb the leaderboard, and turn everyday practice into lasting progress.'
+  title: 'Top X Clubs | Show up. Solve problems. Become unstoppable.',
+  description: 'Top X Clubs helps students build consistent coding habits, improve problem-solving skills, climb the leaderboard, and turn everyday practice into lasting progress.'
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

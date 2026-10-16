@@ -16,6 +16,10 @@ function loadScript(src) {
 export function useFeatureRuntime() {
   useEffect(() => {
     let cancelled = false;
+    const canvasIds = ['dash-gl-canvas', 'lb-bs-canvas', 'home-sort-canvas', 'lab-pf-canvas', 'lab-bs-canvas', 'lab-sort-canvas'];
+    const hasCanvas = canvasIds.some(id => typeof document !== 'undefined' && document.getElementById(id));
+    if (!hasCanvas) return;
+
     (async () => {
       try {
         for (const src of VISUALIZER_SCRIPTS) { if (cancelled) return; await loadScript(src); }

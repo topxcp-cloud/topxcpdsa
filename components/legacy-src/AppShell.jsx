@@ -59,8 +59,14 @@ export default function AppShell() {
     if (target.closest('#header-signin-btn') || target.closest('#open-auth-modal-link')) {
       document.body.classList.add('auth-locked'); return;
     }
-    if (target.closest('#search-pill-btn') || target.closest('#topx-drawer-search')) {
-      window.dispatchEvent(new Event('topx:open-search')); return;
+    if (target.closest('#header-streak-chip')) {
+      if (auth.user) {
+        navigate('profile');
+        setTimeout(() => document.getElementById('streak')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
+      } else {
+        navigate('tasks');
+      }
+      return;
     }
     if (target.closest('#topx-mobile-menu')) {
       document.getElementById('topx-mobile-drawer')?.classList.add('is-open');

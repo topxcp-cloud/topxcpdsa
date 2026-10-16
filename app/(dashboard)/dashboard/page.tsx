@@ -1,2 +1,2 @@
-import RouteFeature from '../../../components/layout/RouteFeature';
-export default function Page(){ return <RouteFeature view="dashboard" title="Dashboard" />; }
+import { redirect } from 'next/navigation';
+export default function Page(){ redirect('/'); }

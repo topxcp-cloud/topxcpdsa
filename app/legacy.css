@@ -1989,17 +1989,19 @@ footer.app-footer {
 }
 .profile-banner-avatar-wrap {
   position: relative;
-  width: 76px;
-  height: 76px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid var(--line);
+  border: none;
   flex: none;
 }
 .profile-banner-avatar {
   width: 100%;
   height: 100%;
+  border-radius: 50%;
   object-fit: cover;
+  display: block;
 }
 .avatar-change-overlay {
   position: absolute;
@@ -2508,16 +2510,22 @@ body.topx-drawer-open { overflow:hidden; }
   max-width: 100% !important;
   padding-left: clamp(14px, 2vw, 28px) !important;
   padding-right: clamp(14px, 2vw, 28px) !important;
-  grid-template-columns: minmax(140px, 190px) minmax(0, 1fr) minmax(190px, 250px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
   gap: clamp(8px, 1.1vw, 18px) !important;
 }
-.brand-wrap, .app-nav-tabs, .header-right {
+.brand-wrap, .header-right {
   min-width: 0 !important;
   box-sizing: border-box !important;
+  flex: 0 0 auto !important;
 }
 .app-nav-tabs {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  max-width: max-content !important;
   justify-content: center !important;
-  overflow: hidden !important;
+  overflow: visible !important;
 }
 .app-nav-tabs .nav-tab-btn {
   padding-left: clamp(6px, .75vw, 11px) !important;
@@ -2664,27 +2672,27 @@ body.topx-drawer-open { overflow:hidden; }
 }
 .app-header .brand-tagline { display:none !important; }
 .app-header > .app-nav-tabs {
-  display: flex !important;
-  flex: 1 1 auto !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
   min-width: 0 !important;
   width: auto !important;
-  height: 48px !important;
-  margin: 0 !important;
-  padding: 5px !important;
+  max-width: max-content !important;
+  height: 44px !important;
+  margin: 0 auto !important;
+  padding: 0 4px !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 2px !important;
+  gap: clamp(14px, 2vw, 32px) !important;
   overflow: visible !important;
   white-space: nowrap !important;
-  border: 1px solid var(--line) !important;
-  border-radius: 15px !important;
-  background: var(--surface) !important;
-  box-shadow: 0 5px 20px rgba(0,0,0,.03) !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
   box-sizing: border-box !important;
 }
 .dark .app-header > .app-nav-tabs, [data-theme="dark"] .app-header > .app-nav-tabs {
-  background: var(--surface-alt) !important;
-  border-color: var(--line) !important;
+  background: transparent !important;
+  border: none !important;
 }
 .app-header .app-nav-tabs .nav-tab-btn {
   display: inline-flex !important;

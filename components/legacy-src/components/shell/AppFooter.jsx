@@ -3,7 +3,7 @@ export default function AppFooter() {
   return (
 <footer className="app-footer">
       <div>
-        <b>Top X Club</b> · Code. Compete. Conquer.
+        <b>Top X Clubs</b> · Code. Complete. Conquer.
       </div>
       <div className="footer-links">
         <a href="/">Home</a>

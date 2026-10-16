@@ -7,14 +7,13 @@ import Podium from "./Podium.jsx";
 import LeaderTable from "./LeaderTable.jsx";
 import Pagination from "./Pagination.jsx";
 import MeBar from "./MeBar.jsx";
-import SearchBox from "./SearchBox.jsx";
 
 import {
-  OPTIONS,
+  YEAR_OPTIONS,
+  BRANCH_OPTIONS,
+  SECTION_OPTIONS,
   PAGE_SIZE,
-  SCOPES,
   buildView,
-  chipLabel,
   loadMe,
 } from "./data.js";
 
@@ -30,8 +29,11 @@ export default function OwnLeaderboard() {
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState("");
 
-  const [scope, setScope] = useState("all");
-  const [val, setVal] = useState(null);
+  // Independent multi-filter state for Year, Branch, and Section
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [selectedSection, setSelectedSection] = useState(null);
+
   const [page, setPage] = useState(1);
   const [instant, setInstant] = useState(false);
   const [pinged, setPinged] = useState(null);
@@ -89,10 +91,10 @@ export default function OwnLeaderboard() {
     const bar = barRef.current;
     if (!bar) return undefined;
 
-    const nav = document.querySelector("nav");
+    const nav = document.querySelector(".app-header") || document.querySelector("header") || document.querySelector("nav");
 
     const updateOffset = () => {
-      const navHeight = window.innerWidth > 860 && nav ? nav.offsetHeight : 0;
+      const navHeight = nav ? nav.offsetHeight : 60;
       document.documentElement.style.setProperty(
         "--stk",
         `${navHeight + bar.offsetHeight}px`
@@ -116,9 +118,21 @@ export default function OwnLeaderboard() {
     };
   }, []);
 
+  // Multi-filtering: Year, Branch, and Section work together simultaneously
+  const activeFilters = useMemo(
+    () => ({
+      year: selectedYear,
+      branch: selectedBranch,
+      section: selectedSection,
+    }),
+    [selectedYear, selectedBranch, selectedSection]
+  );
+
+  const viewKey = `${selectedYear ?? "all"}|${selectedBranch ?? "all"}|${selectedSection ?? "all"}`;
+
   const { sorted: list, prevRank } = useMemo(
-    () => buildView(scope, val, students),
-    [scope, val, students]
+    () => buildView(activeFilters, students),
+    [activeFilters, students]
   );
 
   const top = list.slice(0, 3);
@@ -126,7 +140,6 @@ export default function OwnLeaderboard() {
   const pageCount = Math.ceil(rows.length / PAGE_SIZE);
   const topScore = list.length ? (list[0].s || 1) : 1;
 
-  const viewKey = [scope, val].join("|");
   const meIdx = list.findIndex((student) => student.n === me);
 
   // Clamp page if a filter reduces the number of available pages.
@@ -140,20 +153,25 @@ export default function OwnLeaderboard() {
     setInstant(false);
   };
 
-  const pickScope = (nextScope) => {
-    setScope(nextScope);
-    setVal(nextScope === "all" ? null : OPTIONS[nextScope][0]);
+  const handleYearClick = (yearVal) => {
+    setSelectedYear((prev) => (prev === yearVal ? null : yearVal));
     resetPaging();
   };
 
-  const pickChip = (nextValue) => {
-    setVal(scope === "year" ? Number(nextValue) : nextValue);
+  const handleBranchClick = (branchVal) => {
+    setSelectedBranch((prev) => (prev === branchVal ? null : branchVal));
     resetPaging();
   };
 
-  const showAll = () => {
-    setScope("all");
-    setVal(null);
+  const handleSectionClick = (sectionVal) => {
+    setSelectedSection((prev) => (prev === sectionVal ? null : sectionVal));
+    resetPaging();
+  };
+
+  const clearAllFilters = () => {
+    setSelectedYear(null);
+    setSelectedBranch(null);
+    setSelectedSection(null);
     resetPaging();
   };
 
@@ -177,7 +195,7 @@ export default function OwnLeaderboard() {
     let switched = false;
 
     if (index < 0) {
-      targetList = buildView("all", null, students).sorted;
+      targetList = buildView({}, students).sorted;
       index = targetList.findIndex((student) => student.n === name);
       switched = true;
     }
@@ -187,8 +205,7 @@ export default function OwnLeaderboard() {
     const targetPage = index < 3 ? 1 : Math.floor((index - 3) / PAGE_SIZE) + 1;
 
     if (switched) {
-      setScope("all");
-      setVal(null);
+      clearAllFilters();
       setPage(targetPage);
       setInstant(true);
     } else if (index >= 3 && targetPage !== page) {
@@ -262,41 +279,83 @@ export default function OwnLeaderboard() {
           </p>
         </div>
 
-        <div className="bar" ref={barRef}>
-          <div className="sc">
-            {Object.keys(SCOPES).map((key) => (
-              <button
-                key={key}
-                type="button"
-                className={scope === key ? "on" : ""}
-                aria-pressed={scope === key}
-                onClick={() => pickScope(key)}
-              >
-                {SCOPES[key]}
-              </button>
-            ))}
+        <div className="bar" ref={barRef} role="region" aria-label="Leaderboard Filters">
+          <div className="filter-group-row">
+            <span className="filter-group-title">Year</span>
+            <div className="filter-options-group" role="group" aria-label="Filter by Year">
+              {YEAR_OPTIONS.map((opt) => {
+                const isSelected = selectedYear === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`filter-opt-btn ${isSelected ? "on" : ""}`}
+                    aria-pressed={isSelected}
+                    onClick={() => handleYearClick(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="ch">
-            {scope !== "all" &&
-              OPTIONS[scope]?.map((option) => (
+          <div className="filter-group-row">
+            <span className="filter-group-title">Branch</span>
+            <div className="filter-options-group" role="group" aria-label="Filter by Branch">
+              {BRANCH_OPTIONS.map((opt) => {
+                const isSelected = selectedBranch === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`filter-opt-btn ${isSelected ? "on" : ""}`}
+                    aria-pressed={isSelected}
+                    onClick={() => handleBranchClick(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="filter-group-row filter-group-row-last">
+            <span className="filter-group-title">Section</span>
+            <div className="filter-options-group" role="group" aria-label="Filter by Section">
+              {SECTION_OPTIONS.map((opt) => {
+                const isSelected = selectedSection === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`filter-opt-btn ${isSelected ? "on" : ""}`}
+                    aria-pressed={isSelected}
+                    onClick={() => handleSectionClick(opt.value)}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="filter-status-actions">
+              {(selectedYear !== null || selectedBranch !== null || selectedSection !== null) && (
                 <button
-                  key={option}
                   type="button"
-                  className={val === option ? "on" : ""}
-                  aria-pressed={val === option}
-                  onClick={() => pickChip(option)}
+                  className="clear-filters-btn"
+                  onClick={clearAllFilters}
+                  aria-label="Clear all active filters"
                 >
-                  {chipLabel(scope, option)}
+                  Clear Filters
                 </button>
-              ))}
+              )}
+
+              <span className="cnt" aria-live="polite">
+                {list.length} {list.length === 1 ? "student" : "students"}
+              </span>
+            </div>
           </div>
-
-          <SearchBox onPick={jumpTo} students={students} />
-
-          <span className="cnt">
-            {list.length} {list.length === 1 ? "student" : "students"}
-          </span>
         </div>
 
         <Podium top={top} viewKey={viewKey} {...shared} />
@@ -319,8 +378,8 @@ export default function OwnLeaderboard() {
         {!dataLoading && list.length === 0 && (
           <div className="em">
             <p>No students match the selected filters.</p>
-            <button type="button" onClick={showAll}>
-              Show all students
+            <button type="button" onClick={clearAllFilters}>
+              Clear filters
             </button>
           </div>
         )}
