@@ -1,0 +1,680 @@
+/* ============================================================================
+   TOP-X HOME PAGE — Editorial Hero & Animated C++ Code Editor
+   Warm-white, dark navy, and orange-red identity.
+   ============================================================================ */
+
+/* 1. Hero Layout & Sizing */
+.home-editorial-hero {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 56px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  box-sizing: border-box;
+  background-color: var(--bg, #FAFAF8);
+}
+
+.hero-editorial-container {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 52fr) minmax(0, 48fr);
+  align-items: center;
+  gap: clamp(32px, 4vw, 64px);
+  box-sizing: border-box;
+}
+
+/* 2. Left Column Content */
+.hero-editorial-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 640px;
+}
+
+/* Eyebrow */
+.hero-eyebrow-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #FF4B2B;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.hero-eyebrow-tag .eyebrow-slash {
+  opacity: 0.7;
+}
+
+/* Main Headline */
+.hero-editorial-headline {
+  font-family: var(--font-serif, 'Newsreader', 'Instrument Serif', Georgia, serif);
+  font-size: clamp(42px, 5.2vw, 70px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: #111827;
+  margin: 0 0 24px;
+}
+
+.hero-editorial-headline .hero-headline-accent {
+  display: inline-block;
+  font-style: italic;
+  font-weight: 600;
+  color: #FF4B2B;
+}
+
+/* Description */
+.hero-editorial-desc {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(16px, 1.25vw, 18px);
+  line-height: 1.65;
+  color: #4B5563;
+  margin: 0 0 32px;
+  max-width: 540px;
+}
+
+/* Action Buttons */
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border-radius: 10px;
+  background-color: #FF4B2B;
+  color: #FFFFFF !important;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 14px rgba(255, 75, 43, 0.28);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.hero-btn-primary:hover {
+  background-color: #E03E1E;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 75, 43, 0.36);
+}
+
+.hero-btn-primary:active {
+  transform: translateY(0);
+}
+
+.hero-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 24px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  color: #111827 !important;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.hero-btn-secondary:hover {
+  background-color: #F9FAFB;
+  border-color: #D1D5DB;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.hero-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Thin Divider & Platform Strip */
+.hero-platform-strip {
+  margin-top: 36px;
+  padding-top: 22px;
+  border-top: 1px solid #E5E7EB;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.strip-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B7280;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.strip-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.platform-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 6px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1F2937;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.platform-pill .pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.platform-pill.pill-lc .pill-dot { background-color: #F89F1B; }
+.platform-pill.pill-cf .pill-dot { background-color: #1890FF; }
+.platform-pill.pill-cc .pill-dot { background-color: #B9770E; }
+.platform-pill.pill-hr .pill-dot { background-color: #00EA64; }
+
+.strip-sep {
+  color: #D1D5DB;
+  font-weight: 300;
+}
+
+/* 3. Right Column: Animated Code Editor */
+.hero-editorial-visual {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.hero-editor-wrapper {
+  width: 100%;
+  max-width: 620px;
+  box-sizing: border-box;
+}
+
+.hero-editor-frame {
+  width: 100%;
+  background-color: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 50px -12px rgba(17, 24, 39, 0.38), 0 0 0 1px rgba(17, 24, 39, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Window Header */
+.editor-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background-color: #1F2937;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  height: 44px;
+  box-sizing: border-box;
+}
+
+.editor-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 60px;
+}
+
+.editor-window-controls .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-close { background-color: #EF4444; }
+.dot-minimize { background-color: #F59E0B; }
+.dot-expand { background-color: #10B981; }
+
+.editor-tab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background-color: #111827;
+  border-radius: 6px 6px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #111827;
+  margin-bottom: -11px;
+  height: 33px;
+  box-sizing: border-box;
+}
+
+.tab-lang-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  color: #38BDF8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.tab-filename {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  font-weight: 500;
+  color: #F3F4F6;
+}
+
+.editor-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.execution-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.execution-badge.badge-running {
+  background: rgba(245, 158, 11, 0.12);
+  color: #F59E0B;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.execution-badge.badge-accepted {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.execution-badge.badge-typing {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38BDF8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.status-dot-solid {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+/* Secondary Sub-nav: Problem Pills & Interactive Controls */
+.editor-sub-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background-color: #161F2E;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.editor-pills-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.problem-tab-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94A3B8;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.problem-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #E2E8F0;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.problem-tab-btn.active {
+  background: rgba(255, 75, 43, 0.15);
+  border-color: #FF4B2B;
+  color: #FF8F70;
+  font-weight: 600;
+}
+
+.editor-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editor-tool-btn {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.editor-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #F8FAFC;
+}
+
+.editor-tool-btn:active {
+  transform: scale(0.95);
+}
+
+/* Code Viewport */
+.editor-code-viewport {
+  padding: 18px 16px 14px;
+  background-color: #111827;
+  min-height: 320px;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+.editor-pre {
+  margin: 0;
+  font-family: var(--font-mono, 'JetBrains Mono', Consolas, monospace);
+  font-size: 13px;
+  line-height: 1.65;
+  color: #E5E7EB;
+  tab-size: 4;
+}
+
+.editor-pre code {
+  font-family: inherit;
+  display: block;
+}
+
+.editor-code-row {
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 1px 8px;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.editor-code-row.is-active-row {
+  background-color: rgba(255, 75, 43, 0.1);
+  border-left: 2px solid #FF4B2B;
+  padding-left: 6px;
+}
+
+.editor-code-row.is-ghost-row {
+  opacity: 0.18;
+}
+
+.editor-line-num {
+  width: 28px;
+  flex-shrink: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: #4B5563;
+  text-align: right;
+  padding-right: 14px;
+  user-select: none;
+}
+
+.is-active-row .editor-line-num {
+  color: #FF4B2B;
+  font-weight: 700;
+}
+
+.editor-line-tokens {
+  display: inline-flex;
+  align-items: center;
+  white-space: pre;
+}
+
+/* Syntax Tokens */
+.token-directive { color: #F472B6; font-weight: 500; }
+.token-string { color: #34D399; }
+.token-keyword { color: #C084FC; font-weight: 600; }
+.token-type { color: #38BDF8; font-weight: 500; }
+.token-function { color: #60A5FA; font-weight: 600; }
+.token-variable { color: #F3F4F6; }
+.token-punct { color: #9CA3AF; }
+.token-plain { color: #D1D5DB; }
+.token-comment { color: #64748B; font-style: italic; }
+
+/* Typing Cursor */
+.editor-typing-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  background-color: #FF4B2B;
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: cursorBlink 0.8s infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Status Bar */
+.editor-status-bar {
+  display: flex;
+  align-items: center;
+  padding: 9px 16px;
+  background-color: #161F2E;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 38px;
+  box-sizing: border-box;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: #9CA3AF;
+}
+
+.status-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #38BDF8;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.8);
+}
+
+.status-pulse-dot.running-dot {
+  background-color: #F59E0B;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.8);
+}
+
+.spin-fast {
+  animation: spin 0.75s linear infinite;
+  color: #F59E0B;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Accepted Status Verdict */
+.status-accepted-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-verdict-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: #10B981;
+}
+
+.verdict-check-icon {
+  color: #10B981;
+}
+
+.status-metrics {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: #9CA3AF;
+}
+
+.status-metrics .metric-tag b.metric-val {
+  color: #F1F5F9;
+  font-weight: 700;
+}
+
+.status-metrics .metric-tag small {
+  color: #6B7280;
+  font-size: 9px;
+}
+
+.metric-sep {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* Footer Ribbon */
+.editor-footer-ribbon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background-color: #0F172A;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-ribbon-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.text-brand-orange {
+  color: #FF4B2B;
+}
+
+.editor-motto {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #64748B;
+  text-transform: uppercase;
+}
+
+.editor-algo-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  color: #475569;
+}
+
+/* 4. Responsive Breakpoints */
+@media (max-width: 1080px) {
+  .hero-editorial-container {
+    gap: 32px;
+  }
+  .hero-editorial-headline {
+    font-size: clamp(36px, 4.4vw, 56px);
+  }
+}
+
+@media (max-width: 860px) {
+  .home-editorial-hero {
+    min-height: auto;
+    padding: 36px 20px 48px;
+  }
+  .hero-editorial-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .hero-editorial-content {
+    max-width: 100%;
+  }
+  .hero-editorial-visual {
+    justify-content: center;
+  }
+  .hero-editor-wrapper {
+    max-width: 100%;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    transition: none;
+    transform: none !important;
+  }
+  .editor-typing-cursor,
+  .spin-fast {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   Dashboard Context Overrides
+   When the editorial hero is placed inside .dash-container, break out of
+   the container's max-width and padding so the hero fills the viewport width.
+   ============================================================================ */
+.dash-container > .dash-editorial-hero {
+  margin-left: -24px;
+  margin-right: -24px;
+  width: calc(100% + 48px);
+  max-width: none;
+  border: none;
+  border-radius: 0;
+}
+
+.dash-editorial-hero {
+  background-color: var(--dash-bg, var(--bg, #FAFAF8));
+}

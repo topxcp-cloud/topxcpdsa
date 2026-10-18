@@ -91,7 +91,7 @@ export function Badge({ index }) {
 
   if (index === 0) {
     return (
-      <span className="pc-badge" aria-hidden="true">
+      <span className="pc-badge badge-flip" aria-hidden="true">
         <svg viewBox="0 0 64 64">
           {defs}
           <path d="M17 11H9v4c0 7 4 11 10 12" fill="none" stroke={C[1]} strokeWidth="3.4" strokeLinecap="round" />
@@ -112,7 +112,7 @@ export function Badge({ index }) {
   }
 
   return (
-    <span className="pc-badge" aria-hidden="true">
+    <span className="pc-badge badge-flip" aria-hidden="true">
       <svg viewBox="0 0 64 64">
         {defs}
         <polygon points="18,4 30,4 38,30 26,30" fill="#FF5A36" />

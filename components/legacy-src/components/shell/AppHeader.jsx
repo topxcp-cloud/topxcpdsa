@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '../../features/auth/useAuth.js';
 import {
@@ -25,7 +25,16 @@ export default function AppHeader({ onOpenAuth }) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [resourcesMenuOpen, setResourcesMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef(null);
+
+  // Scroll detection for subtle header shadow
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll(); // initial check
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -48,25 +57,41 @@ export default function AppHeader({ onOpenAuth }) {
         setMobileDrawerOpen(false);
       }
     };
+    const handleResize = () => {
+      if (window.innerWidth > 1024) setMobileDrawerOpen(false);
+    };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
-  const navigateTo = (path) => {
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    if (mobileDrawerOpen) {
+      document.body.classList.add('topx-drawer-open');
+    } else {
+      document.body.classList.remove('topx-drawer-open');
+    }
+  }, [mobileDrawerOpen]);
+
+  const navigateTo = useCallback((path) => {
     setProfileMenuOpen(false);
     setResourcesMenuOpen(false);
     setMobileDrawerOpen(false);
     router.push(path);
-  };
+  }, [router]);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     setProfileMenuOpen(false);
     setMobileDrawerOpen(false);
     await logout();
     router.push('/');
-  };
+  }, [logout, router]);
 
-  const handleOpenAuth = () => {
+  const handleOpenAuth = useCallback(() => {
     setProfileMenuOpen(false);
     setMobileDrawerOpen(false);
     if (typeof onOpenAuth === 'function') {
@@ -74,7 +99,7 @@ export default function AppHeader({ onOpenAuth }) {
     } else {
       router.push('/login');
     }
-  };
+  }, [onOpenAuth, router]);
 
   // Compute streak count
   const streakCount = Number(user?.currentStreak) || 0;
@@ -88,9 +113,12 @@ export default function AppHeader({ onOpenAuth }) {
   const isResourcesActive = pathname === '/problems' || pathname === '/roadmap';
   const isProfileActive = pathname === '/profile' || pathname === '/settings';
 
+  // Avatar initial
+  const avatarInitial = (user?.name || 'U').slice(0, 1).toUpperCase();
+
   return (
-    <header className="app-header" ref={headerRef}>
-      {/* Brand Logo with Editorial Refinement */}
+    <header className={`app-header${scrolled ? ' is-scrolled' : ''}`} ref={headerRef}>
+      {/* ── Brand ── */}
       <div className="brand-wrap">
         <a
           className="brand-logo"
@@ -98,9 +126,8 @@ export default function AppHeader({ onOpenAuth }) {
           onClick={(e) => { e.preventDefault(); navigateTo('/'); }}
           aria-label="Top X Club Home"
         >
-          {/* Geometric Asterisk / Diamond Logo matching Locomotive Editorial Reference */}
           <span className="brand-star-mark" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="2" x2="12" y2="22" />
               <line x1="2" y1="12" x2="22" y2="12" />
               <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
@@ -111,144 +138,102 @@ export default function AppHeader({ onOpenAuth }) {
         </a>
       </div>
 
-      {/* Primary Navigation */}
+      {/* ── Primary Navigation ── */}
       <nav className="app-nav-tabs" aria-label="Main navigation">
-        <button type="button" className={`nav-tab-btn ${isDashboardActive || isHomeActive ? 'active' : ''}`} onClick={() => navigateTo('/dashboard')}>Dashboard</button>
-        <button type="button" className={`nav-tab-btn ${isTasksActive ? 'active' : ''}`} onClick={() => navigateTo('/progress')}>Daily Tasks</button>
-        <button type="button" className={`nav-tab-btn ${isLeaderboardActive ? 'active' : ''}`} onClick={() => navigateTo('/leaderboard')}>Leaderboard</button>
-        <button type="button" className={`nav-tab-btn ${isProfileActive ? 'active' : ''}`} onClick={() => navigateTo(user ? '/profile' : '/login')}>Profile</button>
+        <button type="button" className={`nav-tab-btn interactive-transition${isDashboardActive ? ' active' : ''}`} onClick={() => navigateTo('/dashboard')}>Dashboard</button>
+        <button type="button" className={`nav-tab-btn interactive-transition${isTasksActive ? ' active' : ''}`} onClick={() => navigateTo('/progress')}>Daily Tasks</button>
+        <button type="button" className={`nav-tab-btn interactive-transition${isLeaderboardActive ? ' active' : ''}`} onClick={() => navigateTo('/leaderboard')}>Leaderboard</button>
+        <button type="button" className={`nav-tab-btn interactive-transition${isProfileActive ? ' active' : ''}`} onClick={() => navigateTo(user ? '/profile' : '/login')}>Profile</button>
       </nav>
 
-      {/* Header Right Utility Controls */}
+      {/* ── Header Right Controls ── */}
       <div className="header-right">
-        {/* Search Palette Opener */}
+        {/* Search */}
         <button
           type="button"
-          className="search-pill-btn"
+          className="search-pill-btn hover-lift interactive-transition"
           id="search-pill-btn"
           title="Open Command Palette (Cmd+K or /)"
           onClick={() => window.dispatchEvent(new Event('topx:open-search'))}
         >
           <Search size={14} className="search-icon" aria-hidden="true" />
-          <span>Search anything...</span>
+          <span>Search…</span>
           <kbd>/</kbd>
         </button>
 
-        {/* Consistency Streak Chip */}
+        {/* Streak Chip */}
         <div
-          className="streak-chip"
+          className="streak-chip hover-lift interactive-transition"
           id="header-streak-chip"
           role="button"
           tabIndex={0}
-          title="Active practice streak — Click to view tasks & streaks"
+          title="Active practice streak"
           onClick={() => navigateTo('/progress')}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateTo('/progress'); } }}
         >
-          <Flame size={15} style={{ color: 'var(--ac)' }} aria-hidden="true" />
-          <span className="num" id="header-streak-num">{streakCount}</span>
+          <Flame size={14} style={{ color: 'var(--ac)' }} aria-hidden="true" />
+          <span className="num badge-flip" id="header-streak-num">{streakCount}</span>
           <span>streak</span>
         </div>
 
-        {/* Mobile Hamburger Menu */}
+        {/* Mobile Hamburger */}
         <button
           type="button"
-          className="topx-mobile-menu"
+          className="topx-mobile-menu interactive-transition"
           id="topx-mobile-menu"
           aria-label="Open navigation menu"
           aria-expanded={mobileDrawerOpen}
           onClick={() => setMobileDrawerOpen(true)}
         >
-          <Menu size={20} aria-hidden="true" />
+          <Menu size={18} aria-hidden="true" />
         </button>
 
-        {/* Authentication: Sign In if unauthenticated */}
+        {/* Sign In (unauthenticated) */}
         {!user && (
           <button
             type="button"
-            className="btn-primary header-signin-btn"
+            className="btn-primary header-signin-btn hover-lift interactive-transition"
             id="header-signin-btn"
             onClick={handleOpenAuth}
-            style={{ padding: '7px 18px', fontSize: '13px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
-            <span>Sign In</span>
-            <span style={{ fontSize: '14px', lineHeight: 1 }}>→</span>
+            Sign In <span aria-hidden="true">→</span>
           </button>
         )}
 
-        {/* Authenticated User Avatar & Dropdown */}
+        {/* Profile Pill (authenticated) */}
         {user && (
           <div style={{ position: 'relative' }}>
             <button
               type="button"
-              className={`profile-pill-btn ${isProfileActive ? 'active' : ''}`}
+              className={`profile-pill-btn hover-lift interactive-transition${isProfileActive ? ' active' : ''}`}
               id="header-profile-btn"
               aria-label="User account actions"
               aria-haspopup="true"
               aria-expanded={profileMenuOpen}
               onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 8px 4px 4px', borderRadius: '999px', border: '1px solid var(--line)', background: 'var(--card)' }}
             >
-              <div
-                className="profile-avatar"
-                id="header-user-avatar"
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'var(--surface-alt)',
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  color: 'var(--ink)'
-                }}
-              >
+              <div className="profile-avatar" id="header-user-avatar">
                 {user.avatar ? (
                   <img
                     src={user.avatar}
                     alt={user.name || 'Member'}
                     referrerPolicy="no-referrer"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 ) : (
-                  (user.name || 'U').slice(0, 1).toUpperCase()
+                  avatarInitial
                 )}
               </div>
-              <ChevronDown size={14} style={{ opacity: 0.7 }} aria-hidden="true" />
+              <ChevronDown size={12} style={{ opacity: 0.5 }} aria-hidden="true" />
             </button>
 
             {profileMenuOpen && (
-              <div
-                className="menu-dropdown open"
-                id="menu-profile"
-                style={{
-                  width: '260px',
-                  position: 'absolute',
-                  top: 'calc(100% + 8px)',
-                  right: 0,
-                  background: 'var(--card)',
-                  border: '1px solid var(--line)',
-                  borderRadius: '12px',
-                  boxShadow: 'var(--sh-lg)',
-                  padding: '8px',
-                  zIndex: 200
-                }}
-              >
-                <div
-                  className="menu-header"
-                  id="menu-profile-header"
-                  style={{
-                    padding: '8px 10px 10px',
-                    borderBottom: '1px solid var(--line)',
-                    marginBottom: '6px'
-                  }}
-                >
-                  <div style={{ fontWeight: '700', fontSize: '14px', color: 'var(--ink)' }}>{user.name || 'Member'}</div>
+              <div className="menu-dropdown open reveal-up" id="menu-profile">
+                {/* User info */}
+                <div className="menu-header" id="menu-profile-header">
+                  <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--ink)' }}>{user.name || 'Member'}</div>
                   <div style={{ fontSize: '12px', color: 'var(--mute)', wordBreak: 'break-all' }}>{user.email || ''}</div>
                   {user.branch && (
-                    <div style={{ marginTop: '4px', fontSize: '11px', color: 'var(--ac)', fontWeight: 600 }}>
+                    <div style={{ marginTop: '3px', fontSize: '11px', color: 'var(--ac)', fontWeight: 600 }}>
                       {user.branch} {user.academicYear ? `• Year ${user.academicYear}` : ''}
                     </div>
                   )}
@@ -256,23 +241,10 @@ export default function AppHeader({ onOpenAuth }) {
 
                 <button
                   type="button"
-                  className="menu-item"
+                  className="menu-item interactive-transition"
                   id="open-profile-modal-link"
                   data-tab="profile"
                   onClick={() => navigateTo('/profile')}
-                  style={{
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '8px 10px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    cursor: 'pointer',
-                    color: 'var(--ink)'
-                  }}
                 >
                   <User size={15} style={{ color: 'var(--ac)' }} />
                   <div>
@@ -283,22 +255,9 @@ export default function AppHeader({ onOpenAuth }) {
 
                 <button
                   type="button"
-                  className="menu-item"
+                  className="menu-item interactive-transition"
                   data-tab="tasks"
                   onClick={() => navigateTo('/progress')}
-                  style={{
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '8px 10px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    cursor: 'pointer',
-                    color: 'var(--ink)'
-                  }}
                 >
                   <Flame size={15} style={{ color: 'var(--ac)' }} />
                   <div>
@@ -307,26 +266,14 @@ export default function AppHeader({ onOpenAuth }) {
                   </div>
                 </button>
 
-                <div style={{ borderTop: '1px solid var(--line)', margin: '6px 0' }} />
+                <div style={{ borderTop: '1px solid var(--line)', margin: '4px 0' }} />
 
                 <button
                   type="button"
-                  className="menu-item"
+                  className="menu-item interactive-transition"
                   id="header-logout-btn"
                   onClick={handleLogout}
-                  style={{
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '8px 10px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: 'transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    cursor: 'pointer',
-                    color: 'var(--hard)'
-                  }}
+                  style={{ color: 'var(--hard)' }}
                 >
                   <LogOut size={15} />
                   <span style={{ fontSize: '13px', fontWeight: 600 }}>Sign Out</span>
@@ -337,7 +284,7 @@ export default function AppHeader({ onOpenAuth }) {
         )}
       </div>
 
-      {/* Mobile Drawer Backdrop */}
+      {/* ── Mobile Drawer Backdrop ── */}
       {mobileDrawerOpen && (
         <div
           className="topx-drawer-backdrop"
@@ -346,9 +293,9 @@ export default function AppHeader({ onOpenAuth }) {
         />
       )}
 
-      {/* Mobile Navigation Drawer */}
+      {/* ── Mobile Navigation Drawer ── */}
       <aside
-        className={`topx-mobile-drawer ${mobileDrawerOpen ? 'is-open' : ''}`}
+        className={`topx-mobile-drawer${mobileDrawerOpen ? ' is-open' : ''}`}
         id="topx-mobile-drawer"
         aria-label="Mobile navigation"
         aria-hidden={!mobileDrawerOpen}
@@ -361,7 +308,7 @@ export default function AppHeader({ onOpenAuth }) {
             aria-label="Close navigation"
             onClick={() => setMobileDrawerOpen(false)}
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
@@ -379,11 +326,27 @@ export default function AppHeader({ onOpenAuth }) {
           <kbd>/</kbd>
         </button>
 
+        {/* Streak in mobile drawer */}
+        {user && (
+          <div
+            className="streak-chip"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigateTo('/progress')}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateTo('/progress'); } }}
+            style={{ alignSelf: 'flex-start' }}
+          >
+            <Flame size={14} style={{ color: 'var(--ac)' }} aria-hidden="true" />
+            <span className="num">{streakCount}</span>
+            <span>day streak</span>
+          </div>
+        )}
+
         <nav className="topx-drawer-links" aria-label="Mobile navigation">
-          <button type="button" className={`nav-tab-btn ${isDashboardActive || isHomeActive ? 'active' : ''}`} onClick={() => navigateTo('/dashboard')}>Dashboard</button>
-          <button type="button" className={`nav-tab-btn ${isTasksActive ? 'active' : ''}`} onClick={() => navigateTo('/progress')}>Daily Tasks</button>
-          <button type="button" className={`nav-tab-btn ${isLeaderboardActive ? 'active' : ''}`} onClick={() => navigateTo('/leaderboard')}>Leaderboard</button>
-          <button type="button" className={`nav-tab-btn ${isProfileActive ? 'active' : ''}`} onClick={() => navigateTo(user ? '/profile' : '/login')}>Profile</button>
+          <button type="button" className={`nav-tab-btn${isDashboardActive ? ' active' : ''}`} onClick={() => navigateTo('/dashboard')}>Dashboard</button>
+          <button type="button" className={`nav-tab-btn${isTasksActive ? ' active' : ''}`} onClick={() => navigateTo('/progress')}>Daily Tasks</button>
+          <button type="button" className={`nav-tab-btn${isLeaderboardActive ? ' active' : ''}`} onClick={() => navigateTo('/leaderboard')}>Leaderboard</button>
+          <button type="button" className={`nav-tab-btn${isProfileActive ? ' active' : ''}`} onClick={() => navigateTo(user ? '/profile' : '/login')}>Profile</button>
           {user ? (
             <button type="button" className="nav-tab-btn" onClick={handleLogout} style={{ color: 'var(--hard)', marginTop: '16px' }}>Sign Out ({user.name || 'Member'})</button>
           ) : (

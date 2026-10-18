@@ -6,7 +6,7 @@ import { Count, Flame, Movement, YouTag } from './common.jsx';
 function Row({ student: d, rank, rowIndex, instant, me, pinged, prevRank, maxScore }) {
   const [ref, visible] = useReveal(instant);
   const delay = Math.min(rowIndex, 6) * 0.05;
-  const cls = ['reveal', visible && 'visible', d.n === me && 'me', d.n === pinged && 'hit ping']
+  const cls = ['reveal', 'interactive-transition', visible && 'visible', d.n === me && 'me', d.n === pinged && 'hit ping']
     .filter(Boolean)
     .join(' ');
 
@@ -15,7 +15,7 @@ function Row({ student: d, rank, rowIndex, instant, me, pinged, prevRank, maxSco
   return (
     <tr className={cls} ref={ref} data-name={d.n} style={{ '--d': delay + 's' }}>
       <td className="rc n">
-        <span className="rb">{rank}</span>
+        <span className="rb badge-flip">{rank}</span>
         <Movement index={rank - 1} prevRank={prevRank?.[d.n]} isNew={!!NEW_STUDENTS[d.n]} />
       </td>
       <td>

@@ -11,12 +11,15 @@ import AppHeader from '../legacy-src/components/shell/AppHeader.jsx';
 import AppFooter from '../legacy-src/components/shell/AppFooter.jsx';
 import { api } from '../legacy-src/lib/api.js';
 import { Sparkles, Play, RefreshCw, BarChart2, Zap, Shield, ArrowRight } from 'lucide-react';
+import AnimatedCodeEditor from './AnimatedCodeEditor.jsx';
+import useScrollReveal from '../../lib/useScrollReveal.js';
 
 export default function HomePageView() {
   const auth = useAuth();
   const router = useRouter();
   const [topMembers, setTopMembers] = useState([]);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const mainRef = useScrollReveal();
 
   // Initialize 3D algorithm visualizers
   useFeatureRuntime();
@@ -28,7 +31,7 @@ export default function HomePageView() {
           setTopMembers(data.members.slice(0, 3));
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   return (
@@ -42,7 +45,7 @@ export default function HomePageView() {
         setError={auth.setError}
         isAuthenticated={Boolean(auth.user)}
         isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
+        onClose={() => { setAuthModalOpen(false); document.body.classList.remove('auth-locked'); }}
       />
 
       {!auth.loading && auth.user && !hasRequiredStudentProfile(auth.user) && (
@@ -57,98 +60,85 @@ export default function HomePageView() {
 
       <AppHeader onOpenAuth={() => setAuthModalOpen(true)} />
 
-      <main className="home-main-container">
-        {/* HERO SECTION */}
-        <section className="home-hero-section">
-          <div className="home-hero-content">
-            <div className="home-badge-pill">
-              <span className="pulse-dot" />
-              <span>Student-Driven Coding Community</span>
-            </div>
-
-            <h1 className="home-hero-headline">
-              Write Code. Build Consistency. Push Your Limits.
-            </h1>
-
-            <p className="home-hero-description">
-              Top X Club is where curious minds become consistent problem solvers. Track your coding journey,
-              challenge your friends, climb the leaderboard, and turn everyday practice into lasting progress.
-            </p>
-
-            <div className="home-hero-actions">
-              <Link href="/leaderboard" className="btn-primary home-primary-btn">
-                <span>Explore Leaderboard</span>
-                <span className="btn-arrow">→</span>
-              </Link>
-              <Link href={auth.user ? '/profile' : '/progress'} className="btn-secondary home-secondary-btn">
-                <span>Start Your Streak</span>
-              </Link>
-            </div>
-
-            <div className="home-platform-chips">
-              <span className="chips-label">Tracking accepted problems across:</span>
-              <div className="platform-tag-group">
-                <span className="platform-tag lc">LeetCode</span>
-                <span className="platform-tag cf">Codeforces</span>
-                <span className="platform-tag cc">CodeChef</span>
-              </div>
-            </div>
-          </div>
-
-          {/* HERO VISUAL: Live Technical Activity Card */}
-          <div className="home-hero-visual-wrap">
-            <div className="hero-activity-card">
-              <div className="hero-activity-header">
-                <div className="terminal-dots">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <div className="terminal-title">club_activity_stream.log</div>
-                <div className="terminal-status">LIVE</div>
+      <main className="home-main-container" ref={mainRef}>
+        {/* FULL-SCREEN EDITORIAL HERO SECTION */}
+        <section className="home-editorial-hero reveal-up" aria-label="Top-X Community Introduction" data-reveal="fade-up">
+          <div className="hero-editorial-container">
+            {/* Left Column: Editorial Headline & Actions */}
+            <div className="hero-editorial-content">
+              <div className="hero-eyebrow-tag reveal-up">
+                <span className="eyebrow-slash">//</span> STUDENT CODING COMMUNITY
               </div>
 
-              <div className="hero-activity-body">
-                <div className="activity-stat-row">
-                  <div>
-                    <span className="sm">Community Momentum</span>
-                    <div className="stat-big-val">🔥 Daily Streaks</div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span className="sm">Verified Sync</span>
-                    <div className="stat-tag-clean">Asia/Kolkata</div>
-                  </div>
-                </div>
+              <h1 className="hero-editorial-headline reveal-up">
+                Show up. Solve problems.<br />
+                <span className="hero-headline-accent">Become unstoppable.</span>
+              </h1>
 
-                <div className="hero-code-block">
-                  <code>
-                    <span className="code-kw">function</span> <span className="code-fn">achieveMastery</span>() &#123;<br />
-                    &nbsp;&nbsp;<span className="code-kw">while</span> (curious) &#123;<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;solve(problem);<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;streak++;<br />
-                    &nbsp;&nbsp;&nbsp;&nbsp;learnFromMistakes();<br />
-                    &nbsp;&nbsp;&#125;<br />
-                    &#125;
-                  </code>
-                </div>
+              <p className="hero-editorial-desc reveal-up">
+                Top X Club helps students build consistent coding habits, improve their problem-solving skills, challenge themselves, and grow alongside a motivated community of developers.
+              </p>
 
-                {/* Heatmap preview bar */}
-                <div className="hero-preview-heatmap">
-                  <span className="sm">Recent Club Activity Consistency:</span>
-                  <div className="preview-heat-grid">
-                    {Array.from({ length: 28 }).map((_, i) => {
-                      const level = (i * 3 + 2) % 5;
-                      return <span key={i} className={`heatmap-cell heatmap-cell-${level}`} />;
-                    })}
-                  </div>
+              <div className="hero-cta-group reveal-up">
+                <Link
+                  href={auth.user ? '/progress' : '#'}
+                  onClick={(e) => {
+                    if (!auth.user) {
+                      e.preventDefault();
+                      setAuthModalOpen(true);
+                    }
+                  }}
+                  className="hero-btn-primary hover-lift interactive-transition"
+                  id="hero-cta-streak"
+                >
+                  <span>Start Your Streak</span>
+                  <span aria-hidden="true">→</span>
+                </Link>
+
+                <Link
+                  href="/leaderboard"
+                  className="hero-btn-secondary hover-lift interactive-transition"
+                  id="hero-cta-community"
+                >
+                  <span>Explore Community</span>
+                </Link>
+              </div>
+
+              <div className="hero-platform-strip reveal-up">
+                <span className="strip-label">Tracking accepted problems across:</span>
+                <div className="strip-pills">
+                  <span className="platform-pill pill-lc badge-flip">
+                    <span className="pill-dot" aria-hidden="true" />
+                    LeetCode
+                  </span>
+                  <span className="strip-sep" aria-hidden="true">|</span>
+                  <span className="platform-pill pill-cf badge-flip">
+                    <span className="pill-dot" aria-hidden="true" />
+                    Codeforces
+                  </span>
+                  <span className="strip-sep" aria-hidden="true">|</span>
+                  <span className="platform-pill pill-cc badge-flip">
+                    <span className="pill-dot" aria-hidden="true" />
+                    CodeChef
+                  </span>
+                  <span className="strip-sep" aria-hidden="true">|</span>
+                  <span className="platform-pill pill-hr badge-flip">
+                    <span className="pill-dot" aria-hidden="true" />
+                    HackerRank
+                  </span>
                 </div>
               </div>
+            </div>
+
+            {/* Right Column: Animated C++ Code Editor */}
+            <div className="hero-editorial-visual reveal-left">
+              <AnimatedCodeEditor />
             </div>
           </div>
         </section>
 
         {/* PROMINENT SORTING ALGORITHMS & DSA SECTION */}
-        <section className="home-section home-sorting-section" style={{ padding: '60px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', background: 'var(--card)' }}>
+        <section className="home-section home-sorting-section" data-reveal="fade-up" style={{ padding: '60px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', background: 'var(--card)' }}>
           <div className="view-wrap" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 var(--pad)' }}>
             <div className="home-section-header" style={{ marginBottom: '32px' }}>
               <span className="section-eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
@@ -405,7 +395,7 @@ export default function HomePageView() {
 
         {/* COMMUNITY CONSISTENCY SHOWCASE */}
         {topMembers.length > 0 && (
-          <section className="home-section home-podium-preview">
+          <section className="home-section home-podium-preview reveal-up">
             <div className="home-section-header">
               <span className="section-eyebrow">Top Consistent Peers</span>
               <h2>Active Streak Champions</h2>
@@ -414,8 +404,8 @@ export default function HomePageView() {
 
             <div className="home-podium-grid">
               {topMembers.map((m, idx) => (
-                <div key={m.id} className="home-podium-item">
-                  <div className="podium-badge">Rank #{idx + 1}</div>
+                <div key={m.id} className="home-podium-item hover-lift interactive-transition">
+                  <div className="podium-badge badge-flip">Rank #{idx + 1}</div>
                   <h4>{m.n}</h4>
                   <span className="sm" style={{ color: 'var(--mute)' }}>
                     {m.branch ? `${m.branch} • ` : ''}
@@ -433,7 +423,7 @@ export default function HomePageView() {
             </div>
 
             <div style={{ textAlign: 'center', marginTop: '24px' }}>
-              <Link href="/leaderboard" className="btn-primary" style={{ display: 'inline-flex', padding: '10px 22px' }}>
+              <Link href="/leaderboard" className="btn-primary hover-lift interactive-transition" style={{ display: 'inline-flex', padding: '10px 22px' }}>
                 View Full College Leaderboard →
               </Link>
             </div>
@@ -441,15 +431,15 @@ export default function HomePageView() {
         )}
 
         {/* CALL TO ACTION */}
-        <section className="home-cta-section">
-          <div className="home-cta-box">
+        <section className="home-cta-section reveal-up">
+          <div className="home-cta-box reveal-up">
             <h2>Ready to build your coding habit?</h2>
             <p>Join fellow students tracking their competitive programming progress today.</p>
             <div className="cta-actions">
-              <Link href="/profile" className="btn-primary">
+              <Link href="/profile" className="btn-primary hover-lift interactive-transition">
                 Create Free Profile
               </Link>
-              <Link href="/leaderboard" className="btn-secondary">
+              <Link href="/leaderboard" className="btn-secondary hover-lift interactive-transition">
                 Explore Leaderboard
               </Link>
             </div>

@@ -19,6 +19,7 @@ import BlueprintsView from '../legacy-src/components/views/BlueprintsView.jsx';
 import LabView from '../legacy-src/components/views/LabView.jsx';
 import ProView from '../legacy-src/components/views/ProView.jsx';
 import AdminView from '../legacy-src/components/views/AdminView.jsx';
+import useScrollReveal from '../../lib/useScrollReveal.js';
 
 const VIEW_MAP: Record<string, any> = {
   dashboard: DashboardView,
@@ -43,6 +44,7 @@ export default function RouteFeature({ view, title }: { view: string; title?: st
   const auth = useAuth();
   const router = useRouter();
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const viewContainerRef = useScrollReveal();
   useFeatureRuntime();
 
   const View = VIEW_MAP[view] || DashboardView;
@@ -71,7 +73,7 @@ export default function RouteFeature({ view, title }: { view: string; title?: st
         setError={auth.setError}
         isAuthenticated={Boolean(auth.user)}
         isOpen={(!auth.loading && !auth.user && isProtected) || authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
+        onClose={() => { setAuthModalOpen(false); document.body.classList.remove('auth-locked'); }}
       />
 
       {!auth.loading && auth.user && !hasRequiredStudentProfile(auth.user) && (
@@ -86,7 +88,7 @@ export default function RouteFeature({ view, title }: { view: string; title?: st
 
       <AppHeader onOpenAuth={() => setAuthModalOpen(true)} />
 
-      <main className="app-view-container">
+      <main className="app-view-container" ref={viewContainerRef}>
         {auth.loading && isProtected ? (
           <div style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--mute)' }}>
             <p>Loading your profile session...</p>

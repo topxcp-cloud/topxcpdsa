@@ -255,20 +255,20 @@ export default function OwnLeaderboard() {
           </div>
         )}
 
-        <div className="top">
+        <div className="top reveal-up">
           <h1>Leaderboard</h1>
           <p className="sub">
             Ranked only by current streak. Problem counts are shown for reference.
           </p>
         </div>
 
-        <div className="bar" ref={barRef}>
+        <div className="bar reveal-up" ref={barRef}>
           <div className="sc">
             {Object.keys(SCOPES).map((key) => (
               <button
                 key={key}
                 type="button"
-                className={scope === key ? "on" : ""}
+                className={`interactive-transition hover-lift ${scope === key ? "on" : ""}`}
                 aria-pressed={scope === key}
                 onClick={() => pickScope(key)}
               >
@@ -283,7 +283,7 @@ export default function OwnLeaderboard() {
                 <button
                   key={option}
                   type="button"
-                  className={val === option ? "on" : ""}
+                  className={`interactive-transition hover-lift ${val === option ? "on" : ""}`}
                   aria-pressed={val === option}
                   onClick={() => pickChip(option)}
                 >
@@ -294,7 +294,7 @@ export default function OwnLeaderboard() {
 
           <SearchBox onPick={jumpTo} students={students} />
 
-          <span className="cnt">
+          <span className="cnt interactive-transition">
             {list.length} {list.length === 1 ? "student" : "students"}
           </span>
         </div>

@@ -123,7 +123,7 @@ export default function LeaderboardView({ active = false }) {
       </div>
 
       <div className="view-wrap" style={{ maxWidth: '1200px' }}>
-        <div className="section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '14px' }}>
+        <div className="section-head reveal-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '14px' }}>
           <div>
             <h2>Top X Club Leaderboard</h2>
             <p className="sub">
@@ -134,7 +134,7 @@ export default function LeaderboardView({ active = false }) {
             <button
               type="button"
               onClick={resetFilters}
-              className="bs-ctl-btn"
+              className="bs-ctl-btn hover-lift interactive-transition"
               style={{ color: 'var(--ac)', borderColor: 'var(--ac)' }}
             >
               ✕ Reset All Filters
@@ -143,7 +143,7 @@ export default function LeaderboardView({ active = false }) {
         </div>
 
         {/* Multi-Filter Controls Bar */}
-        <div className="lb-filter-bar">
+        <div className="lb-filter-bar reveal-up">
           <div className="lb-filter-grid">
             {/* Academic Year */}
             <div className="auth-field">
@@ -259,15 +259,15 @@ export default function LeaderboardView({ active = false }) {
 
         {/* Podium for Top 3 */}
         {podium.length > 0 && (
-          <div className="lb-podium" id="lb-podium-wrap" style={{ marginBottom: '24px' }}>
+          <div className="lb-podium reveal-up" id="lb-podium-wrap" style={{ marginBottom: '24px' }}>
             {podium.map((member, index) => (
               <div
-                className={`lb-podium-card podium-${index + 1}`}
+                className={`lb-podium-card podium-${index + 1} hover-lift interactive-transition`}
                 key={member.id}
                 onClick={() => handleSelectStudent(member)}
                 style={{ cursor: 'pointer' }}
               >
-                <span className="lb-podium-rank">#{index + 1}</span>
+                <span className="lb-podium-rank badge-flip">#{index + 1}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0' }}>
                   <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'var(--surface-alt)', border: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, overflow: 'hidden', flexShrink: 0 }}>
                     {member.avatar ? (
@@ -308,7 +308,7 @@ export default function LeaderboardView({ active = false }) {
 
         {/* Leaderboard Table */}
         {!loading && filteredMembers.length > 0 ? (
-          <div className="lb-table-wrap">
+          <div className="lb-table-wrap reveal-up">
             <table className="lb-table">
               <thead>
                 <tr>
@@ -323,9 +323,9 @@ export default function LeaderboardView({ active = false }) {
               </thead>
               <tbody id="lb-tbody">
                 {filteredMembers.map((member, index) => (
-                  <tr key={member.id} style={{ cursor: 'pointer' }} onClick={() => handleSelectStudent(member)}>
+                  <tr key={member.id} className="interactive-transition" style={{ cursor: 'pointer' }} onClick={() => handleSelectStudent(member)}>
                     <td>
-                      <span className={getRankBadgeClass(index)}>
+                      <span className={`${getRankBadgeClass(index)} badge-flip`}>
                         {member.rank || index + 1}
                       </span>
                     </td>

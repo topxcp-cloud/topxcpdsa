@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 /** AuthGate: unified authentication gate supporting Firebase Google sign-in and email/password. */
 export default function AuthGate({
@@ -15,18 +15,34 @@ export default function AuthGate({
 }) {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen || !onClose) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (isAuthenticated || !isOpen) {
     return null;
   }
 
   const handleGoogleClick = async () => {
-    if (googleLoading) return;
+    if (googleLoading || formLoading) return;
     setGoogleLoading(true);
     if (setError) setError('');
     try {
       if (typeof loginWithGoogle === 'function') {
         await loginWithGoogle();
+        if (onClose) onClose();
       } else {
         throw new Error('Google Sign-In service is initializing. Please try again.');
       }
@@ -37,28 +53,79 @@ export default function AuthGate({
     }
   };
 
+  const validateForm = () => {
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      if (setError) setError('Please enter your email address.');
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      if (setError) setError('Please enter a valid email address.');
+      return false;
+    }
+    if (!password) {
+      if (setError) setError('Please enter your password.');
+      return false;
+    }
+    if (authMode === 'register') {
+      const cleanName = name.trim();
+      if (!cleanName) {
+        if (setError) setError('Please enter your full name.');
+        return false;
+      }
+      if (password.length < 8) {
+        if (setError) setError('Password must be at least 8 characters long.');
+        return false;
+      }
+      if (password.length > 200) {
+        if (setError) setError('Password is too long (maximum 200 characters).');
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    if (formLoading) return;
+    if (formLoading || googleLoading) return;
+    if (!validateForm()) return;
     setFormLoading(true);
     if (setError) setError('');
-    const form = new FormData(event.currentTarget);
     try {
       await authenticate({
-        name: String(form.get('name') || ''),
-        email: String(form.get('email') || ''),
-        password: String(form.get('password') || '')
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password
       });
+      setPassword('');
+      if (onClose) onClose();
     } catch (err) {
-      // error handled by authenticate
+      if (setError) setError(err.message || 'Authentication failed. Please check your credentials.');
     } finally {
       setFormLoading(false);
     }
   };
 
+  const handleTabSwitch = (mode) => {
+    setAuthMode(mode);
+    if (setError) setError('');
+  };
+
   return (
-    <div id="login-gate" className="login-gate" role="dialog" aria-modal="true" aria-label="Sign in gate">
-      <div className="login-gate-bg">
+    <div
+      id="login-gate"
+      className="login-gate"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Sign in gate"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && onClose) {
+          onClose();
+        }
+      }}
+    >
+      <div className="login-gate-bg" aria-hidden="true">
         <div className="login-gate-grid" />
       </div>
       <div className="login-gate-container">
@@ -81,19 +148,29 @@ export default function AuthGate({
           </div>
         </div>
 
-        <div className="login-gate-form-card">
+        <div className="login-gate-form-card" style={{ position: 'relative' }}>
           {onClose && (
             <button
               type="button"
               onClick={onClose}
               style={{
-                float: 'right',
-                background: 'transparent',
-                border: 'none',
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'var(--surface-alt)',
+                border: '1px solid var(--line)',
+                borderRadius: '8px',
                 color: 'var(--mute)',
                 cursor: 'pointer',
-                fontSize: '20px',
-                lineHeight: 1
+                fontSize: '16px',
+                lineHeight: 1,
+                zIndex: 2,
+                transition: 'background-color .15s ease, color .15s ease'
               }}
               aria-label="Close sign in dialog"
             >
@@ -101,12 +178,12 @@ export default function AuthGate({
             </button>
           )}
 
-          <div className="login-form-tabs">
+          <div className="login-form-tabs" style={{ paddingRight: onClose ? '36px' : undefined }}>
             <button
               type="button"
               className={`login-form-tab ${authMode === 'login' ? 'active' : ''}`}
               id="login-tab-signin"
-              onClick={() => { setAuthMode('login'); if (setError) setError(''); }}
+              onClick={() => handleTabSwitch('login')}
             >
               Sign In
             </button>
@@ -114,7 +191,7 @@ export default function AuthGate({
               type="button"
               className={`login-form-tab ${authMode === 'register' ? 'active' : ''}`}
               id="login-tab-signup"
-              onClick={() => { setAuthMode('register'); if (setError) setError(''); }}
+              onClick={() => handleTabSwitch('register')}
             >
               Create Account
             </button>
@@ -149,25 +226,33 @@ export default function AuthGate({
           </div>
 
           <form id="gate-auth-form" autoComplete="off" onSubmit={handleFormSubmit}>
-            <div className="auth-field" id="gate-name-field" style={{ display: authMode === 'register' ? undefined : 'none' }}>
-              <label htmlFor="gate-name">Full Name</label>
-              <input
-                id="gate-name"
-                name="name"
-                placeholder="Your full name"
-                autoComplete="name"
-                required={authMode === 'register'}
-              />
-            </div>
+            {authMode === 'register' && (
+              <div className="auth-field" id="gate-name-field">
+                <label htmlFor="gate-name">Full Name</label>
+                <input
+                  id="gate-name"
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your full name"
+                  autoComplete="name"
+                  required={authMode === 'register'}
+                  disabled={formLoading}
+                />
+              </div>
+            )}
             <div className="auth-field">
               <label htmlFor="gate-email">Email Address</label>
               <input
                 type="email"
                 id="gate-email"
                 name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@university.edu"
                 required
                 autoComplete="email"
+                disabled={formLoading}
               />
             </div>
             <div className="auth-field">
@@ -176,10 +261,13 @@ export default function AuthGate({
                 type="password"
                 id="gate-password"
                 name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
                 minLength={authMode === 'register' ? 8 : undefined}
                 autoComplete={authMode === 'register' ? 'new-password' : 'current-password'}
+                disabled={formLoading}
               />
             </div>
             <button
@@ -217,7 +305,7 @@ export default function AuthGate({
                 <a
                   href="#signup"
                   id="gate-toggle-link"
-                  onClick={(e) => { e.preventDefault(); setAuthMode('register'); if (setError) setError(''); }}
+                  onClick={(e) => { e.preventDefault(); handleTabSwitch('register'); }}
                 >
                   Create one
                 </a>
@@ -227,7 +315,7 @@ export default function AuthGate({
                 Already have an account?{' '}
                 <a
                   href="#signin"
-                  onClick={(e) => { e.preventDefault(); setAuthMode('login'); if (setError) setError(''); }}
+                  onClick={(e) => { e.preventDefault(); handleTabSwitch('login'); }}
                 >
                   Sign in
                 </a>

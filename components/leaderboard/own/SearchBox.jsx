@@ -68,7 +68,7 @@ export default function SearchBox({ onPick, students = [] }) {
   const showList = open && term.length > 0;
 
   return (
-    <div className="srch" ref={wrapRef} role="search">
+    <div className="srch interactive-transition" ref={wrapRef} role="search">
       <svg className="srch-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <circle cx="11" cy="11" r="7" />
         <path d="M20 20l-3.5-3.5" />
@@ -93,12 +93,12 @@ export default function SearchBox({ onPick, students = [] }) {
         onKeyDown={onKeyDown}
       />
       {q && (
-        <button type="button" className="srch-x" aria-label="Clear search" onClick={() => { setQ(''); inputRef.current?.focus(); }}>
+        <button type="button" className="srch-x interactive-transition" aria-label="Clear search" onClick={() => { setQ(''); inputRef.current?.focus(); }}>
           ×
         </button>
       )}
       {showList && (
-        <ul className="srch-list" id="srch-list" role="listbox">
+        <ul className="srch-list reveal-up" id="srch-list" role="listbox">
           {results.length === 0 ? (
             <li className="srch-empty">No student matches “{q.trim()}”</li>
           ) : (
@@ -107,7 +107,7 @@ export default function SearchBox({ onPick, students = [] }) {
                 key={d.id || d.n || i}
                 role="option"
                 aria-selected={i === active}
-                className={i === active ? 'on' : ''}
+                className={`interactive-transition ${i === active ? 'on' : ''}`}
                 onMouseEnter={() => setActive(i)}
                 onPointerDown={(e) => {
                   e.preventDefault();

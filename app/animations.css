@@ -1,0 +1,486 @@
+/* ==============================================================================
+   TOP-X — Lightweight Animation & Interaction System
+   Subtle, professional, high-performance CSS transitions and scroll reveals.
+   Uses transform and opacity only. GPU-accelerated. Full reduced-motion support.
+   ============================================================================== */
+
+:root {
+  --topx-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --topx-ease-soft: cubic-bezier(0.25, 1, 0.5, 1);
+  --topx-dur-fast: 180ms;
+  --topx-dur-normal: 340ms;
+  --topx-dur-slow: 440ms;
+  --topx-lift-button: -1.5px;
+  --topx-lift-card: -2px;
+}
+
+/* ==============================================================================
+   Core Required Animation Utilities
+   ============================================================================== */
+
+/* 1. reveal-up: fade in while moving up 14px */
+@keyframes topxKeyframeRevealUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-up {
+  animation: topxKeyframeRevealUp 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.reveal-up.stagger-1 { animation-delay: 50ms; }
+.reveal-up.stagger-2 { animation-delay: 100ms; }
+.reveal-up.stagger-3 { animation-delay: 150ms; }
+.reveal-up.stagger-4 { animation-delay: 200ms; }
+.reveal-up.stagger-5 { animation-delay: 250ms; }
+
+/* 2. reveal-left: fade in while moving right-to-left 16px */
+@keyframes topxKeyframeRevealLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.reveal-left {
+  animation: topxKeyframeRevealLeft 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+/* 3. hover-lift: move up 2px on hover */
+.hover-lift {
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease !important;
+  will-change: transform;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px) !important;
+}
+
+.hover-lift:active {
+  transform: translateY(0) !important;
+}
+
+/* 4. interactive-transition: smooth color, border, and background transitions */
+.interactive-transition {
+  transition: color 180ms ease,
+              background-color 180ms ease,
+              border-color 180ms ease,
+              box-shadow 180ms ease,
+              opacity 180ms ease,
+              transform 180ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* 5. badge-flip: a subtle one-time flip for suitable badges */
+@keyframes topxKeyframeBadgeFlip {
+  0% {
+    opacity: 0;
+    transform: perspective(400px) rotateY(-70deg) scale(0.94);
+  }
+  60% {
+    opacity: 1;
+    transform: perspective(400px) rotateY(10deg) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(400px) rotateY(0deg) scale(1);
+  }
+}
+
+.badge-flip {
+  animation: topxKeyframeBadgeFlip 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.badge-flip:hover {
+  transform: perspective(400px) rotateY(10deg) translateY(-1px);
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==============================================================================
+   1. Scroll & Entrance Reveals (Fade-up, Slide-in, Stagger)
+   ============================================================================== */
+
+/* Base fade-up: 14px upward movement while fading in */
+.topx-reveal,
+[data-reveal="fade-up"] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--topx-dur-normal) var(--topx-ease-out),
+    transform var(--topx-dur-normal) var(--topx-ease-out);
+  will-change: opacity, transform;
+}
+
+/* Slide in from left: 16px */
+.topx-reveal-left,
+[data-reveal="slide-left"] {
+  opacity: 0;
+  transform: translateX(-16px);
+  transition: opacity var(--topx-dur-normal) var(--topx-ease-out),
+    transform var(--topx-dur-normal) var(--topx-ease-out);
+  will-change: opacity, transform;
+}
+
+/* Slide in from right: 16px */
+.topx-reveal-right,
+[data-reveal="slide-right"] {
+  opacity: 0;
+  transform: translateX(16px);
+  transition: opacity var(--topx-dur-normal) var(--topx-ease-out),
+    transform var(--topx-dur-normal) var(--topx-ease-out);
+  will-change: opacity, transform;
+}
+
+/* Revealed state triggered once by IntersectionObserver */
+.topx-reveal.is-revealed,
+.topx-reveal-left.is-revealed,
+.topx-reveal-right.is-revealed,
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translate(0, 0);
+  will-change: auto;
+}
+
+/* Short, rhythmic stagger delays (45ms–60ms intervals) */
+.topx-stagger-1 {
+  transition-delay: 50ms !important;
+}
+
+.topx-stagger-2 {
+  transition-delay: 100ms !important;
+}
+
+.topx-stagger-3 {
+  transition-delay: 150ms !important;
+}
+
+.topx-stagger-4 {
+  transition-delay: 200ms !important;
+}
+
+.topx-stagger-5 {
+  transition-delay: 250ms !important;
+}
+
+.topx-stagger-6 {
+  transition-delay: 300ms !important;
+}
+
+/* Stagger parent helper: automatically sequences direct children */
+.topx-stagger-group>*:nth-child(1) {
+  transition-delay: 45ms;
+}
+
+.topx-stagger-group>*:nth-child(2) {
+  transition-delay: 90ms;
+}
+
+.topx-stagger-group>*:nth-child(3) {
+  transition-delay: 135ms;
+}
+
+.topx-stagger-group>*:nth-child(4) {
+  transition-delay: 180ms;
+}
+
+.topx-stagger-group>*:nth-child(5) {
+  transition-delay: 225ms;
+}
+
+.topx-stagger-group>*:nth-child(6) {
+  transition-delay: 270ms;
+}
+
+/* ==============================================================================
+   2. Restrained Hover and Interaction Feedback
+   ============================================================================== */
+
+/* Buttons: 1-2px subtle lift + shadow change */
+.btn-accent,
+.btn-primary,
+.btn-secondary,
+.btn-verify,
+.btn-verify-sync,
+.btn-profile-save-action,
+.btn-solve,
+.hero-btn-primary,
+.hero-btn-secondary,
+.btn-platform-pill {
+  transition: transform var(--topx-dur-fast) var(--topx-ease-out),
+    background-color var(--topx-dur-fast) ease,
+    border-color var(--topx-dur-fast) ease,
+    box-shadow var(--topx-dur-fast) ease,
+    color var(--topx-dur-fast) ease !important;
+}
+
+.btn-accent:hover:not(:disabled),
+.btn-primary:hover:not(:disabled),
+.btn-secondary:hover:not(:disabled),
+.btn-verify:hover:not(:disabled),
+.btn-verify-sync:hover:not(:disabled),
+.btn-profile-save-action:hover:not(:disabled),
+.hero-btn-primary:hover,
+.hero-btn-secondary:hover {
+  transform: translateY(var(--topx-lift-button));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.btn-solve:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-accent:active:not(:disabled),
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled),
+.btn-verify:active:not(:disabled),
+.btn-verify-sync:active:not(:disabled),
+.btn-profile-save-action:active:not(:disabled),
+.hero-btn-primary:active,
+.hero-btn-secondary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Navigation Links: smooth active indicator and text color transition */
+.app-header .app-nav-tabs .nav-tab-btn {
+  transition: color var(--topx-dur-fast) ease,
+    background-color var(--topx-dur-fast) ease,
+    transform var(--topx-dur-fast) var(--topx-ease-out) !important;
+}
+
+.app-header .app-nav-tabs .nav-tab-btn:hover {
+  transform: translateY(-0.5px);
+}
+
+.footer-links a,
+.btn-link {
+  transition: color var(--topx-dur-fast) ease,
+    opacity var(--topx-dur-fast) ease !important;
+}
+
+/* Task rows: slight background change and subtle border-color transition */
+.task-row,
+.dash-task-item {
+  transition: background-color var(--topx-dur-fast) ease,
+    border-color var(--topx-dur-fast) ease !important;
+}
+
+.task-row:hover,
+.dash-task-item:hover {
+  background-color: #FAFAF7 !important;
+  border-color: #DDDCD8 !important;
+}
+
+.task-status-box,
+.dash-task-status-indicator {
+  transition: transform 220ms var(--topx-ease-out),
+    background-color var(--topx-dur-fast) ease,
+    border-color var(--topx-dur-fast) ease,
+    color var(--topx-dur-fast) ease !important;
+}
+
+.task-row:hover .task-status-box,
+.dash-task-item:hover .dash-task-status-indicator {
+  transform: scale(1.06);
+}
+
+/* Leaderboard rows: gentle background highlight, strictly preserving layout */
+.own-leaderboard tbody tr,
+.dash-leader-row {
+  transition: background-color var(--topx-dur-fast) ease,
+    border-color var(--topx-dur-fast) ease !important;
+}
+
+.own-leaderboard tbody tr:hover,
+.dash-leader-row:hover {
+  background-color: rgba(255, 90, 54, 0.035) !important;
+}
+
+/* Profile / Platform / Metric Items: slight 2px lift on hover */
+.platform-card-item,
+.dash-platform-card,
+.profile-stat-box,
+.profile-streak-metric-item,
+.dash-metric-block {
+  transition: transform 220ms var(--topx-ease-out),
+    border-color var(--topx-dur-fast) ease,
+    box-shadow 220ms ease !important;
+}
+
+.platform-card-item:hover,
+.dash-platform-card:hover,
+.profile-stat-box:hover,
+.profile-streak-metric-item:hover,
+.dash-metric-block:hover {
+  transform: translateY(var(--topx-lift-card));
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+/* Interactive Modules / Cards: subtle container transition */
+.dash-module,
+.profile-header-card,
+.profile-stats-surface,
+.profile-streak-surface,
+.profile-platforms-surface,
+.tasks-list-surface,
+.tasks-celebrate-banner {
+  transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+
+/* ==============================================================================
+   3. Subtle 3D Flip & Badge Animations
+   ============================================================================== */
+
+@keyframes topxBadgeFlipIn {
+  0% {
+    opacity: 0;
+    transform: perspective(400px) rotateY(-80deg) scale(0.92);
+  }
+
+  60% {
+    opacity: 1;
+    transform: perspective(400px) rotateY(12deg) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: perspective(400px) rotateY(0deg) scale(1);
+  }
+}
+
+.topx-badge-flip,
+.profile-pro-badge,
+.tasks-header-meta .meta-pill {
+  animation: topxBadgeFlipIn 450ms var(--topx-ease-out) both;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.profile-pro-badge:hover,
+.own-leaderboard .badge-medal:hover,
+.tasks-header-meta .meta-pill:hover {
+  transform: perspective(400px) rotateY(12deg) translateY(-1px);
+  transition: transform 220ms var(--topx-ease-out);
+}
+
+/* Streak value subtle flip effect on update */
+@keyframes topxCounterFlip {
+  0% {
+    transform: perspective(300px) rotateX(0deg);
+  }
+
+  50% {
+    transform: perspective(300px) rotateX(90deg);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: perspective(300px) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.streak-chip.is-updated .num,
+.tasks-streak-chip.is-updated .streak-num {
+  animation: topxCounterFlip 350ms var(--topx-ease-out);
+}
+
+/* ==============================================================================
+   4. Home & Dashboard Hero Entrance Coordination
+   ============================================================================== */
+
+.home-editorial-hero.is-revealed .hero-eyebrow-tag {
+  animation: topxFadeUp 360ms var(--topx-ease-out) 0ms both;
+}
+
+.home-editorial-hero.is-revealed .hero-editorial-headline {
+  animation: topxFadeUp 380ms var(--topx-ease-out) 60ms both;
+}
+
+.home-editorial-hero.is-revealed .hero-editorial-desc {
+  animation: topxFadeUp 400ms var(--topx-ease-out) 130ms both;
+}
+
+.home-editorial-hero.is-revealed .hero-cta-group {
+  animation: topxFadeUp 420ms var(--topx-ease-out) 200ms both;
+}
+
+.home-editorial-hero.is-revealed .hero-platform-strip {
+  animation: topxFadeUp 440ms var(--topx-ease-out) 270ms both;
+}
+
+.home-editorial-hero.is-revealed .hero-editorial-visual {
+  animation: topxFadeUp 450ms var(--topx-ease-out) 120ms both;
+}
+
+@keyframes topxFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Smooth line transition in AnimatedCodeEditor */
+.editor-code-row {
+  transition: opacity 160ms var(--topx-ease-out),
+    background-color 150ms ease,
+    transform 160ms var(--topx-ease-out) !important;
+}
+
+/* ==============================================================================
+   5. Accessibility & Prefers Reduced Motion (Highest Priority)
+   ============================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .topx-reveal,
+  .topx-reveal-left,
+  .topx-reveal-right,
+  [data-reveal],
+  .reveal-up,
+  .reveal-left,
+  .hover-lift,
+  .badge-flip,
+  .home-editorial-hero .hero-eyebrow-tag,
+  .home-editorial-hero .hero-editorial-headline,
+  .home-editorial-hero .hero-editorial-desc,
+  .home-editorial-hero .hero-cta-group,
+  .home-editorial-hero .hero-platform-strip,
+  .home-editorial-hero .hero-editorial-visual,
+  .topx-badge-flip,
+  .profile-pro-badge,
+  .own-leaderboard .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}

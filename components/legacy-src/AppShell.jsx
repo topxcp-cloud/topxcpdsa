@@ -37,10 +37,21 @@ export default function AppShell() {
   const { activeTab, navigate } = useNavigation();
   const auth = useAuth();
   const [toast, setToast] = useState('');
+  const [authGateOpen, setAuthGateOpen] = useState(false);
   const notify = useCallback((message) => {
     setToast(message);
     window.setTimeout(() => setToast(''), 2800);
   }, []);
+
+  useEffect(() => {
+    const handleOpenAuth = (e) => {
+      if (e?.detail?.mode) auth.setAuthMode(e.detail.mode);
+      setAuthGateOpen(true);
+      document.body.classList.add('auth-locked');
+    };
+    window.addEventListener('topx:open-auth', handleOpenAuth);
+    return () => window.removeEventListener('topx:open-auth', handleOpenAuth);
+  }, [auth]);
 
   useEffect(() => {
     document.querySelectorAll('.nav-tab-btn[data-tab]').forEach(button => {
@@ -57,7 +68,9 @@ export default function AppShell() {
       auth.logout(); notify('You have been signed out.'); return;
     }
     if (target.closest('#header-signin-btn') || target.closest('#open-auth-modal-link')) {
-      document.body.classList.add('auth-locked'); return;
+      setAuthGateOpen(true);
+      document.body.classList.add('auth-locked');
+      return;
     }
     if (target.closest('#search-pill-btn') || target.closest('#topx-drawer-search')) {
       window.dispatchEvent(new Event('topx:open-search')); return;
@@ -129,6 +142,11 @@ export default function AppShell() {
         error={auth.error}
         setError={auth.setError}
         isAuthenticated={Boolean(auth.user)}
+        isOpen={authGateOpen}
+        onClose={() => {
+          setAuthGateOpen(false);
+          document.body.classList.remove('auth-locked');
+        }}
       />
       {!auth.loading && auth.user && !hasRequiredStudentProfile(auth.user) && (
         <StudentProfileSetup

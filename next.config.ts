@@ -11,6 +11,19 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   images: { unoptimized: true },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups',
+          },
+        ],
+      },
+    ];
+  },
   // Ensure the preserved route registry and its tiny compatibility router are
   // included in Node serverless output when deployed on Vercel.
   outputFileTracingIncludes: {

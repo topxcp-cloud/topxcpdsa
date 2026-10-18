@@ -8,7 +8,7 @@ const DELAY = [0.3, 0.14, 0]; // bronze first, then silver, then the winner
 function PodiumCard({ student: d, index: i, me, pinged, prevRank }) {
   const [ref, visible] = useReveal(false);
   const delay = DELAY[i] + 0.25;
-  const cls = ['pc', 'r' + (i + 1), 'reveal', visible && 'visible', d.n === me && 'me', d.n === pinged && 'hit ping']
+  const cls = ['pc', 'r' + (i + 1), 'reveal', 'hover-lift', 'interactive-transition', visible && 'visible', d.n === me && 'me', d.n === pinged && 'hit ping']
     .filter(Boolean)
     .join(' ');
 
@@ -18,7 +18,7 @@ function PodiumCard({ student: d, index: i, me, pinged, prevRank }) {
       <Badge index={i} />
       <div className="rk rank-display">
         <span className="rank-medal">
-          <span className="rank-num">{i + 1}</span>
+          <span className="rank-num badge-flip">{i + 1}</span>
           <span className="rank-suffix">{SUFFIX[i]}</span>
         </span>
         <span className="rank-movement">

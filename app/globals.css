@@ -1,50 +1,289 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..800&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap');
+@import '../components/dashboard/dashboard.css';
+@import '../components/layout/navbar.css';
+@import '../components/tasks/tasks.css';
+@import '../components/profile/profile.css';
+@import '../components/home/hero-editor.css';
+@import '../components/admin/admin.css';
+@import './animations.css';
 
 /* Top X Club - Global Design Tokens and React Layout Defaults */
 :root {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Newsreader', 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
-html, body, #root { min-height: 100%; margin: 0; }
-body { min-width: 320px; font-feature-settings: "cv02", "cv03", "cv04", "cv11"; }
-button, input, select, textarea { font: inherit; }
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-width: 320px;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
 
 /* React-owned feature interaction styles */
-.bp-nav-tabs, .bp-lang-buttons, .track-pill-group { display:flex; flex-wrap:wrap; gap:8px; }
-.bp-tab-btn, .bp-lang-btn, .track-tab-btn, .compare-toggle-btn, .bp-copy-btn { cursor:pointer; }
-.bp-signals-list { padding-left:20px; display:grid; gap:9px; }
-.bp-code-pre { max-height:620px; overflow:auto; white-space:pre; }
-.bp-code-pre code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px; line-height:1.65; }
-.bp-copy-btn, .bs-ctl-btn, .compare-toggle-btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
-.roadmap-progress-card { display:flex; align-items:center; gap:22px; flex-wrap:wrap; margin:20px 0 24px; }
-.roadmap-progress-track { flex:1; min-width:140px; }
-.roadmap-progress-controls { display:flex; align-items:center; gap:12px; }
-.roadmap-timeline { display:grid; gap:18px; }
-.roadmap-phase-card { padding:22px; border:1px solid var(--line); border-radius:16px; background:var(--card, var(--surface)); }
-.roadmap-phase-head { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; color:var(--mute); font-size:12px; font-weight:700; }
-.roadmap-phase-card h3 { margin:10px 0 8px; }
-.roadmap-phase-card > p { color:var(--mute); margin:0 0 14px; }
-.roadmap-platforms { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:16px; }
-.roadmap-milestones { display:grid; gap:0; border-top:1px solid var(--line); }
-.roadmap-milestone { display:flex; gap:10px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer; }
-.roadmap-milestone input { position:absolute; opacity:0; pointer-events:none; }
-.roadmap-check { display:inline-flex; flex:0 0 20px; width:20px; height:20px; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:6px; color:transparent; }
-.roadmap-milestone.is-complete .roadmap-check { background:var(--ac); border-color:var(--ac); color:white; }
-.roadmap-milestone.is-complete > span:last-child { color:var(--mute); text-decoration:line-through; }
-.roadmap-target { margin-top:14px; padding:12px; background:var(--soft, rgba(127,127,127,.08)); border-radius:10px; font-size:13px; }
-.guides-controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:18px 0 22px; }
-.guides-search { display:flex; align-items:center; gap:9px; padding:0 12px; min-width:220px; flex:1; border:1px solid var(--line); border-radius:10px; }
-.guides-search input { width:100%; min-width:0; padding:11px 0; border:0; outline:0; background:transparent; color:inherit; }
-.guides-controls select { padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:inherit; }
-.guides-error, .pro-feedback.error { color:#b42318; font-size:13px; }
-.pro-feedback.success { color:#16803c; font-size:13px; }
-.guides-empty { padding:32px; display:grid; justify-items:center; gap:10px; color:var(--mute); }
-.pro-status-text { display:flex; gap:7px; align-items:center; margin-top:10px; }
-.cc-check-icon { color:var(--mute); flex-shrink:0; }
-.cc-problem-item.solved .cc-check-icon { color:var(--easy, #159947); }
-.pro-solve-link { display:inline-flex; align-items:center; gap:4px; white-space:nowrap; }
-@media (max-width:700px) { .roadmap-progress-card { align-items:stretch; gap:12px; } .roadmap-progress-controls { justify-content:space-between; } .roadmap-phase-card { padding:16px; } .bp-split-grid { grid-template-columns:minmax(0,1fr); } }
+.bp-nav-tabs,
+.bp-lang-buttons,
+.track-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bp-tab-btn,
+.bp-lang-btn,
+.track-tab-btn,
+.compare-toggle-btn,
+.bp-copy-btn {
+  cursor: pointer;
+}
+
+.bp-signals-list {
+  padding-left: 20px;
+  display: grid;
+  gap: 9px;
+}
+
+.bp-code-pre {
+  max-height: 620px;
+  overflow: auto;
+  white-space: pre;
+}
+
+.bp-code-pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.bp-copy-btn,
+.bs-ctl-btn,
+.compare-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.roadmap-progress-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin: 20px 0 24px;
+}
+
+.roadmap-progress-track {
+  flex: 1;
+  min-width: 140px;
+}
+
+.roadmap-progress-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.roadmap-timeline {
+  display: grid;
+  gap: 18px;
+}
+
+.roadmap-phase-card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card, var(--surface));
+}
+
+.roadmap-phase-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--mute);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.roadmap-phase-card h3 {
+  margin: 10px 0 8px;
+}
+
+.roadmap-phase-card>p {
+  color: var(--mute);
+  margin: 0 0 14px;
+}
+
+.roadmap-platforms {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.roadmap-milestones {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.roadmap-milestone {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+
+.roadmap-milestone input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.roadmap-check {
+  display: inline-flex;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: transparent;
+}
+
+.roadmap-milestone.is-complete .roadmap-check {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: white;
+}
+
+.roadmap-milestone.is-complete>span:last-child {
+  color: var(--mute);
+  text-decoration: line-through;
+}
+
+.roadmap-target {
+  margin-top: 14px;
+  padding: 12px;
+  background: var(--soft, rgba(127, 127, 127, .08));
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.guides-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 18px 0 22px;
+}
+
+.guides-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  min-width: 220px;
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.guides-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.guides-controls select {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: inherit;
+}
+
+.guides-error,
+.pro-feedback.error {
+  color: #b42318;
+  font-size: 13px;
+}
+
+.pro-feedback.success {
+  color: #16803c;
+  font-size: 13px;
+}
+
+.guides-empty {
+  padding: 32px;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  color: var(--mute);
+}
+
+.pro-status-text {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.cc-check-icon {
+  color: var(--mute);
+  flex-shrink: 0;
+}
+
+.cc-problem-item.solved .cc-check-icon {
+  color: var(--easy, #159947);
+}
+
+.pro-solve-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+@media (max-width:700px) {
+  .roadmap-progress-card {
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .roadmap-progress-controls {
+    justify-content: space-between;
+  }
+
+  .roadmap-phase-card {
+    padding: 16px;
+  }
+
+  .bp-split-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 
 /* Premium Editorial Design Tokens (Locomotive-inspired) */
 .brand-star-mark {
@@ -55,9 +294,11 @@ button, input, select, textarea { font: inherit; }
   margin-right: 8px;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .brand-logo:hover .brand-star-mark {
   transform: rotate(45deg) scale(1.1);
 }
+
 .brand-text {
   font-family: var(--font-display, sans-serif);
   font-weight: 800;
@@ -65,22 +306,143 @@ button, input, select, textarea { font: inherit; }
   font-size: 17px;
   color: var(--ink);
 }
+
 .brand-text i {
   font-style: normal;
   color: var(--ac);
   margin-left: 2px;
 }
+
 .spin-icon {
   animation: topx-spin 1s linear infinite;
 }
+
 @keyframes topx-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
+
 .profile-cohort-chip {
   transition: background 0.2s ease, border-color 0.2s ease;
 }
+
 .profile-cohort-chip:hover {
   border-color: var(--ink);
 }
 
+/* ── Shared Page Container Standards across Home, Dashboard, Tasks, Leaderboard, Profile ── */
+.dash-container,
+.tasks-page-container,
+.profile-page-container,
+.home-main-container,
+.own-leaderboard main {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+
+  .dash-container,
+  .tasks-page-container,
+  .profile-page-container,
+  .home-main-container,
+  .own-leaderboard main,
+  footer.app-footer {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .dash-container,
+  .tasks-page-container,
+  .profile-page-container,
+  .home-main-container,
+  .own-leaderboard main,
+  footer.app-footer {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+/* ==============================================================================
+   Core Global Animation Utilities
+   ============================================================================== */
+@keyframes topxKeyframeRevealUp {
+  0% { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-up {
+  animation: topxKeyframeRevealUp 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes topxKeyframeRevealLeft {
+  0% { opacity: 0; transform: translateX(16px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.reveal-left {
+  animation: topxKeyframeRevealLeft 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.hover-lift {
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease !important;
+  will-change: transform;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px) !important;
+}
+
+.hover-lift:active {
+  transform: translateY(0) !important;
+}
+
+.interactive-transition {
+  transition: color 180ms ease,
+              background-color 180ms ease,
+              border-color 180ms ease,
+              box-shadow 180ms ease,
+              opacity 180ms ease,
+              transform 180ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes topxKeyframeBadgeFlip {
+  0% { opacity: 0; transform: perspective(400px) rotateY(-70deg) scale(0.94); }
+  60% { opacity: 1; transform: perspective(400px) rotateY(10deg) scale(1.02); }
+  100% { opacity: 1; transform: perspective(400px) rotateY(0deg) scale(1); }
+}
+
+.badge-flip {
+  animation: topxKeyframeBadgeFlip 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.badge-flip:hover {
+  transform: perspective(400px) rotateY(10deg) translateY(-1px);
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .reveal-left,
+  .hover-lift,
+  .badge-flip {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+}

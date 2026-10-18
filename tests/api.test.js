@@ -45,6 +45,18 @@ before(async (t) => {
   baseUrl = `http://127.0.0.1:${server.address().port}`;
   const health = await request('/api/health');
   assert.equal(health.response.status, 200);
+  const cleanup = async () => {
+    const adminLogin = await request('/api/admin/login', { method: 'POST', body: JSON.stringify({ key: process.env.ADMIN_KEY }) });
+    if (adminLogin.response.status === 200 && adminLogin.body?.token) {
+      const listRes = await request('/api/admin/users?limit=100', { headers: { authorization: `Bearer ${adminLogin.body.token}` } });
+      for (const u of (listRes.body?.users || [])) {
+        if (['member@example.com', 'second@example.com'].includes(u.email)) {
+          await request(`/api/admin/users/${u.id}?reason=test-cleanup`, { method: 'DELETE', headers: { authorization: `Bearer ${adminLogin.body.token}` } });
+        }
+      }
+    }
+  };
+  await cleanup();
 });
 
 after(async () => {
