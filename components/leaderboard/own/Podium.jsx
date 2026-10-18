@@ -26,7 +26,13 @@ function PodiumCard({ student: d, index: i, me, pinged, prevRank }) {
         </span>
       </div>
       <div className="who">
-        <span className="av">{initials(d.n)}</span>
+        <span className="av">
+          {d.avatar ? (
+            <img src={d.avatar} alt={d.n} referrerPolicy="no-referrer" />
+          ) : (
+            initials(d.n)
+          )}
+        </span>
         <div>
           <div className="nm">
             {d.n}

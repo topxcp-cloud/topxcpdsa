@@ -125,7 +125,7 @@ export default function LeaderboardView({ active = false }) {
       <div className="view-wrap" style={{ maxWidth: '1200px' }}>
         <div className="section-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '14px' }}>
           <div>
-            <h2>Top X Club Leaderboard</h2>
+            <h2>Top-X Leaderboard</h2>
             <p className="sub">
               Live college rankings backed by real verified platform activity. Compete with peers across batches, branches, and sections.
             </p>

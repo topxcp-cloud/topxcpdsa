@@ -26,7 +26,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navItems = [
     { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
     { label: 'User Directory', href: '/users', icon: Users },
-    { label: 'Daily Tasks', href: '/tasks', icon: CalendarCheck },
+    { label: 'Weekly Tasks', href: '/tasks', icon: CalendarCheck },
     { label: 'Leaderboard', href: '/leaderboard', icon: Trophy },
     { label: 'Analytics', href: '/analytics', icon: BarChart3 },
     { label: 'Audit Logs', href: '/audit', icon: ShieldAlert },

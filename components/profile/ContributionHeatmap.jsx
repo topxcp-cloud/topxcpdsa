@@ -136,7 +136,7 @@ export default function ContributionHeatmap({ dailyActivity = {}, platformFilter
                 <span
                   key={i}
                   className="heatmap-month-label"
-                  style={{ left: `${m.weekIndex * 15}px` }}
+                  style={{ left: `${weeks.length > 0 ? (m.weekIndex / weeks.length) * 100 : 0}%` }}
                 >
                   {m.label}
                 </span>

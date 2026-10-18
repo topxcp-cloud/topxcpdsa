@@ -7,14 +7,13 @@ import Podium from "./Podium.jsx";
 import LeaderTable from "./LeaderTable.jsx";
 import Pagination from "./Pagination.jsx";
 import MeBar from "./MeBar.jsx";
-import SearchBox from "./SearchBox.jsx";
 
 import {
-  OPTIONS,
+  YEAR_OPTIONS,
+  BRANCH_OPTIONS,
+  SECTION_OPTIONS,
   PAGE_SIZE,
-  SCOPES,
   buildView,
-  chipLabel,
   loadMe,
 } from "./data.js";
 
@@ -30,13 +29,15 @@ export default function OwnLeaderboard() {
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState("");
 
-  const [scope, setScope] = useState("all");
-  const [val, setVal] = useState(null);
+  // Multi-filter state for Year, Branch, Section, and Search query
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [page, setPage] = useState(1);
   const [instant, setInstant] = useState(false);
   const [pinged, setPinged] = useState(null);
-
-  const barRef = useRef(null);
 
   useEffect(() => {
     setMe(auth.user?.name || loadMe());
@@ -84,41 +85,34 @@ export default function OwnLeaderboard() {
     };
   }, []);
 
-  // Keep the sticky offset used by the table and floating MeBar in sync.
+  // Sync navbar offset for table header docking and jump-to scrolling
   useEffect(() => {
-    const bar = barRef.current;
-    if (!bar) return undefined;
-
-    const nav = document.querySelector("nav");
-
+    const nav = document.querySelector(".app-header") || document.querySelector("header") || document.querySelector("nav");
     const updateOffset = () => {
-      const navHeight = window.innerWidth > 860 && nav ? nav.offsetHeight : 0;
-      document.documentElement.style.setProperty(
-        "--stk",
-        `${navHeight + bar.offsetHeight}px`
-      );
+      const navHeight = nav ? nav.offsetHeight : 64;
+      document.documentElement.style.setProperty("--stk", `${navHeight}px`);
     };
-
     updateOffset();
     window.addEventListener("resize", updateOffset);
-
-    const observer =
-      typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(updateOffset)
-        : null;
-
-    observer?.observe(bar);
-    if (nav) observer?.observe(nav);
-
-    return () => {
-      window.removeEventListener("resize", updateOffset);
-      observer?.disconnect();
-    };
+    return () => window.removeEventListener("resize", updateOffset);
   }, []);
 
+  // Multi-filtering: Year, Branch, Section, and Search query work simultaneously
+  const activeFilters = useMemo(
+    () => ({
+      year: selectedYear,
+      branch: selectedBranch,
+      section: selectedSection,
+      query: searchQuery,
+    }),
+    [selectedYear, selectedBranch, selectedSection, searchQuery]
+  );
+
+  const viewKey = `${selectedYear ?? "all"}|${selectedBranch ?? "all"}|${selectedSection ?? "all"}|${searchQuery.trim()}`;
+
   const { sorted: list, prevRank } = useMemo(
-    () => buildView(scope, val, students),
-    [scope, val, students]
+    () => buildView(activeFilters, students),
+    [activeFilters, students]
   );
 
   const top = list.slice(0, 3);
@@ -126,7 +120,6 @@ export default function OwnLeaderboard() {
   const pageCount = Math.ceil(rows.length / PAGE_SIZE);
   const topScore = list.length ? (list[0].s || 1) : 1;
 
-  const viewKey = [scope, val].join("|");
   const meIdx = list.findIndex((student) => student.n === me);
 
   // Clamp page if a filter reduces the number of available pages.
@@ -140,22 +133,34 @@ export default function OwnLeaderboard() {
     setInstant(false);
   };
 
-  const pickScope = (nextScope) => {
-    setScope(nextScope);
-    setVal(nextScope === "all" ? null : OPTIONS[nextScope][0]);
+  const handleYearClick = (yearVal) => {
+    setSelectedYear((prev) => (prev === yearVal ? null : yearVal));
     resetPaging();
   };
 
-  const pickChip = (nextValue) => {
-    setVal(scope === "year" ? Number(nextValue) : nextValue);
+  const handleBranchClick = (branchVal) => {
+    setSelectedBranch((prev) => (prev === branchVal ? null : branchVal));
     resetPaging();
   };
 
-  const showAll = () => {
-    setScope("all");
-    setVal(null);
+  const handleSectionClick = (sectionVal) => {
+    setSelectedSection((prev) => (prev === sectionVal ? null : sectionVal));
     resetPaging();
   };
+
+  const clearAllFilters = () => {
+    setSelectedYear(null);
+    setSelectedBranch(null);
+    setSelectedSection(null);
+    setSearchQuery("");
+    resetPaging();
+  };
+
+  const hasActiveFilters =
+    selectedYear !== null ||
+    selectedBranch !== null ||
+    selectedSection !== null ||
+    Boolean(searchQuery.trim());
 
   const go = (target) => {
     const nextPage = Math.max(1, Math.min(pageCount, target));
@@ -177,7 +182,7 @@ export default function OwnLeaderboard() {
     let switched = false;
 
     if (index < 0) {
-      targetList = buildView("all", null, students).sorted;
+      targetList = buildView({}, students).sorted;
       index = targetList.findIndex((student) => student.n === name);
       switched = true;
     }
@@ -187,8 +192,7 @@ export default function OwnLeaderboard() {
     const targetPage = index < 3 ? 1 : Math.floor((index - 3) / PAGE_SIZE) + 1;
 
     if (switched) {
-      setScope("all");
-      setVal(null);
+      clearAllFilters();
       setPage(targetPage);
       setInstant(true);
     } else if (index >= 3 && targetPage !== page) {
@@ -208,7 +212,7 @@ export default function OwnLeaderboard() {
       const stickyOffset =
         parseInt(
           getComputedStyle(document.documentElement).getPropertyValue("--stk")
-        ) || 0;
+        ) || 64;
 
       const rect = element.getBoundingClientRect();
       const targetY =
@@ -262,41 +266,162 @@ export default function OwnLeaderboard() {
           </p>
         </div>
 
-        <div className="bar" ref={barRef}>
-          <div className="sc">
-            {Object.keys(SCOPES).map((key) => (
-              <button
-                key={key}
-                type="button"
-                className={scope === key ? "on" : ""}
-                aria-pressed={scope === key}
-                onClick={() => pickScope(key)}
-              >
-                {SCOPES[key]}
-              </button>
-            ))}
-          </div>
-
-          <div className="ch">
-            {scope !== "all" &&
-              OPTIONS[scope]?.map((option) => (
+        {/* Modern Theme-Matched Control Panel */}
+        <div className="lb-controls-panel" role="region" aria-label="Leaderboard Filters">
+          {/* Top Row: Search Input + Live Stats / Clear Button */}
+          <div className="lb-controls-top">
+            <div className="lb-search-wrap">
+              <svg className="lb-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20l-3.5-3.5" />
+              </svg>
+              <input
+                type="text"
+                className="lb-search-input"
+                value={searchQuery}
+                placeholder="Search students by name, branch, or section…"
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  resetPaging();
+                }}
+                aria-label="Search student by name or branch"
+              />
+              {searchQuery && (
                 <button
-                  key={option}
                   type="button"
-                  className={val === option ? "on" : ""}
-                  aria-pressed={val === option}
-                  onClick={() => pickChip(option)}
+                  className="lb-search-clear"
+                  onClick={() => {
+                    setSearchQuery("");
+                    resetPaging();
+                  }}
+                  aria-label="Clear search query"
                 >
-                  {chipLabel(scope, option)}
+                  ×
                 </button>
-              ))}
+              )}
+            </div>
+
+            <div className="lb-status-bar">
+              <span className="lb-metric-badge">
+                <span className="lb-streak-fire">🔥</span>
+                Ranked by Streak
+              </span>
+
+              <span className="lb-count-pill" aria-live="polite">
+                <b>{list.length}</b> {list.length === 1 ? "student" : "students"}
+              </span>
+
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  className="lb-clear-all-btn"
+                  onClick={clearAllFilters}
+                  aria-label="Clear all active filters"
+                >
+                  Clear Filters
+                </button>
+              )}
+            </div>
           </div>
 
-          <SearchBox onPick={jumpTo} students={students} />
+          {/* Filter Rows */}
+          <div className="lb-filter-rows">
+            {/* Year Row */}
+            <div className="lb-filter-row">
+              <div className="lb-filter-label">
+                <span className="lb-filter-icon">🎓</span>
+                <span>Year</span>
+              </div>
+              <div className="lb-filter-chips" role="group" aria-label="Filter by Year">
+                <button
+                  type="button"
+                  className={`lb-chip-btn ${selectedYear === null ? "on" : ""}`}
+                  aria-pressed={selectedYear === null}
+                  onClick={() => { setSelectedYear(null); resetPaging(); }}
+                >
+                  All Years
+                </button>
+                {YEAR_OPTIONS.map((opt) => {
+                  const isSelected = selectedYear === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      className={`lb-chip-btn ${isSelected ? "on" : ""}`}
+                      aria-pressed={isSelected}
+                      onClick={() => handleYearClick(opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-          <span className="cnt">
-            {list.length} {list.length === 1 ? "student" : "students"}
-          </span>
+            {/* Branch Row */}
+            <div className="lb-filter-row">
+              <div className="lb-filter-label">
+                <span className="lb-filter-icon">🏛️</span>
+                <span>Branch</span>
+              </div>
+              <div className="lb-filter-chips" role="group" aria-label="Filter by Branch">
+                <button
+                  type="button"
+                  className={`lb-chip-btn ${selectedBranch === null ? "on" : ""}`}
+                  aria-pressed={selectedBranch === null}
+                  onClick={() => { setSelectedBranch(null); resetPaging(); }}
+                >
+                  All Branches
+                </button>
+                {BRANCH_OPTIONS.map((opt) => {
+                  const isSelected = selectedBranch === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      className={`lb-chip-btn ${isSelected ? "on" : ""}`}
+                      aria-pressed={isSelected}
+                      onClick={() => handleBranchClick(opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Section Row */}
+            <div className="lb-filter-row">
+              <div className="lb-filter-label">
+                <span className="lb-filter-icon">🏷️</span>
+                <span>Section</span>
+              </div>
+              <div className="lb-filter-chips" role="group" aria-label="Filter by Section">
+                <button
+                  type="button"
+                  className={`lb-chip-btn ${selectedSection === null ? "on" : ""}`}
+                  aria-pressed={selectedSection === null}
+                  onClick={() => { setSelectedSection(null); resetPaging(); }}
+                >
+                  All Sections
+                </button>
+                {SECTION_OPTIONS.map((opt) => {
+                  const isSelected = selectedSection === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      className={`lb-chip-btn ${isSelected ? "on" : ""}`}
+                      aria-pressed={isSelected}
+                      onClick={() => handleSectionClick(opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
 
         <Podium top={top} viewKey={viewKey} {...shared} />
@@ -319,8 +444,8 @@ export default function OwnLeaderboard() {
         {!dataLoading && list.length === 0 && (
           <div className="em">
             <p>No students match the selected filters.</p>
-            <button type="button" onClick={showAll}>
-              Show all students
+            <button type="button" onClick={clearAllFilters}>
+              Clear filters
             </button>
           </div>
         )}

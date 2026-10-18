@@ -20,7 +20,13 @@ function Row({ student: d, rank, rowIndex, instant, me, pinged, prevRank, maxSco
       </td>
       <td>
         <div className="pn">
-          <span className="av">{initials(d.n)}</span>
+          <span className="av">
+            {d.avatar ? (
+              <img src={d.avatar} alt={d.n} referrerPolicy="no-referrer" />
+            ) : (
+              initials(d.n)
+            )}
+          </span>
           {d.n}
           {d.n === me && <YouTag />}
         </div>
@@ -67,7 +73,7 @@ const LeaderTable = forwardRef(function LeaderTable(
         <tbody id="tb" ref={tbodyRef}>
           {slice.map((d, i) => (
             <Row
-              key={viewKey + '|' + page + '|' + d.n}
+              key={viewKey + '|' + page + '|' + (d.id || d.n) + '|' + i}
               student={d}
               rank={i + 4 + offset}
               rowIndex={i}

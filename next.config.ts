@@ -3,9 +3,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   async redirects() {
     return [
-      { source: '/problems/:path*', destination: '/dashboard', permanent: false },
-      { source: '/roadmap', destination: '/dashboard', permanent: false },
-      { source: '/contests/:path*', destination: '/dashboard', permanent: false },
+      { source: '/dashboard', destination: '/', permanent: false },
       { source: '/settings', destination: '/profile', permanent: false },
     ];
   },

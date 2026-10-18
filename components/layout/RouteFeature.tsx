@@ -8,7 +8,6 @@ import AppFooter from '../legacy-src/components/shell/AppFooter.jsx';
 import AuthGate from '../legacy-src/components/shell/AuthGate.jsx';
 import StudentProfileSetup from '../legacy-src/components/shell/StudentProfileSetup.jsx';
 import { hasRequiredStudentProfile } from '../legacy-src/features/profile/studentProfileOptions.js';
-import DashboardView from '../legacy-src/components/views/DashboardView.jsx';
 import LeaderboardView from '../leaderboard/Leaderboard';
 import VaultView from '../legacy-src/components/views/VaultView.jsx';
 import RoadmapsView from '../legacy-src/components/views/RoadmapsView.jsx';
@@ -21,7 +20,6 @@ import ProView from '../legacy-src/components/views/ProView.jsx';
 import AdminView from '../legacy-src/components/views/AdminView.jsx';
 
 const VIEW_MAP: Record<string, any> = {
-  dashboard: DashboardView,
   roadmap: RoadmapsView,
   problems: VaultView,
   progress: TasksView,
@@ -45,8 +43,8 @@ export default function RouteFeature({ view, title }: { view: string; title?: st
   const [authModalOpen, setAuthModalOpen] = useState(false);
   useFeatureRuntime();
 
-  const View = VIEW_MAP[view] || DashboardView;
-  const isProtected = view === 'profile' || view === 'settings' || view === 'dashboard';
+  const View = VIEW_MAP[view] || TasksView;
+  const isProtected = view === 'profile' || view === 'settings';
 
   useEffect(() => {
     const handleProfileUpdated = (event: Event) => {

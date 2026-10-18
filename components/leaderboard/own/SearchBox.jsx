@@ -114,7 +114,13 @@ export default function SearchBox({ onPick, students = [] }) {
                   pick(d);
                 }}
               >
-                <span className="av">{initials(d.n || d.name)}</span>
+                <span className="av">
+                  {d.avatar ? (
+                    <img src={d.avatar} alt={d.n || d.name} referrerPolicy="no-referrer" />
+                  ) : (
+                    initials(d.n || d.name)
+                  )}
+                </span>
                 <span className="srch-t">
                   <b>{d.n || d.name}</b>
                   <small>{tagOf(d)}</small>

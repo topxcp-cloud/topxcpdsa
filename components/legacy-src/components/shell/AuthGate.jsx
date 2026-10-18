@@ -70,9 +70,12 @@ export default function AuthGate({
               <circle cx="6" cy="20" r="3.2" fill="currentColor" />
               <circle cx="20" cy="20" r="3.2" fill="#FF5A36" />
             </svg>
-            <span>TOP X <i>CLUB</i></span>
+            <span>TOP-X</span>
           </div>
-          <h1>Code. Compete.<br />Conquer.</h1>
+          <h1>
+            Code. Compete.<br />
+            <span style={{ color: 'var(--ac, #ff7a1a)' }}>Conquer.</span>
+          </h1>
           <p>The student-driven competitive programming platform.<br />Track LeetCode, Codeforces &amp; CodeChef with campus peers.</p>
           <div className="login-stats-row">
             <div><b>500+</b><span>Problems</span></div>
@@ -86,15 +89,7 @@ export default function AuthGate({
             <button
               type="button"
               onClick={onClose}
-              style={{
-                float: 'right',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--mute)',
-                cursor: 'pointer',
-                fontSize: '20px',
-                lineHeight: 1
-              }}
+              className="login-gate-close-btn"
               aria-label="Close sign in dialog"
             >
               ✕
@@ -196,16 +191,22 @@ export default function AuthGate({
           </form>
 
           {error && (
-            <div role="alert" style={{
-              marginTop: '14px',
-              padding: '10px 14px',
-              borderRadius: '8px',
-              background: 'rgba(239, 68, 68, 0.08)',
-              color: 'var(--hard)',
-              border: '1px solid rgba(239, 68, 68, 0.2)',
-              fontSize: '13px',
-              lineHeight: 1.4
-            }}>
+            <div
+              role="alert"
+              style={{
+                marginTop: '16px',
+                padding: '12px 14px',
+                borderRadius: '8px',
+                background: '#FEF2F2',
+                color: '#991B1B',
+                border: '1.5px solid #DC2626',
+                boxShadow: '2.5px 2.5px 0 #991B1B',
+                fontFamily: 'var(--font-mono, monospace)',
+                fontSize: '12.5px',
+                fontWeight: 650,
+                lineHeight: 1.45
+              }}
+            >
               {error}
             </div>
           )}

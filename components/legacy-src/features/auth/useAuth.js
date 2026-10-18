@@ -42,24 +42,39 @@ function initSession() {
       });
     });
 
+let googleAuthPromise = null;
+async function syncGoogleUser(fbUser) {
+  if (globalUser) return globalUser;
+  if (googleAuthPromise) return googleAuthPromise;
+  googleAuthPromise = (async () => {
+    try {
+      const idToken = await fbUser.getIdToken();
+      const res = await api('/api/auth/google', {
+        method: 'POST',
+        body: JSON.stringify({
+          credential: idToken,
+          uid: fbUser.uid,
+          photoURL: fbUser.photoURL || '',
+          name: fbUser.displayName || '',
+          email: fbUser.email || ''
+        })
+      });
+      setGlobalState({ user: res.user, loading: false, error: '' });
+      return res.user;
+    } finally {
+      googleAuthPromise = null;
+    }
+  })();
+  return googleAuthPromise;
+}
+
   // Firebase auth observer if configured
   if (auth && isFirebaseConfigured) {
     try {
       onAuthStateChanged(auth, async (fbUser) => {
         if (fbUser && !globalUser) {
           try {
-            const idToken = await fbUser.getIdToken();
-            const res = await api('/api/auth/google', {
-              method: 'POST',
-              body: JSON.stringify({
-                credential: idToken,
-                uid: fbUser.uid,
-                photoURL: fbUser.photoURL || '',
-                name: fbUser.displayName || '',
-                email: fbUser.email || ''
-              })
-            });
-            setGlobalState({ user: res.user, loading: false, error: '' });
+            await syncGoogleUser(fbUser);
           } catch (error) {
             setGlobalState({ error: error.message || 'Google sign-in failed.' });
           }
@@ -81,7 +96,12 @@ export function useAuth() {
     initSession();
     const listener = (nextState) => setState({ ...nextState });
     listeners.add(listener);
-    setState({ user: globalUser, loading: globalLoading, error: globalError });
+    setState(prev => {
+      if (prev.user === globalUser && prev.loading === globalLoading && prev.error === globalError) {
+        return prev;
+      }
+      return { user: globalUser, loading: globalLoading, error: globalError };
+    });
     return () => { listeners.delete(listener); };
   }, []);
 
@@ -114,19 +134,7 @@ export function useAuth() {
     }
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const idToken = await result.user.getIdToken();
-      const res = await api('/api/auth/google', {
-        method: 'POST',
-        body: JSON.stringify({
-          credential: idToken,
-          uid: result.user.uid,
-          photoURL: result.user.photoURL || '',
-          name: result.user.displayName || '',
-          email: result.user.email || ''
-        })
-      });
-      setGlobalState({ user: res.user, loading: false, error: '' });
-      return res.user;
+      return await syncGoogleUser(result.user);
     } catch (err) {
       let message = err.message || 'Google sign-in failed.';
       if (err.code === 'auth/popup-closed-by-user') {

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="110" fill="#0d0d0f"/>
+  <circle cx="256" cy="256" r="180" fill="url(#radialGlow)" opacity="0.4"/>
+  <defs>
+    <radialGradient id="radialGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0d0d0f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Connector lines -->
+  <line x1="256" y1="160" x2="160" y2="340" stroke="#ffffff" stroke-width="26" stroke-linecap="round"/>
+  <line x1="256" y1="160" x2="352" y2="340" stroke="#ffffff" stroke-width="26" stroke-linecap="round"/>
+  <!-- Nodes -->
+  <circle cx="256" cy="160" r="44" fill="#ffffff" stroke="#ff7a1a" stroke-width="8"/>
+  <circle cx="160" cy="340" r="44" fill="#f8fafc" stroke="#ffffff" stroke-width="8"/>
+  <circle cx="352" cy="340" r="44" fill="#ff7a1a" stroke="#ffffff" stroke-width="8"/>
+</svg>

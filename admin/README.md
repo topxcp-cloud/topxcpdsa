@@ -1,6 +1,6 @@
-# TOP X CLUB — Production Admin Panel
+# TOP-X — Production Admin Panel
 
-A standalone, secure, enterprise-grade administrative dashboard and governance console for **Top X Club**. Built inside `admin/` to ensure full structural isolation while querying the unified Supabase and backend database layers.
+A standalone, secure, enterprise-grade administrative dashboard and governance console for **Top-X**. Built inside `admin/` to ensure full structural isolation while querying the unified Supabase and backend database layers.
 
 ---
 
