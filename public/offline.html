@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Top-X | Offline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;850&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #FAFAF8;
+      color: #0d0d0f;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-image: linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+      background-size: 38px 38px;
+    }
+    .offline-card {
+      background: #ffffff;
+      border: 2px solid #0d0d0f;
+      border-top: 6px solid #ff7a1a;
+      border-radius: 14px;
+      box-shadow: 8px 8px 0 #0d0d0f;
+      padding: clamp(32px, 6vw, 48px) clamp(24px, 5vw, 40px);
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+    }
+    .offline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ff7a1a;
+      background: #fff7ed;
+      border: 1.5px solid #0d0d0f;
+      box-shadow: 2px 2px 0 #0d0d0f;
+      padding: 4px 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 850;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+      color: #0d0d0f;
+    }
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #525866;
+      margin-bottom: 26px;
+    }
+    .btn-retry {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      background: #0d0d0f;
+      color: #ffffff;
+      border: 2px solid #0d0d0f;
+      border-radius: 8px;
+      box-shadow: 4px 4px 0 #ff7a1a;
+      font-size: 14.5px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+    .btn-retry:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 #ff7a1a;
+      background: #ff7a1a;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-card">
+    <div class="offline-badge">// CONNECTION OFFLINE</div>
+    <h1>You're Currently Offline</h1>
+    <p>Top-X needs an active connection to verify latest submissions, leaderboards, and daily streaks. We'll automatically reconnect once network restores.</p>
+    <button class="btn-retry" onclick="window.location.reload()">Retry Connection</button>
+  </div>
+</body>
+</html>
