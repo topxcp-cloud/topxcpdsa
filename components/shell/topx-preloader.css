@@ -1,0 +1,379 @@
+/* =====================================================================
+   TOP-X PRELOADER & CINEMATIC PORTAL ANIMATION (TANTRAFIESTA-STYLE)
+   ===================================================================== */
+
+.topx-preloader-wrap {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  background: #ffffff;
+  pointer-events: auto;
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  opacity: 1;
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.topx-preloader-wrap.is-closing {
+  background-color: transparent;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.topx-preloader-wrap.no-webgl {
+  background-color: #ffffff;
+  background-image:
+    radial-gradient(1px 1px at 13% 24%, rgba(148, 163, 184, 0.48) 50%, transparent 100%),
+    radial-gradient(1px 1px at 76% 18%, rgba(255, 160, 82, 0.5) 50%, transparent 100%),
+    radial-gradient(1px 1px at 88% 71%, rgba(148, 163, 184, 0.4) 50%, transparent 100%),
+    radial-gradient(1px 1px at 28% 82%, rgba(255, 145, 56, 0.42) 50%, transparent 100%),
+    radial-gradient(1px 1px at 64% 61%, rgba(148, 163, 184, 0.34) 50%, transparent 100%);
+}
+
+.topx-preloader-wrap.no-webgl .topx-preloader-canvas {
+  display: none;
+}
+
+/* Background WebGL Shader Canvas (Full Viewport) */
+.topx-preloader-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+}
+
+/* Cyberpunk HUD Frame Overlay */
+.topx-preloader-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(16px, 3vw, 36px);
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 35%, rgba(226, 232, 240, 0.72) 100%);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 1.05s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.topx-preloader-hud.hud-exit {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+/* Top / Bottom HUD Bars */
+.topx-hud-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 11.5px;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.topx-hud-bar.top {
+  border-bottom: 1px solid rgba(255, 122, 26, 0.2);
+  padding-bottom: 14px;
+}
+
+.topx-hud-bar.bottom {
+  border-top: 1px solid rgba(255, 122, 26, 0.2);
+  padding-top: 14px;
+}
+
+/* Brand & Dot */
+.topx-hud-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+.topx-hud-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff8a32;
+  box-shadow: 0 0 10px #ff7a1a;
+  animation: topx-pulse-dot 1.2s infinite ease-in-out;
+}
+
+@keyframes topx-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.7); }
+}
+
+.topx-hud-center {
+  color: rgba(15, 23, 42, 0.42);
+  font-weight: 600;
+}
+
+.topx-hud-sys {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f2a06a;
+  font-weight: 700;
+}
+
+/* Center Stage */
+.topx-preloader-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: clamp(14px, 2.5vw, 24px);
+  margin: auto 0;
+}
+
+/* 8-Polygon Emblem */
+.topx-loader-logo-wrap {
+  width: clamp(70px, 9vw, 110px);
+  height: auto;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 0 18px rgba(255, 122, 26, 0.3));
+}
+
+.topx-loader-logo-wrap.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.topx-loader-logo-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.topx-poly {
+  stroke-linejoin: round;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translate3d(0, 10px, 0) scale(0.86);
+  transition:
+    opacity 0.48s ease,
+    transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.topx-loader-logo-wrap.revealed .topx-poly {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.topx-loader-logo-wrap.revealed .poly-chev-l {
+  transition-delay: 0.12s;
+}
+
+.topx-loader-logo-wrap.revealed .poly-chev-r {
+  transition-delay: 0.2s;
+}
+
+.topx-loader-logo-wrap.revealed .poly-accent-main {
+  transition-delay: 0.32s;
+}
+
+.topx-loader-logo-wrap.revealed .poly-shard-1,
+.topx-loader-logo-wrap.revealed .poly-shard-4 {
+  transition-delay: 0.42s;
+}
+
+.topx-loader-logo-wrap.revealed .poly-shard-2,
+.topx-loader-logo-wrap.revealed .poly-shard-3,
+.topx-loader-logo-wrap.revealed .poly-shard-5 {
+  transition-delay: 0.52s;
+}
+
+.topx-poly.poly-chev-l,
+.topx-poly.poly-chev-r {
+  fill: #1f2937;
+}
+
+.topx-poly.poly-accent-main {
+  fill: #ff7a1a;
+  stroke: #ff7a1a;
+  stroke-width: 8;
+  filter: drop-shadow(0 0 12px rgba(255, 122, 26, 0.68));
+}
+
+.topx-poly.poly-shard-1,
+.topx-poly.poly-shard-4 {
+  fill: #9ca3af;
+}
+
+.topx-poly.poly-shard-2,
+.topx-poly.poly-shard-3 {
+  fill: #ff7a1a;
+}
+
+.topx-poly.poly-shard-5 {
+  fill: #ffa477;
+}
+
+/* Cinematic 3 Words Sequence */
+.topx-loader-words {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(12px, 2.5vw, 24px);
+  font-family: var(--font-display, 'Space Grotesk', system-ui, sans-serif);
+  font-size: clamp(2rem, 6vw, 5.25rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.075em;
+  text-transform: uppercase;
+}
+
+.topx-word {
+  opacity: 0;
+  transform: translateY(18px) scale(0.96);
+  color: #94a3b8;
+  transition:
+    opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.38s ease,
+    text-shadow 0.42s ease;
+  will-change: opacity, transform;
+}
+
+.topx-word.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  color: #111827;
+  text-shadow: 0 0 24px rgba(15, 23, 42, 0.12);
+}
+
+.topx-word.active.glow-orange {
+  color: #ff9b55;
+  text-shadow: 0 0 36px rgba(255, 122, 26, 0.68), 0 0 70px rgba(255, 122, 26, 0.32);
+  transform: translateY(0) scale(1.04);
+}
+
+/* Tagline Subtitle */
+.topx-loader-tagline {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: clamp(10px, 1.2vw, 12.5px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(15, 23, 42, 0.58);
+  margin-top: 6px;
+}
+
+/* Bottom HUD Elements */
+.topx-hud-log {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 450px;
+}
+
+.log-caret {
+  color: #ff8a32;
+  font-weight: 800;
+}
+
+.log-text {
+  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Progress bar & Percent */
+.topx-hud-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topx-hud-bar-track {
+  width: clamp(100px, 14vw, 180px);
+  height: 4px;
+  background: rgba(15, 23, 42, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.topx-hud-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6818, #ffc18a);
+  box-shadow: 0 0 8px #ff7a1a;
+  transition: width 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.topx-hud-percent {
+  font-weight: 800;
+  color: #ffab70;
+  font-size: 13px;
+  min-width: 44px;
+}
+
+/* Skip Button */
+.topx-hud-skip {
+  pointer-events: auto;
+  background: rgba(255, 122, 26, 0.08);
+  border: 1px solid rgba(255, 122, 26, 0.35);
+  color: #ffab70;
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.topx-hud-skip:hover {
+  background: #ffab70;
+  color: #08090b;
+  box-shadow: 0 0 12px rgba(255, 122, 26, 0.5);
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topx-preloader-wrap {
+    transition-duration: 0.01ms !important;
+  }
+
+  .topx-hud-dot {
+    animation: none;
+  }
+
+  .topx-preloader-hud,
+  .topx-loader-logo-wrap,
+  .topx-poly,
+  .topx-word,
+  .topx-hud-bar-fill {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .topx-hud-center {
+    display: none;
+  }
+  .topx-loader-words {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 2.2rem;
+  }
+  .topx-hud-log {
+    display: none;
+  }
+}

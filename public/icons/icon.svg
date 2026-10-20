@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="345 155 900 490" width="512" height="512">
+  <style>
+    .chevron { fill: #111827; }
+    @media (prefers-color-scheme: dark) {
+      .chevron { fill: #FFFFFF; }
+    }
+  </style>
+  <g>
+    <!-- Chevrons with bold accent border for maximum size & sharpness -->
+    <polygon class="chevron" stroke="#ff7a1a" stroke-width="16" stroke-linejoin="round" points="538,208 587,254 449,393 579,527 529,577 354,395" />
+    <polygon class="chevron" stroke="#ff7a1a" stroke-width="16" stroke-linejoin="round" points="1059,208 1239,392 1059,575 1011,527 1143,391 1009,254" />
+    <!-- Center X geometric mark with reinforced geometry -->
+    <polygon fill="#ff7a1a" stroke="#ff7a1a" stroke-width="8" stroke-linejoin="round" points="988,159 1027,159 547,640 508,640" />
+    <polygon fill="#4B5563" stroke="#4B5563" stroke-width="6" stroke-linejoin="round" points="625,255 717,255 796,334 745,383 678,313" />
+    <polygon fill="#ff7a1a" stroke="#ff7a1a" stroke-width="6" stroke-linejoin="round" points="625,367 678,313 745,383 694,438" />
+    <polygon fill="#ff7a1a" stroke="#ff7a1a" stroke-width="6" stroke-linejoin="round" points="942,334 989,382 897,478 850,430" />
+    <polygon fill="#4B5563" stroke="#4B5563" stroke-width="6" stroke-linejoin="round" points="770,433 813,390 850,430 897,478 959,544 871,544" />
+    <polygon fill="#FFA477" stroke="#FFA477" stroke-width="6" stroke-linejoin="round" points="832,369 870,410 850,430 813,390" />
+  </g>
+</svg>
