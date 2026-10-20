@@ -1,0 +1,39 @@
+TOP-X VERCEL DEPLOY NOTES
+
+The extracted download may contain a wrapper folder named `topxcpdsa-shivam3`, with the main app inside it and the separate admin app in its `admin/` subfolder.
+Do not upload .env.local or commit secrets. Configure environment variables in Vercel Project Settings.
+
+MAIN APP:
+- If the Git repository contains the wrapper folder, set Vercel Root Directory to `topxcpdsa-shivam3`.
+- If the Git repository root already contains `app/`, `package.json`, and `next.config.ts`, set Root Directory to `./`.
+- Framework preset: Next.js
+- Confirm the selected root contains a `package.json` with `next` in dependencies before deploying.
+- Install: npm install
+- Build: npm run build
+- Node.js: 20.x or newer
+- Configure the environment variables from .env.example. Set DATABASE_URL to your production PostgreSQL/Supabase connection string, ADMIN_KEY, SESSION_SECRET, APP_ORIGIN, and any Firebase/Google OAuth values actually used by your deployment.
+- Set CRON_SECRET to a long, random secret in Vercel and set the exact same value as a GitHub repository Actions secret. Set APP_ORIGIN as a GitHub repository secret to the deployed main-app URL. GitHub Actions is the sole scheduler at 22:00 UTC (3:30 AM India time); Vercel Cron is intentionally disabled to avoid duplicate refreshes. Ensure the workflow is merged into the repository default branch, because scheduled workflows run from that branch.
+- APP_ORIGIN must be the deployed main app URL. Set OAuth authorized origins/redirect URLs to the deployed domain where applicable.
+
+ADMIN APP (separate Vercel project, same backend):
+- Create a second Vercel project using this same uploaded source.
+- If the repository contains the wrapper folder, set Root Directory to `topxcpdsa-shivam3/admin`.
+- Otherwise, set Root Directory to `admin`.
+- Framework preset: Next.js
+- Confirm the selected root contains the admin `package.json` with `next` in dependencies before deploying.
+- Install: npm install
+- Build: npm run build
+- Set NEXT_PUBLIC_API_BASE_URL to the deployed MAIN app URL (no trailing slash), then redeploy.
+- Configure any admin-specific environment variables required by admin code.
+- This keeps the admin frontend separate while using the main app's API/backend.
+
+IMPORTANT:
+- Vercel deployments do not make local JSON files persistent storage. Use PostgreSQL/Supabase for production data.
+- The main app and admin app are two separate Next.js applications, so they need two Vercel projects/deployments. A single deployment will not host both as independent apps automatically.
+- For deployment without GitHub, use Vercel CLI from a terminal:
+    npm install -g vercel
+    cd topxcpdsa-shivam3
+    vercel
+  Follow prompts, then configure environment variables in the Vercel dashboard and run:
+    vercel --prod
+  For the admin deployment, run `  cd topxcpdsa-shivam3/admin` and repeat `vercel`, linking it as a separate project.
