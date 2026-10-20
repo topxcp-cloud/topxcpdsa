@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Top-X — Code. Compete. Conquer.</title>
+  <meta name="description" content="Top-X: The unified competitive programming dashboard. Track your LeetCode, Codeforces & CodeChef progress.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'><circle cx='20' cy='20' r='3.2' fill='%23FF5A36'/><circle cx='13' cy='6' r='3.2' fill='%23171717'/><circle cx='6' cy='20' r='3.2' fill='%23171717'/></svg>">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/three.min.js"></script>
+</head>
+<body class="auth-locked">
+
+  <!-- =========================================================================
+       FULL-SCREEN LOGIN / SIGN UP GATE (shown before main app)
+       ========================================================================= -->
+  <div id="login-gate" class="login-gate">
+    <div class="login-gate-bg">
+      <div class="login-gate-grid"></div>
+    </div>
+    <div class="login-gate-container">
+      <!-- Left: Branding -->
+      <div class="login-gate-brand">
+        <div class="login-brand-logo">
+          <svg viewBox="0 0 26 26" width="42" height="42">
+            <path d="M13 7L6 19M13 7l7 12" stroke="currentColor" stroke-width="1.6" fill="none"/>
+            <circle cx="13" cy="6" r="3.2" fill="currentColor"/>
+            <circle cx="6" cy="20" r="3.2" fill="currentColor"/>
+            <circle cx="20" cy="20" r="3.2" fill="#FF5A36"/>
+          </svg>
+          <span>TOP<i>-X</i></span>
+        </div>
+        <h1>Code. Compete.<br>Conquer.</h1>
+        <p>The unified competitive programming dashboard.<br>Track LeetCode, Codeforces & CodeChef in one place.</p>
+        <div class="login-stats-row">
+          <div><b>500+</b><span>Problems</span></div>
+          <div><b>3</b><span>Platforms</span></div>
+          <div><b>40</b><span>Pro Challenges</span></div>
+        </div>
+      </div>
+
+      <!-- Right: Auth Form -->
+      <div class="login-gate-form-card">
+        <div class="login-form-tabs">
+          <button class="login-form-tab active" id="login-tab-signin">Sign In</button>
+          <button class="login-form-tab" id="login-tab-signup">Create Account</button>
+        </div>
+
+        <!-- Google Sign In -->
+        <button class="btn-google" id="gate-btn-google">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.15C3.26 21.36 7.33 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.24C.45 8.15 0 9.92 0 12s.45 3.85 1.24 5.42l4.04-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.24 6.58l4.04 3.15c.95-2.83 3.6-4.93 6.72-4.93z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div class="login-divider">
+          <hr><span>OR</span><hr>
+        </div>
+
+        <form id="gate-auth-form" autocomplete="off">
+          <div class="auth-field" id="gate-name-field">
+            <label>Full Name</label>
+            <input id="gate-name" placeholder="Your full name" autocomplete="name">
+          </div>
+          <div class="auth-field">
+            <label>Email Address</label>
+            <input type="email" id="gate-email" placeholder="you@university.edu" required autocomplete="email">
+          </div>
+          <div class="auth-field">
+            <label>Password</label>
+            <input type="password" id="gate-password" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn-primary login-submit-btn" id="gate-submit-btn">
+            <span>Sign In</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+
+        <p class="login-hint" id="gate-toggle-hint">
+          Don't have an account? <a href="javascript:void(0)" id="gate-toggle-link">Create one</a>
+        </p>
+
+        <!-- Quick demo entry -->
+        <div class="login-demo-entry">
+          <button class="login-demo-btn" id="gate-demo-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Demo mode unavailable
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Progress Indicator -->
+  <div id="top-progress"></div>
+
+  <!-- Global Navigation Header -->
+  <header class="app-header">
+    <div class="brand-wrap">
+      <a class="brand-logo" href="#dashboard">
+        <svg class="topx-rebuilt-mark" viewBox="0 0 48 48" aria-label="TOP-X logo">
+          <path d="M5 13 L15 3 L24 12 L15 21 Z" fill="currentColor" opacity=".95"/>
+          <path d="M43 13 L33 3 L24 12 L33 21 Z" fill="currentColor" opacity=".95"/>
+          <path d="M5 35 L15 45 L24 36 L15 27 Z" fill="currentColor" opacity=".78"/>
+          <path d="M43 35 L33 45 L24 36 L33 27 Z" fill="currentColor" opacity=".78"/>
+          <path d="M9 39 L39 9" stroke="#ff6a2a" stroke-width="3.8" stroke-linecap="square"/>
+          <path d="M20 15 L28 23 L20 31 L28 39" fill="none" stroke="#ff8b55" stroke-width="3" opacity=".9"/>
+        </svg>
+        <span>TOP<i>-X</i></span>
+      </a>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="app-nav-tabs" aria-label="Main navigation"><button class="nav-tab-btn active" data-tab="dashboard">Dashboard</button><button class="nav-tab-btn" data-tab="tasks">Daily Tasks <span class="badge-pill" id="nav-tasks-count">3</span></button><button class="nav-tab-btn" data-tab="leaderboard">Leaderboard</button><button class="nav-tab-btn" data-tab="guides">Guides</button><div class="resources-dropdown">
+        <button class="nav-tab-btn resources-trigger" type="button" aria-haspopup="true" aria-expanded="false" id="resources-menu-trigger">Resources <span class="resources-chevron">▾</span></button>
+        <div class="resources-menu" id="resources-menu" hidden>
+          <button class="nav-tab-btn" data-tab="blueprints">Blueprints</button>
+          <button class="nav-tab-btn" data-tab="vault">Problem Vault <span class="badge-pill">16</span></button>
+          <button class="nav-tab-btn" data-tab="lab">3D Labs</button>
+          <button class="nav-tab-btn" data-tab="roadmaps">Roadmaps</button>
+        </div>
+      </div></nav>
+
+    <!-- Header Right Toolbar -->
+    <div class="header-right">
+      <!-- Search Palette Trigger -->
+      <button class="search-pill-btn" id="search-pill-btn" title="Open Command Palette (Cmd+K or /)">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Search anything...</span>
+        <kbd>/</kbd>
+      </button>
+
+      <!-- Streak Badge -->
+      <div class="streak-chip" title="Active practice streak">
+        <i></i>
+        <span class="num" id="header-streak-num">0</span><span>day streak</span>
+      </div>
+
+      <button class="nav-tab-btn topx-pro-button" data-tab="pro">⚡ Top-X Pro</button>
+
+      <!-- Notifications -->
+      <div style="position:relative">
+        <button class="icon-btn" data-menu-target="menu-notifications" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="badge-dot" style="display:none"></span>
+        </button>
+        <div class="menu-dropdown" id="menu-notifications">
+          <div class="menu-header">Notifications</div>
+          <div class="menu-item"><strong>No notifications yet</strong><span>Account updates will appear here when available.</span></div>
+        </div>
+      </div>
+
+      <button type="button" class="topx-mobile-menu" id="topx-mobile-menu" aria-label="Open navigation menu" aria-expanded="false"><span></span><span></span><span></span></button>
+
+      <!-- Sign In Button (visible when logged out) -->
+      <button class="header-signin-btn" id="header-signin-btn" style="display:none">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        Sign In
+      </button>
+
+      <!-- Profile -->
+      <div style="position:relative">
+        <button class="profile-pill-btn" id="header-profile-btn" data-menu-target="menu-profile" aria-label="Profile menu" aria-haspopup="true" aria-expanded="false">
+          <div class="profile-avatar" id="header-user-avatar"></div>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="menu-dropdown" id="menu-profile" style="width:260px">
+          <div class="menu-header" id="menu-profile-header">Sign in to view your profile</div>
+          <a class="menu-item" href="javascript:void(0)" id="open-profile-modal-link"><b>My Profile & CP Sync</b><span>LeetCode, CF & CodeChef</span></a>
+          <a class="menu-item" href="#pro"><b>⚡ Top-X Pro Status</b><span>40 CodeChef Tasks Track</span></a>
+          <a class="menu-item" href="#tasks"><b>Daily Tasks</b><span>Live Member Submissions</span></a>
+          <a class="menu-item" href="#admin" id="profile-admin-link" hidden><b>Admin Console</b><span>Secure Resource Manager</span></a>
+          <a class="menu-item" href="javascript:void(0)" id="open-auth-modal-link"><span style="color:var(--ac);font-weight:600">Switch Account / Sign In</span></a>
+          <a class="menu-item" href="javascript:void(0)" id="header-logout-btn" style="border-top:1px solid var(--line);margin-top:4px;padding-top:10px"><span style="color:var(--hard);font-weight:600">Log Out</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="topx-drawer-backdrop" id="topx-drawer-backdrop" hidden></div>
+    <aside class="topx-mobile-drawer" id="topx-mobile-drawer" aria-label="Mobile navigation" aria-hidden="true">
+      <div class="topx-drawer-heading"><strong>Menu</strong><button type="button" id="topx-drawer-close" aria-label="Close navigation">×</button></div>
+      <button class="search-pill-btn topx-drawer-search" id="topx-drawer-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search anything...</span><kbd>/</kbd></button>
+      <nav class="topx-drawer-links" aria-label="Mobile navigation links">
+        <button class="nav-tab-btn" data-tab="dashboard">Dashboard</button>
+        <button class="nav-tab-btn" data-tab="tasks">Daily Tasks <span class="badge-pill">3</span></button>
+        <button class="nav-tab-btn" data-tab="leaderboard">Leaderboard</button>
+        <button class="nav-tab-btn" data-tab="guides">Guides</button>
+        <button class="nav-tab-btn" data-tab="blueprints">Blueprints</button>
+        <button class="nav-tab-btn" data-tab="vault">Problem Vault</button>
+        <button class="nav-tab-btn" data-tab="lab">3D Labs</button>
+        <button class="nav-tab-btn" data-tab="roadmaps">Roadmaps</button>
+        <button class="nav-tab-btn" data-tab="profile">My Profile</button>
+        <button class="nav-tab-btn" data-tab="admin" id="topx-mobile-admin" hidden>Admin</button>
+      </nav>
+      <a href="#pro" class="topx-pro-button topx-pro-button--wide" data-tab="pro">⚡ Get Top-X Pro</a>
+    </aside>
+  </header>
+
+  <!-- =========================================================================
+       MAIN APPLICATION VIEWS
+       ========================================================================= -->
+  <main class="app-view-container">
+
+    <!-- ── VIEW 1: DASHBOARD ── -->
+    <section class="tab-view active" id="view-dashboard">
+      <!-- Dashboard Hero with 3D Binary Search Visualizer -->
+      <div class="dash-hero">
+        <div class="dash-hero-left">
+          <div class="view-wrap" style="max-width:none;padding-left:var(--pad);padding-right:0">
+            <h1 class="dash-hero-greeting"><span id="dash-greeting-time">Welcome to TOP-X.</span>Continue where you left off.</h1>
+            <div class="dash-focus-grid">
+              <div>
+                <p class="sm">Current focus</p>
+                <h3 id="dash-focus-title">Binary Search</h3>
+                <div class="ticks-bar" id="dash-focus-ticks"></div>
+                <p class="sm"><b class="num" id="dash-focus-progress" style="color:var(--ink)">3 / 8 concepts</b></p>
+              </div>
+              <div>
+                <p class="sm">Next problem</p>
+                <h3 id="dash-next-title">Aggressive Cows</h3>
+                <p class="sm" style="display:flex;align-items:center;gap:10px">
+                  <span class="diff-pill med" id="dash-next-diff-pill">Medium</span>
+                  <span id="dash-next-topic">Binary Search</span>
+                </p>
+              </div>
+            </div>
+            <p class="dash-why-text" id="dash-why-text">You've completed basic binary search. This problem introduces binary search on the answer domain with predicate monotonicity.</p>
+            <div class="dash-hero-actions">
+              <a class="btn-primary" href="#vault">Solve problem →</a>
+              <a class="btn-link" href="#roadmaps">View full roadmap →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Canvas Stage -->
+        <div class="dash-stage-wrap">
+          <canvas class="dash-stage-canvas" id="dash-gl-canvas"></canvas>
+          <div class="dash-telemetry-hud" id="dash-ro-hud">target <b>21</b><br>low <b>0</b>   mid <span style="color:var(--ac);font-weight:600">7</span>   high <b>15</b><br>ready</div>
+        </div>
+
+        <!-- Flow line -->
+        <div class="dash-flow-line">
+          <span><i></i>Learn</span>
+          <span class="active"><i></i>Practice</span>
+          <span><i></i>Track</span>
+          <span><i></i>Compete</span>
+          <span><i></i>Upsolve</span>
+          <span><i></i>Improve</span>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Counters -->
+      <div class="dash-stats-grid">
+        <div class="dash-stat-box">
+          <div class="val num"><span id="stat-solved-num">0</span></div>
+          <h4>LeetCode solved</h4>
+          <p class="delta" id="stat-solved-delta">Connect LeetCode to load stats</p>
+        </div>
+        <div class="dash-stat-box">
+          <div class="val num"><span id="stat-streak-num">0</span><small>d</small></div>
+          <h4>Day streak</h4>
+          <p class="delta" id="stat-streak-delta">Streak not tracked yet</p>
+        </div>
+        <div class="dash-stat-box">
+          <div class="val num"><span id="stat-prog-num">0</span><small>%</small></div>
+          <h4>Roadmap progress</h4>
+          <p class="delta" id="stat-prog-delta">No progress recorded yet</p>
+        </div>
+        <div class="dash-stat-box">
+          <div class="val num"><span id="stat-rating-num">0</span></div>
+          <h4>Contest rating</h4>
+          <p class="delta" id="stat-rating-delta">Connect a platform to load rating</p>
+        </div>
+      </div>
+
+      <!-- Split Row 1: Interactive DAG Roadmap + Next Contest -->
+      <div class="dash-split-row">
+        <!-- Interactive DAG Roadmap -->
+        <div class="dash-split-col">
+          <div class="split-col-head">
+            <h3>Curriculum Roadmap</h3>
+            <a href="#roadmaps">Explore all tracks →</a>
+          </div>
+          <svg id="rp-svg" viewBox="0 -10 780 340"></svg>
+          <div id="dag-tip"></div>
+          <p class="sm" style="margin-top:14px;display:flex;justify-content:space-between">
+            <span>Hover nodes for syllabus breakdown</span>
+            <span id="dash-active-node-label" style="color:var(--ac);font-weight:600">Active Node: Arrays</span>
+          </p>
+        </div>
+
+        <!-- Next Contest Card -->
+        <div class="dash-split-col">
+          <div class="split-col-head">
+            <h3>Next Contest</h3>
+            <a href="https://codeforces.com/contests" target="_blank" rel="noopener">All contests →</a>
+          </div>
+          <p class="contest-name" id="contest-name-txt">Loading upcoming contests…</p>
+          <div class="contest-countdown num">
+            <small>Starts in</small>
+            <span id="contest-tick-h">--</span><small>h</small>
+            <span id="contest-tick-m">--</span><small>m</small>
+            <span class="sec-txt" id="contest-tick-s">--</span>
+          </div>
+          <div class="contest-meta-grid">
+            <span>Platform</span><span id="contest-plat-txt">Codeforces</span>
+            <span>Format</span><span id="contest-format-txt">Rated · 2 hours</span>
+            <span>Starts</span><span id="contest-starts-txt">Fetching live schedule</span>
+          </div>
+          <a class="btn-primary" href="https://codeforces.com/contests" target="_blank" rel="noopener" style="font-size:13px;padding:9px 18px">Register Contest ↗</a>
+
+          <div class="contest-last-box">
+            <p class="sm" id="contest-last-name">Last contest, Round #1038</p>
+            <div class="contest-last-grid">
+              <div><b class="num" id="contest-last-rank">#1,284</b><span class="sm">Rank</span></div>
+              <div><b class="num accent" id="contest-last-delta">+37</b><span class="sm">Rating</span></div>
+              <div><b class="num" id="contest-last-solved">3 / 6</b><span class="sm">Solved</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split Row 2: Recent Problems + College Position -->
+      <div class="dash-split-row">
+        <!-- Recent Problems Table -->
+        <div class="dash-split-col">
+          <div class="split-col-head">
+            <h3>Recent Problems</h3>
+            <a href="#vault">View Problem Vault →</a>
+          </div>
+          <table class="simple-table">
+            <thead>
+              <tr>
+                <th>Problem</th>
+                <th>Topic</th>
+                <th>Difficulty</th>
+                <th>Status</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody id="dash-recent-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- College Position -->
+        <div class="dash-split-col">
+          <div class="split-col-head">
+            <h3>Your Standing</h3>
+            <span class="sm">Indian Institute of Information Technology</span>
+          </div>
+          <div id="dash-college-ranks"></div>
+          <p class="rank-delta-txt" id="dash-rank-delta"></p>
+          <a class="btn-primary" href="#leaderboard" style="font-size:13px;padding:9px 18px">View Full Leaderboard →</a>
+        </div>
+      </div>
+
+      <!-- Activity Heatmap Scrubber -->
+      <section class="dash-act-section">
+        <div class="dash-act-head">
+          <h3>Activity Trajectory<span>182-Day Continuum</span></h3>
+          <div class="stat-num num"><span id="dash-act-streak">0</span><small>day streak</small></div>
+          <div class="stat-num num"><span id="dash-act-active">0</span><small>active days</small></div>
+          <div class="stat-num num"><span id="dash-act-solved">0</span><small>problems solved</small></div>
+        </div>
+        <svg id="act-svg" viewBox="0 0 1200 172"></svg>
+        <div id="act-tip"></div>
+        <div class="act-legend">
+          <span><b>Problems solved:</b></span>
+          <span><i style="width:10px;height:10px;background:#FFB9A8;display:inline-block"></i> 1</span>
+          <span><i style="width:10px;height:10px;background:#FF8C6E;display:inline-block"></i> 2</span>
+          <span><i style="width:10px;height:10px;background:#FF5A36;display:inline-block"></i> 3+</span>
+          <span><i style="width:3px;height:11px;background:#D6D6D0;display:inline-block"></i> Submissions</span>
+          <span><i style="width:9px;height:9px;border-radius:50%;border:1.5px solid currentColor;display:inline-block"></i> Contest day</span>
+          <span style="margin-left:auto">Scrub cursor across chart for daily debrief</span>
+        </div>
+      </section>
+
+      <!-- Prototype Interactive Switcher -->
+      <div class="dash-proto-bar">
+        <span><b>Interactive Prototype Simulator:</b> Test various student learning states & progress bars</span>
+        <div class="proto-controls">
+          <span>Switch User:</span>
+          <button class="proto-btn active" data-user="A">User A (Binary Search)</button>
+          <button class="proto-btn" data-user="B">User B (Linked List)</button>
+          <button class="proto-btn" data-user="C">User C (Dynamic Prog)</button>
+          <button class="proto-btn btn-sim-solve" id="btn-sim-solve">⚡ Simulate Solving Problem</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 2: LEADERBOARD ── -->
+    <section class="tab-view" id="view-leaderboard">
+      <!-- 3D Bubble Sort Interactive Banner -->
+      <div class="bs-sort-banner">
+        <div class="bs-sort-left">
+          <h3>Bubble<br>Sort 3D</h3>
+          <p>Score bubbles swap with their neighbors until the biggest one rises to rank 1. Watch real-time comparison physics live.</p>
+          <div class="bs-sort-controls">
+            <button class="bs-ctl-btn" id="lb-bs-pz">Pause</button>
+            <button class="bs-ctl-btn" id="lb-bs-sp">Speed 1x</button>
+            <button class="bs-ctl-btn" id="lb-bs-sh">Shuffle</button>
+          </div>
+        </div>
+        <div class="bs-stage-wrap">
+          <canvas class="bs-stage-canvas" id="lb-bs-canvas"></canvas>
+          <div class="bs-readout" id="lb-bs-ro">ready</div>
+        </div>
+      </div>
+
+      <div class="view-wrap">
+        <div class="section-head">
+          <h2>College Leaderboard</h2>
+          <p class="sub">Ranked by problems solved. Ties go to the longer streak.</p>
+        </div>
+
+        <!-- Multi-facet Filter Bar -->
+        <div class="lb-filter-bar">
+          <div class="filter-btn-group" id="lb-scope-group"></div>
+          <div class="sub-filter-group" id="lb-sub-group"></div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+            <input id="lb-search-input" placeholder="Search members by name..." style="padding:6px 12px;font-size:13px;border:1px solid var(--line);border-radius:4px;background:var(--card);outline:none;width:240px">
+            <span class="lb-student-count num" id="lb-count-txt">0 members</span>
+          </div>
+        </div>
+
+        <!-- Top 3 Podium Cards -->
+        <div class="lb-podium" id="lb-podium-wrap"></div>
+
+        <!-- Full Table -->
+        <div class="lb-table-wrap">
+          <table class="lb-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Membership</th>
+                <th>Problems Solved</th>
+                <th>Rating</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="lb-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 3: PROBLEM VAULT (LIBRARY) ── -->
+    <section class="tab-view" id="view-vault">
+      <div class="view-wrap vault-wrap">
+        <div class="section-head" style="padding-top:0">
+          <h2>Curated Practice Vault</h2>
+          <p class="sub">16 high-yield interview challenges across foundational graph, array, and divide-and-conquer patterns.</p>
+        </div>
+
+        <!-- Progress Tracker Card -->
+        <div class="vault-progress-card">
+          <div class="vault-badge-pct num" id="vault-pct-badge">0%</div>
+          <div>
+            <h4 id="vault-prog-title" style="font-size:17px;font-weight:700">Ready to Start</h4>
+            <span class="sm">Track your progress as you solve each curated challenge. State is saved automatically.</span>
+            <div class="vault-prog-bar-bg">
+              <div class="vault-prog-bar-fill" id="vault-fill-bar" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="num" style="font-size:14px;color:var(--mute)">
+            Solved: <b id="vault-count-solved" style="color:var(--ink)">0</b> / <span id="vault-count-total">16</span>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="vault-toolbar">
+          <div class="vault-diff-pills">
+            <button class="diff-filter-btn active" data-diff="all">All Difficulties</button>
+            <button class="diff-filter-btn" data-diff="1">Easy</button>
+            <button class="diff-filter-btn" data-diff="2">Medium</button>
+            <button class="diff-filter-btn" data-diff="3">Hard</button>
+          </div>
+
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="vault-search-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--mute)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input id="vault-search-input" placeholder="Search problems or companies...">
+            </div>
+            <div class="view-mode-toggle">
+              <button class="view-mode-btn active" id="vault-cards-btn" title="Grid View">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              </button>
+              <button class="view-mode-btn" id="vault-table-btn" title="Table View">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="vault-layout">
+          <!-- Sidebar -->
+          <aside class="vault-sidebar" id="vault-sidebar"></aside>
+
+          <!-- Right Content -->
+          <div>
+            <div class="problem-cards-grid" id="vault-cards-view"></div>
+            <div id="vault-table-view" style="display:none">
+              <table class="simple-table" style="background:var(--surface);padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm)">
+                <thead>
+                  <tr>
+                    <th style="width:40px">Done</th>
+                    <th>Problem Name</th>
+                    <th>Difficulty</th>
+                    <th>Companies</th>
+                    <th>Link</th>
+                  </tr>
+                </thead>
+                <tbody id="vault-table-tbody"></tbody>
+              </table>
+            </div>
+            <p class="sm" style="margin-top:20px;display:flex;justify-content:space-between">
+              <span>Showing <b id="vault-shown-count" style="color:var(--ink)">16</b> problems. Checkboxes persist in storage.</span>
+              <span>Click "Key Intuition" on any card for pattern hints.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 4: ALGORITHM BLUEPRINTS ── -->
+    <section class="tab-view" id="view-blueprints">
+      <div class="view-wrap blueprints-wrap">
+        <div class="section-head" style="padding-top:0">
+          <h2>Algorithm Blueprints</h2>
+          <p class="sub">Production-grade templates you can memorize and deploy in coding interviews. Switch between patterns and programming languages.</p>
+        </div>
+
+        <!-- Pattern Navigation Tabs -->
+        <div class="bp-nav-tabs">
+          <button class="bp-tab-btn active" data-bp="graph">🕸️ Dijkstra / Graph</button>
+          <button class="bp-tab-btn" data-bp="two">↔️ Two Pointers</button>
+          <button class="bp-tab-btn" data-bp="binary">🎯 Binary Search</button>
+          <button class="bp-tab-btn" data-bp="prefix">➕ Prefix Sum</button>
+        </div>
+
+        <!-- Active Blueprint Split Frame -->
+        <div class="bp-split-grid">
+          <!-- Left Specs Column -->
+          <div class="bp-info-col">
+            <div class="bp-category-badge" id="bp-badge">GRAPH THEORY • SHORTEST PATH</div>
+            <h3 class="bp-title" id="bp-title">Dijkstra's Algorithm (Priority Queue)</h3>
+            <p class="bp-desc" id="bp-desc">Finds the single-source shortest path in a weighted graph with non-negative edge costs using a min-heap priority queue.</p>
+            <div class="bp-specs-grid">
+              <div><b id="bp-time">O((V + E) log V)</b><span>Time Complexity</span></div>
+              <div><b id="bp-space">O(V + E)</b><span>Space Complexity</span></div>
+            </div>
+            <h5 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px">Key Recognition Signals</h5>
+            <ul class="bp-signals-list" id="bp-signals"></ul>
+          </div>
+
+          <!-- Right Interactive Code Window -->
+          <div class="bp-code-col">
+            <div class="bp-code-header">
+              <div class="bp-lang-buttons">
+                <button class="bp-lang-btn active" data-lang="python">Python</button>
+                <button class="bp-lang-btn" data-lang="cpp">C++</button>
+                <button class="bp-lang-btn" data-lang="javascript">JavaScript</button>
+              </div>
+              <button class="bp-copy-btn" id="bp-copy-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy Template
+              </button>
+            </div>
+            <pre class="bp-code-pre"><code id="bp-code-block"></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 5: CURATED ROADMAPS (DSA & CP) ── -->
+    <section class="tab-view" id="view-roadmaps">
+      <div class="view-wrap roadmaps-wrap">
+        <div class="section-head" style="padding-top:0">
+          <h2>Curated Roadmaps: DSA vs CP</h2>
+          <p class="sub">Two distinct disciplines, two master trajectories. Choose the <b>DSA Track</b> for FAANG and product engineering interviews, or the <b>Competitive Programming Track</b> for Codeforces and ICPC.</p>
+        </div>
+
+        <!-- Track Switch & Compare Toggle -->
+        <div class="roadmap-track-switch">
+          <div class="track-pill-group">
+            <button class="track-tab-btn active" id="track-btn-dsa">🎯 DSA Track (SDE & Interviews)</button>
+            <button class="track-tab-btn" id="track-btn-cp">⚡ CP Track (Contests & ICPC)</button>
+          </div>
+          <button class="compare-toggle-btn" id="btn-compare-toggle">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+            Compare Tracks Side-by-Side
+          </button>
+        </div>
+
+        <!-- Collapsible Compare Matrix Panel -->
+        <div class="compare-matrix-box" id="compare-matrix-box">
+          <div class="compare-card">
+            <h4>🎯 DSA Technical Interview Track</h4>
+            <ul>
+              <li><strong>Target:</strong> Clear technical coding rounds at Google, Meta, Amazon, Microsoft, Uber.</li>
+              <li><strong>Time:</strong> 45-minute live interview loop with discussion, coding, and complexity proofs.</li>
+              <li><strong>Bar:</strong> Clean variable naming, edge case handling, and communication clarity.</li>
+              <li><strong>Core:</strong> Two Pointers, Sliding Window, Trees, Heaps, BFS/DFS, 1D/2D DP.</li>
+            </ul>
+          </div>
+          <div class="compare-card" style="border-left:1px solid var(--line);padding-left:24px">
+            <h4>⚡ Competitive Programming Track</h4>
+            <ul>
+              <li><strong>Target:</strong> High rating on Codeforces (Specialist/Master), CodeChef stars, ICPC qualification.</li>
+              <li><strong>Time:</strong> 2-hour contests with strict penalty for wrong submissions.</li>
+              <li><strong>Bar:</strong> Algorithmic correctness within $10^8$ ops/sec and 256MB memory.</li>
+              <li><strong>Core:</strong> Number Theory, Segment Trees, Lazy Trees, Tree DP, Bitmask DP, Flows.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Track 1: DSA Track Panel -->
+        <div id="track-panel-dsa">
+          <div class="vault-progress-card" style="margin-bottom:24px">
+            <div>
+              <h4 style="font-size:18px;font-weight:700">DSA Interview Progression</h4>
+              <span class="sm">Check off completed milestones below. Progress saves automatically.</span>
+            </div>
+            <div style="flex:1;max-width:400px">
+              <div class="vault-prog-bar-bg">
+                <div class="vault-prog-bar-fill" id="dsa-progress-bar" style="width:0%"></div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <span class="sm num" id="dsa-progress-txt">0 of 25 Milestones (0%)</span>
+              <button class="bs-ctl-btn" id="btn-reset-dsa" style="padding:4px 10px;font-size:12px">Reset</button>
+            </div>
+          </div>
+          <div id="dsa-timeline-container"></div>
+        </div>
+
+        <!-- Track 2: CP Track Panel -->
+        <div id="track-panel-cp" style="display:none">
+          <div class="vault-progress-card" style="margin-bottom:24px">
+            <div>
+              <h4 style="font-size:18px;font-weight:700">Competitive Programming Progression</h4>
+              <span class="sm">Check off completed contest milestones below.</span>
+            </div>
+            <div style="flex:1;max-width:400px">
+              <div class="vault-prog-bar-bg">
+                <div class="vault-prog-bar-fill" id="cp-progress-bar" style="width:0%"></div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <span class="sm num" id="cp-progress-txt">0 of 24 Milestones (0%)</span>
+              <button class="bs-ctl-btn" id="btn-reset-cp" style="padding:4px 10px;font-size:12px">Reset</button>
+            </div>
+          </div>
+          <div id="cp-timeline-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 6: 3D VISUALIZER LAB ── -->
+    <section class="tab-view" id="view-lab">
+      <div class="view-wrap lab-wrap">
+        <div class="section-head" style="padding-top:0">
+          <h2>3D Algorithm Simulation Lab</h2>
+          <p class="sub">Explore live WebGL simulations for graph pathfinding, binary search range halving, and sorting mechanics.</p>
+        </div>
+
+        <!-- Lab Selector Tabs -->
+        <div class="lab-selector-bar">
+          <button class="lab-tab-btn active" data-lab="pathfinding">3D Pathfinding (BFS / Dijkstra / A*)</button>
+          <button class="lab-tab-btn" data-lab="binsearch">3D Binary Search System</button>
+          <button class="lab-tab-btn" data-lab="bubble">3D Bubble Sort Orbital Physics</button>
+        </div>
+
+        <!-- Lab 1: 3D Pathfinding -->
+        <div class="lab-display-card" id="lab-card-pathfinding">
+          <div class="pf-grid">
+            <div class="pf-left-panel">
+              <h3 style="font-size:28px;font-weight:700;letter-spacing:-0.04em">Shortest Path In 3D</h3>
+              <p class="sm" style="margin:8px 0 20px">Click any tile on the 3D grid to place or remove walls and high-cost mud.</p>
+
+              <div class="filter-btn-group" style="margin-bottom:14px">
+                <button class="lab-pf-algo-btn active" data-a="0">BFS</button>
+                <button class="lab-pf-algo-btn" data-a="1">Dijkstra</button>
+                <button class="lab-pf-algo-btn" data-a="2">A*</button>
+              </div>
+
+              <div class="bs-sort-controls" style="margin-top:0;margin-bottom:20px">
+                <button class="bs-ctl-btn" id="lab-pf-pz">Pause</button>
+                <button class="bs-ctl-btn" id="lab-pf-sp">Speed 1x</button>
+                <button class="bs-ctl-btn" id="lab-pf-nm">New Maze</button>
+              </div>
+
+              <table class="simple-table" style="font-size:13px;margin-bottom:16px">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Expanded</th>
+                    <th>Steps</th>
+                    <th>Cost</th>
+                  </tr>
+                </thead>
+                <tbody id="lab-pf-table"></tbody>
+              </table>
+
+              <div class="act-legend" style="font-size:12px;margin-top:0">
+                <span><i style="width:10px;height:10px;background:#1d2740;display:inline-block"></i> Wall</span>
+                <span><i style="width:10px;height:10px;background:#d6c9a8;display:inline-block"></i> Mud (Cost 5)</span>
+                <span><i style="width:10px;height:10px;background:#FF5A36;display:inline-block"></i> Frontier / Path</span>
+                <span><i style="width:10px;height:10px;background:#8da2bd;display:inline-block"></i> Visited</span>
+              </div>
+            </div>
+
+            <div class="pf-stage-canvas-wrap">
+              <canvas class="dash-stage-canvas" id="lab-pf-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lab 2: 3D Binary Search -->
+        <div class="lab-display-card" id="lab-card-binsearch" style="display:none">
+          <div style="padding:24px 32px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <h3 style="font-size:22px;font-weight:700">Monotonic Binary Search in Physical 3D Space</h3>
+              <p class="sm">Watch the active search interval halve with every iteration step.</p>
+            </div>
+            <div class="bs-readout" id="lab-bs-ro" style="position:static;text-align:right">ready</div>
+          </div>
+          <div style="position:relative;height:500px">
+            <canvas class="dash-stage-canvas" id="lab-bs-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Lab 3: 3D Bubble Sort -->
+        <div class="lab-display-card" id="lab-card-bubble" style="display:none">
+          <div style="padding:24px 32px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+            <div>
+              <h3 style="font-size:22px;font-weight:700">Bubble Sort Orbital Swap Physics</h3>
+              <p class="sm">Compare and swap adjacent pucks until all elements lock into sorted order.</p>
+            </div>
+            <div class="bs-sort-controls" style="margin-top:0">
+              <button class="bs-ctl-btn" id="lab-sort-pz">Pause</button>
+              <button class="bs-ctl-btn" id="lab-sort-sp">Speed 1x</button>
+              <button class="bs-ctl-btn" id="lab-sort-sh">Shuffle</button>
+            </div>
+          </div>
+          <div style="position:relative;height:500px">
+            <canvas class="dash-stage-canvas" id="lab-sort-canvas"></canvas>
+            <div class="bs-readout" id="lab-sort-ro">ready</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MEMBER PROFILE & LIVE PLATFORM SYNC ── -->
+    <section class="tab-view" id="view-profile">
+      <div class="view-wrap" style="max-width:1120px">
+        <div class="section-head" style="padding-top:0">
+          <h2>My Profile</h2>
+          <p class="sub">Manage your TOP-X account and connect your real competitive-programming profiles. No API keys are needed for public profile lookups.</p>
+        </div>
+        <div class="profile-banner" style="margin-bottom:22px">
+          <div class="profile-banner-avatar-wrap"><div class="profile-banner-avatar" id="page-profile-avatar" style="display:flex;align-items:center;justify-content:center;font-size:32px;background:var(--card);color:var(--ink)">?</div></div>
+          <div class="profile-banner-info"><h4 id="page-profile-name">Your account</h4><p id="page-profile-email">Sign in to view your profile</p><div class="profile-badge-tag">Authenticated TOP-X member</div></div>
+          <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><button class="bs-ctl-btn" id="page-profile-logout" type="button">Log out</button></div>
+        </div>
+        <div class="vault-progress-card" style="display:block;margin-bottom:22px">
+          <h3 style="margin-bottom:14px">Account details</h3>
+          <form id="page-profile-form" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:end">
+            <div class="auth-field"><label for="page-profile-name-input">Full name</label><input id="page-profile-name-input" maxlength="80" required autocomplete="name"></div>
+            <div class="auth-field"><label for="page-profile-branch-input">Branch</label><select id="page-profile-branch-input"><option value="">Select branch</option><option value="CSE">CSE</option><option value="IT">IT</option><option value="EI">EI</option><option value="EEE">EEE</option><option value="CSBS">CSBS</option><option value="MECH">Mechanical</option><option value="CIVIL">Civil</option><option value="IP">IP</option></select></div>
+            <div class="auth-field"><label for="page-profile-section-input">Section</label><select id="page-profile-section-input"><option value="">Select section</option><option value="A">Section A</option><option value="B">Section B</option></select></div>
+            <div><button class="btn-primary" type="submit" id="page-profile-save">Save profile</button></div>
+          </form>
+        </div>
+        <div class="vault-progress-card" style="display:block;margin-bottom:22px">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px"><div><h3>Connect coding platforms</h3><p class="sm">Enter the exact public usernames/handles used on each platform.</p></div><button class="btn-primary" type="button" id="page-profile-sync">↻ Save & sync live data</button></div>
+          <div class="cp-platform-cards">
+            <div class="cp-card"><div class="cp-card-head lc"><b>LeetCode</b><span class="sm">Live public profile lookup</span></div><input id="page-handle-leetcode" placeholder="LeetCode username" autocomplete="off"><div class="cp-card-stat-box"><div><span>Total solved</span><b id="page-lc-solved">—</b></div><div><span>Easy / Medium / Hard</span><b id="page-lc-breakdown">—</b></div><div><span>Global ranking</span><b id="page-lc-rank">—</b></div></div><p class="sm" id="page-lc-status" aria-live="polite">Not synced yet</p></div>
+            <div class="cp-card"><div class="cp-card-head cf"><b>Codeforces</b><span class="sm">Official public API</span></div><input id="page-handle-codeforces" placeholder="Codeforces handle" autocomplete="off"><div class="cp-card-stat-box"><div><span>Rating</span><b id="page-cf-rating">—</b></div><div><span>Rank</span><b id="page-cf-rank">—</b></div><div><span>Maximum rating</span><b id="page-cf-max">—</b></div></div><p class="sm" id="page-cf-status" aria-live="polite">Not synced yet</p></div>
+            <div class="cp-card"><div class="cp-card-head cc"><b>CodeChef</b><span class="sm">Live public profile lookup</span></div><input id="page-handle-codechef" placeholder="CodeChef username" autocomplete="off"><div class="cp-card-stat-box"><div><span>Rating</span><b id="page-cc-rating">—</b></div><div><span>Stars</span><b id="page-cc-stars">—</b></div><div><span>Global rank</span><b id="page-cc-rank">—</b></div></div><p class="sm" id="page-cc-status" aria-live="polite">Not synced yet</p></div>
+          </div>
+          <p class="sm" id="page-profile-sync-status" style="margin-top:14px" aria-live="polite">Your handles and statistics are private to your account.</p>
+          <p class="sm" id="page-profile-last-sync"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 7: MASTERCLASS GUIDES ── -->
+    <section class="tab-view" id="view-guides">
+      <div class="view-wrap guides-wrap">
+        <div class="section-head" style="padding-top:0">
+          <h2>Masterclass Guides & Literature</h2>
+          <p class="sub">The finest algorithmic write-ups, university lectures, and reference materials across computer science.</p>
+        </div>
+        <div class="guides-cards-grid" id="guides-cards-grid"></div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 8: DAILY MEMBER TASKS ── -->
+    <section class="tab-view" id="view-tasks">
+      <div class="view-wrap tasks-wrap">
+        <div class="section-head" style="padding-top:0">
+          <h2>Daily Member Tasks</h2>
+          <p class="sub">Curated daily drills synced directly with LeetCode, Codeforces, and CodeChef. Complete problems on the platform and click verify to earn XP.</p>
+        </div>
+
+        <!-- Task Stats Bar -->
+        <div class="vault-progress-card" style="margin-bottom:24px">
+          <div>
+            <h4 style="font-size:18px;font-weight:700">Today's Practice Quests</h4>
+            <span class="sm">Task completion is saved to your account; platform submissions are not automatically verified.</span>
+          </div>
+          <div style="display:flex;gap:32px;align-items:center">
+            <div><span class="sm">Completed Today:</span> <b class="num" id="tasks-done-stat" style="font-size:20px;color:var(--easy)">1 / 3</b></div>
+            <div><span class="sm">Daily Streak:</span> <b class="num" id="tasks-streak-stat" style="font-size:20px;color:var(--ac)">0 days</b></div>
+            <div><span class="sm">XP Earned:</span> <b class="num" id="tasks-xp-stat" style="font-size:20px;color:var(--ink)">0 XP</b></div>
+          </div>
+          <button class="btn-primary" id="btn-sync-all-tasks" style="padding:9px 18px;font-size:13px">🔄 Refresh Tasks</button>
+        </div>
+
+        <!-- Task Cards Grid -->
+        <div class="tasks-cards-grid" id="tasks-cards-grid"></div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 9: TOP-X PRO (CODECHEF 40 TASKS TRACK) ── -->
+    <section class="tab-view" id="view-pro">
+      <div class="view-wrap" style="padding:40px 0 80px">
+        <div class="pro-hero-banner">
+          <div class="pro-hero-left">
+            <span class="pro-nav-pill" style="margin-bottom:12px">⚡ ELITE GUILD MEMBERSHIP</span>
+            <h2>Unlock Top-X Pro</h2>
+            <p>Top-X Pro is an elite tier for dedicated competitive programmers. Submit your CodeChef progress for manual admin review. Membership is granted only after review; automatic submission verification is not available yet.</p>
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+              <button class="btn-primary" id="btn-verify-pro-now" style="background:var(--ac);border-color:var(--ac)">Request Pro Verification</button>
+              <a class="btn-link" href="https://www.codechef.com" target="_blank" rel="noopener">Open CodeChef ↗</a>
+            </div>
+          </div>
+
+          <!-- Requirements Card -->
+          <div class="pro-req-card">
+            <h4>Pro Qualification Challenge</h4>
+            <p class="sm">Complete the 40-problem challenge and submit a request for manual admin review.</p>
+            <div class="pro-prog-box">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">
+                <span>Progress:</span>
+                <b class="num" id="pro-progress-count">0 / 40 Completed (0%)</b>
+              </div>
+              <div class="vault-prog-bar-bg">
+                <div class="vault-prog-bar-fill" id="pro-progress-fill" style="width:0%"></div>
+              </div>
+            </div>
+            <span class="sm" id="pro-status-badge" style="font-weight:600;color:var(--ac)">In Progress · 16 Problems Remaining</span>
+          </div>
+        </div>
+
+        <div class="section-head" style="padding:20px 0 10px">
+          <h3>The 40 CodeChef 500-Rated Challenge Vault</h3>
+          <p class="sm">This checklist is informational; CodeChef submissions are not automatically verified yet.</p>
+        </div>
+
+        <!-- 40 CodeChef Problems Grid -->
+        <div class="cc-problems-grid" id="cc-problems-grid"></div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 10: SECURE ADMIN CONSOLE ── -->
+    <section class="tab-view" id="view-admin">
+      <div class="view-wrap admin-wrap">
+        <!-- Locked View (when not authenticated as admin) -->
+        <div class="admin-auth-box" id="admin-auth-box">
+          <div class="admin-lock-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3 style="font-size:22px;font-weight:700;margin-bottom:8px">Secure Admin Console</h3>
+          <p class="sm" style="margin-bottom:20px">Protected portal for administrators to publish curated resources, post daily member tasks, and manage platform members.</p>
+          <div class="auth-field">
+            <input type="password" id="admin-pass-input" placeholder="Enter your configured admin key">
+          </div>
+          <button class="btn-primary" id="btn-admin-login" style="width:100%;justify-content:center">Authenticate as Admin</button>
+          <p class="sm" style="margin-top:12px;font-size:12px">Admin access is controlled by the deployment environment secret.</p>
+        </div>
+
+        <!-- Authenticated Admin Dashboard -->
+        <div class="admin-dashboard-layout" id="admin-dashboard" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:18px">
+            <div>
+              <span class="phase-badge" style="background:rgba(16,185,129,0.1);color:var(--easy)">AUTHENTICATED • ADMIN CONSOLE</span>
+              <h2 style="margin-top:6px">Top-X System Management</h2>
+            </div>
+            <button class="bs-ctl-btn" id="btn-admin-logout" style="color:var(--hard)">Sign Out Admin</button>
+          </div>
+
+          <!-- Stats Summary -->
+          <div class="admin-stats-summary">
+            <div class="admin-stat-card"><div class="val num" id="admin-stat-users">—</div><h5>Registered Members</h5></div>
+            <div class="admin-stat-card"><div class="val num" id="admin-stat-pro">0</div><h5>Pro Members</h5></div>
+            <div class="admin-stat-card"><div class="val num" id="admin-stat-tasks">—</div><h5>Active Daily Tasks</h5></div>
+            <div class="admin-stat-card"><div class="val num" id="admin-stat-problems">—</div><h5>CodeChef 500 Drills</h5></div>
+          </div>
+
+          <!-- Forms Grid -->
+          <div class="admin-forms-grid">
+            <!-- Add Daily Task -->
+            <div class="admin-panel-card">
+              <h4>Create Daily Member Task</h4>
+              <form id="form-add-task">
+                <div class="auth-field">
+                  <label>Task Title</label>
+                  <input id="new-task-title" placeholder="e.g. Codeforces 1840C - Ski Resort" required>
+                </div>
+                <div class="auth-field" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div>
+                    <label>Platform</label>
+                    <select id="new-task-plat" style="width:100%;padding:10px;border:1px solid var(--line);background:var(--card);border-radius:4px">
+                      <option value="LeetCode">LeetCode</option>
+                      <option value="Codeforces">Codeforces</option>
+                      <option value="CodeChef">CodeChef</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>Difficulty</label>
+                    <input id="new-task-diff" placeholder="e.g. Medium / 1200 Rating" required>
+                  </div>
+                </div>
+                <div class="auth-field">
+                  <label>Problem URL</label>
+                  <input id="new-task-url" placeholder="https://..." required>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Publish Daily Task</button>
+              </form>
+            </div>
+
+            <!-- Add Resource / Guide -->
+            <div class="admin-panel-card">
+              <h4>Publish Learning Resource / Guide</h4>
+              <form id="form-add-resource">
+                <div class="auth-field">
+                  <label>Resource Title</label>
+                  <input id="new-res-title" placeholder="e.g. MIT 6.006: Advanced DP" required>
+                </div>
+                <div class="auth-field" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div>
+                    <label>Category / Type</label>
+                    <input id="new-res-type" placeholder="e.g. Video Lecture / Interactive" required>
+                  </div>
+                  <div>
+                    <label>Read / Watch Time</label>
+                    <input id="new-res-time" placeholder="e.g. 25 min" required>
+                  </div>
+                </div>
+                <div class="auth-field">
+                  <label>Resource Link</label>
+                  <input id="new-res-link" placeholder="https://..." required>
+                </div>
+                <div class="auth-field">
+                  <label>Description</label>
+                  <input id="new-res-desc" placeholder="Brief explanation of why this resource is useful..." required>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Publish Resource</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Add Problem Vault item -->
+          <div class="admin-panel-card" style="margin-top:18px">
+            <h4>Add Problem to Problem Vault</h4>
+            <p class="sm" style="margin:0 0 14px">Publish a real problem link. New problems appear in the public Vault and persist on the server.</p>
+            <form id="form-add-vault-problem" class="admin-forms-grid">
+              <div class="auth-field"><label>Problem Title</label><input id="new-vault-title" placeholder="e.g. Longest Increasing Subsequence" required maxlength="140"></div>
+              <div class="auth-field"><label>Problem URL (HTTPS)</label><input id="new-vault-url" type="url" placeholder="https://leetcode.com/problems/..." required></div>
+              <div class="auth-field"><label>Category / Pattern</label><input id="new-vault-category" placeholder="e.g. Dynamic Programming" required maxlength="50"></div>
+              <div class="auth-field"><label>Difficulty</label><select id="new-vault-difficulty" required style="width:100%;padding:10px;border:1px solid var(--line);background:var(--card);border-radius:4px"><option value="1">Easy</option><option value="2" selected>Medium</option><option value="3">Hard</option></select></div>
+              <div class="auth-field"><label>Problem ID / Slug (optional)</label><input id="new-vault-slug" placeholder="e.g. longest-increasing-subsequence"></div>
+              <div class="auth-field"><label>Companies (comma separated)</label><input id="new-vault-companies" placeholder="Google, Amazon, Microsoft"></div>
+              <div class="auth-field" style="grid-column:1/-1"><label>Key Intuition (optional)</label><input id="new-vault-intuition" placeholder="One-line hint / mental model"></div>
+              <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Add Problem to Vault</button>
+            </form>
+          </div>
+
+          <!-- Content management lists -->
+          <div class="admin-panel-card" style="margin-top:18px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><h4>Manage Published Content</h4><button type="button" class="bs-ctl-btn" id="btn-refresh-admin-content">Refresh lists</button></div>
+            <p class="sm" style="margin:0 0 16px">Remove individual daily tasks, resources, or Problem Vault entries. Built-in vault entries can be restored only by adding them again or clearing their removal record in storage.</p>
+            <div class="admin-forms-grid">
+              <div><h5>Daily Tasks</h5><div id="admin-manage-tasks" class="admin-content-list"><p class="sm">Sign in to load tasks.</p></div></div>
+              <div><h5>Learning Resources</h5><div id="admin-manage-resources" class="admin-content-list"><p class="sm">Sign in to load resources.</p></div></div>
+              <div style="grid-column:1/-1"><h5>Problem Vault</h5><div id="admin-manage-vault" class="admin-content-list"><p class="sm">Sign in to load problems.</p></div></div>
+            </div>
+          </div>
+
+          <!-- Members Management Table -->
+          <div class="admin-panel-card">
+            <h4>Registered Members & Handles Sync</h4>
+            <div style="overflow-x:auto">
+              <table class="simple-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>LeetCode</th>
+                    <th>Codeforces</th>
+                    <th>CodeChef</th>
+                    <th>Pro Status</th>
+                    <th>Verification Request</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       COMMAND PALETTE MODAL (Cmd+K / /)
+       ========================================================================= -->
+  <div class="cmd-backdrop" id="cmd-backdrop">
+    <div class="cmd-modal">
+      <div class="cmd-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="cmd-input" id="cmd-input" placeholder="Type a problem, topic, student, or algorithm...">
+      </div>
+      <div class="cmd-results" id="cmd-results"></div>
+      <div class="cmd-footer">
+        <span>Navigation: Click or press Enter</span>
+        <span>Close: Esc</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       PROFILE & AUTHENTICATION MODAL
+       ========================================================================= -->
+  <div class="modal-backdrop" id="profile-modal-backdrop">
+    <div class="modal-card wide">
+      <div class="modal-header">
+        <div style="display:flex;gap:12px;align-items:center">
+          <button class="filter-btn-group active" id="modal-tab-profile-btn" style="font-size:14px;font-weight:700">CP Profiles & API Sync</button>
+          <button class="filter-btn-group" id="modal-tab-auth-btn" style="font-size:14px;color:var(--mute)">Account & Sign In</button>
+        </div>
+        <button class="modal-close-btn" id="modal-close-profile-btn">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- TAB 1: PROFILE & CP PLATFORMS SYNC -->
+        <div id="modal-profile-view">
+          <div class="profile-banner">
+            <div class="profile-banner-avatar-wrap">
+              <img class="profile-banner-avatar" id="modal-user-avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Avatar">
+              <div class="avatar-change-overlay" id="btn-change-avatar">Change</div>
+            </div>
+            <div class="profile-banner-info">
+              <h4 id="modal-user-name">Member</h4>
+              <p id="modal-user-email">Sign in to load your account</p>
+              <div id="modal-user-pro-badge" class="profile-badge-tag">Top-X Member</div>
+            </div>
+            <div style="margin-left:auto">
+              <button class="btn-primary" id="btn-sync-all-cp-modal" style="padding:10px 18px;font-size:13px">⚡ Sync All Data Directly</button>
+            </div>
+          </div>
+
+          <!-- Avatar URL Input Drawer -->
+          <div id="avatar-input-drawer" style="display:none;margin-bottom:20px;padding:14px;border:1px solid var(--line);border-radius:4px;background:var(--card)">
+            <label class="sm" style="display:block;margin-bottom:6px">Paste Profile Picture Image URL:</label>
+            <div style="display:flex;gap:8px">
+              <input id="custom-avatar-url-input" placeholder="https://..." style="flex:1;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--surface)">
+              <button class="btn-primary" id="btn-save-custom-avatar" style="padding:8px 14px;font-size:12px">Save Picture</button>
+            </div>
+          </div>
+
+          <!-- Connected CP Handles Inputs & Live Cards -->
+          <h5 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:14px">Connected Coding Platforms</h5>
+          <div class="cp-platform-cards">
+            <!-- LeetCode Card -->
+            <div class="cp-card">
+              <div class="cp-card-head lc">
+                <b>LeetCode</b>
+                <span class="sm">Live API · sync on request</span>
+              </div>
+              <input id="input-handle-leetcode" placeholder="Your LeetCode username" value="">
+              <div class="cp-card-stat-box" id="stats-box-leetcode">
+                <div><span>Solved:</span><b id="lc-stat-solved">—</b></div>
+                <div><span>Easy / Med / Hard:</span><b id="lc-stat-ratio">Connect handle</b></div>
+                <div><span>Contest Rating:</span><b id="lc-stat-rating">—</b></div>
+              </div>
+            </div>
+
+            <!-- Codeforces Card -->
+            <div class="cp-card">
+              <div class="cp-card-head cf">
+                <b>Codeforces</b>
+                <span class="sm">Live API · sync on request</span>
+              </div>
+              <input id="input-handle-codeforces" placeholder="Your Codeforces handle" value="">
+              <div class="cp-card-stat-box" id="stats-box-codeforces">
+                <div><span>Rating:</span><b id="cf-stat-rating" style="color:var(--ac)">—</b></div>
+                <div><span>Rank Title:</span><b id="cf-stat-rank">Connect handle</b></div>
+                <div><span>Max Rating:</span><b id="cf-stat-max">—</b></div>
+              </div>
+            </div>
+
+            <!-- CodeChef Card -->
+            <div class="cp-card">
+              <div class="cp-card-head cc">
+                <b>CodeChef</b>
+                <span class="sm">Live API · sync on request</span>
+              </div>
+              <input id="input-handle-codechef" placeholder="Your CodeChef handle" value="">
+              <div class="cp-card-stat-box" id="stats-box-codechef">
+                <div><span>Rating:</span><b id="cc-stat-rating">—</b></div>
+                <div><span>Stars:</span><b id="cc-stat-stars">Connect handle</b></div>
+                <div><span>Global Rank:</span><b id="cc-stat-rank">—</b></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--line)">
+            <span class="sm" id="sync-status-msg">Connect your handles, then sync to load live stats.</span>
+            <button class="btn-primary" id="btn-save-handles-only" style="padding:8px 16px;font-size:12px">Save Handles</button>
+          </div>
+        </div>
+
+        <!-- TAB 2: ACCOUNT & LOGIN / GOOGLE SIGN-IN -->
+        <div id="modal-auth-view" style="display:none">
+          <div style="max-width:420px;margin:10px auto">
+            <!-- Google Sign-In Button -->
+            <button class="btn-google" id="btn-login-google">
+              <svg class="google-icon" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.15C3.26 21.36 7.33 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.24C.45 8.15 0 9.92 0 12s.45 3.85 1.24 5.42l4.04-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.24 6.58l4.04 3.15c.95-2.83 3.6-4.93 6.72-4.93z"/>
+              </svg>
+              <span>Continue with Google</span>
+            </button>
+
+            <div style="display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--mute);font-size:12px">
+              <hr style="flex:1;border:0;border-top:1px solid var(--line)">
+              <span>OR EMAIL</span>
+              <hr style="flex:1;border:0;border-top:1px solid var(--line)">
+            </div>
+
+            <form id="form-auth-credentials">
+              <div class="auth-field">
+                <label>Full Name (for new account)</label>
+                <input id="auth-name-input" placeholder="Your full name">
+              </div>
+              <div class="auth-field">
+                <label>Email Address</label>
+                <input type="email" id="auth-email-input" placeholder="you@university.edu" value="" required>
+              </div>
+              <div class="auth-field">
+                <label>Password</label>
+                <input type="password" id="auth-password-input" placeholder="••••••••" value="" required>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:20px">
+                <button type="submit" class="btn-primary" id="btn-submit-login" style="flex:1;justify-content:center">Sign In</button>
+                <button type="button" class="bs-ctl-btn" id="btn-submit-register" style="flex:1;justify-content:center">Register</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Global Footer -->
+  <footer class="app-footer">
+    <div>
+      <b>Top-X</b> · Code. Compete. Conquer. Unified Platform.
+    </div>
+    <div class="footer-links">
+      <a href="#dashboard">Dashboard</a>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#vault">Problem Vault</a>
+      <a href="#blueprints">Blueprints</a>
+      <a href="#roadmaps">Roadmaps</a>
+      <a href="#lab">3D Lab</a>
+      <a href="#guides">Guides</a>
+    </div>
+    <div>
+      <span>Engineered with Three.js & Geist Typography</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/visualizers.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
