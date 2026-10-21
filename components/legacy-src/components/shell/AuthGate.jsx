@@ -2,21 +2,20 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
-/** AuthGate: unified authentication gate supporting Firebase Google sign-in and email/password. */
+/** AuthGate: unified authentication gate supporting Firebase Google sign-in only. */
 export default function AuthGate({
-  authMode,
-  setAuthMode,
-  authenticate,
   loginWithGoogle,
   error,
   setError,
   isAuthenticated = false,
   isOpen = true,
-  onClose
+  onClose,
+  authMode,
+  setAuthMode,
+  authenticate
 }) {
   const router = useRouter();
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
 
   const logoRef = useRef(null);
   const replayLogoAnim = useCallback(() => {
@@ -39,7 +38,9 @@ export default function AuthGate({
       if (typeof onClose === 'function') {
         onClose();
       }
-      router.push('/profile');
+      const searchParams = new URLSearchParams(window.location.search);
+      const destination = searchParams.get('redirect') || searchParams.get('next') || '/dashboard';
+      router.push(destination);
     }
   }, [router, onClose]);
 
@@ -64,28 +65,6 @@ export default function AuthGate({
       if (setError) setError(err.message || 'Google sign-in failed.');
     } finally {
       setGoogleLoading(false);
-    }
-  };
-
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    if (formLoading) return;
-    setFormLoading(true);
-    if (setError) setError('');
-    const form = new FormData(event.currentTarget);
-    try {
-      const user = await authenticate({
-        name: String(form.get('name') || ''),
-        email: String(form.get('email') || ''),
-        password: String(form.get('password') || '')
-      });
-      if (user) {
-        triggerPostLoginTransition();
-      }
-    } catch (err) {
-      // error handled by authenticate
-    } finally {
-      setFormLoading(false);
     }
   };
 
@@ -138,23 +117,25 @@ export default function AuthGate({
             </button>
           )}
 
-          <div className="login-form-tabs">
-            <button
-              type="button"
-              className={`login-form-tab ${authMode === 'login' ? 'active' : ''}`}
-              id="login-tab-signin"
-              onClick={() => { setAuthMode('login'); if (setError) setError(''); }}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              className={`login-form-tab ${authMode === 'register' ? 'active' : ''}`}
-              id="login-tab-signup"
-              onClick={() => { setAuthMode('register'); if (setError) setError(''); }}
-            >
-              Create Account
-            </button>
+          <div style={{ marginBottom: '22px' }}>
+            <h2 style={{
+              fontFamily: "var(--font-display, 'Space Grotesk', sans-serif)",
+              fontSize: '22px',
+              fontWeight: 850,
+              color: '#0d0d0f',
+              margin: '0 0 8px 0',
+              letterSpacing: '-0.02em'
+            }}>
+              Student Sign In
+            </h2>
+            <p style={{
+              fontSize: '13.5px',
+              lineHeight: 1.55,
+              color: '#525866',
+              margin: 0
+            }}>
+              Sign in with your Google account to access your Top-X student dashboard, synchronize daily problem solves, and track leaderboard standings.
+            </p>
           </div>
 
           {/* Continue with Google button */}
@@ -163,11 +144,28 @@ export default function AuthGate({
             className="btn-google"
             id="gate-btn-google"
             onClick={handleGoogleClick}
-            disabled={googleLoading || formLoading}
+            disabled={googleLoading}
             aria-label="Continue with Google"
           >
             {googleLoading ? (
-              <span>Signing in with Google...</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ animation: 'topxSpin 1s linear infinite' }}
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                  <path d="M12 2a10 10 0 0 1 10 10" />
+                </svg>
+                <span>Signing in with Google...</span>
+              </span>
             ) : (
               <>
                 <svg className="google-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -180,57 +178,6 @@ export default function AuthGate({
               </>
             )}
           </button>
-
-          <div className="login-divider">
-            <hr /><span>OR</span><hr />
-          </div>
-
-          <form id="gate-auth-form" autoComplete="off" onSubmit={handleFormSubmit}>
-            <div className="auth-field" id="gate-name-field" style={{ display: authMode === 'register' ? undefined : 'none' }}>
-              <label htmlFor="gate-name">Full Name</label>
-              <input
-                id="gate-name"
-                name="name"
-                placeholder="Your full name"
-                autoComplete="name"
-                required={authMode === 'register'}
-              />
-            </div>
-            <div className="auth-field">
-              <label htmlFor="gate-email">Email Address</label>
-              <input
-                type="email"
-                id="gate-email"
-                name="email"
-                placeholder="you@university.edu"
-                required
-                autoComplete="email"
-              />
-            </div>
-            <div className="auth-field">
-              <label htmlFor="gate-password">Password</label>
-              <input
-                type="password"
-                id="gate-password"
-                name="password"
-                placeholder="••••••••"
-                required
-                minLength={authMode === 'register' ? 8 : undefined}
-                autoComplete={authMode === 'register' ? 'new-password' : 'current-password'}
-              />
-            </div>
-            <button
-              type="submit"
-              className="btn-primary login-submit-btn"
-              id="gate-submit-btn"
-              disabled={formLoading || googleLoading}
-            >
-              <span>{formLoading ? 'Authenticating...' : (authMode === 'register' ? 'Create Account' : 'Sign In')}</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
-          </form>
 
           {error && (
             <div
@@ -253,32 +200,30 @@ export default function AuthGate({
             </div>
           )}
 
-          <p className="login-hint" id="gate-toggle-hint">
-            {authMode === 'login' ? (
-              <>
-                Don&apos;t have an account?{' '}
-                <a
-                  href="#signup"
-                  id="gate-toggle-link"
-                  onClick={(e) => { e.preventDefault(); setAuthMode('register'); if (setError) setError(''); }}
-                >
-                  Create one
-                </a>
-              </>
-            ) : (
-              <>
-                Already have an account?{' '}
-                <a
-                  href="#signin"
-                  onClick={(e) => { e.preventDefault(); setAuthMode('login'); if (setError) setError(''); }}
-                >
-                  Sign in
-                </a>
-              </>
-            )}
-          </p>
+          <div style={{
+            marginTop: '22px',
+            paddingTop: '16px',
+            borderTop: '1px solid #f0f0ed',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            color: '#6b7280',
+            fontSize: '12px',
+            lineHeight: 1.4
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff7a1a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <span>Verified student accounts only. Multi-judge daily synchronization is tied to your Google profile.</span>
+          </div>
         </div>
       </div>
+      <style>{`
+        @keyframes topxSpin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

@@ -392,59 +392,72 @@ export default function HomePageView() {
         </section>
 
         {/* =================================================================
-            COMMUNITY SPOTLIGHT VIDEO SECTION (CINEMATIC FULL-SCREEN CARD)
+            COMMUNITY SPOTLIGHT VIDEO SECTION
             ================================================================= */}
         <section className="tx-video-section">
-          <div className="tx-video-container">
-            <div className="tx-video-card tx-reveal is-visible">
-              <video
-                ref={videoRef}
-                className="tx-video-element"
-                src="/topx-intro.mp4"
-                autoPlay
-                muted
-                defaultMuted
-                playsInline
-                loop
-                preload="auto"
-                onClick={toggleVideoPlay}
-                onPlay={() => setIsVideoPlaying(true)}
-                onPause={() => setIsVideoPlaying(false)}
-              />
+          <div className="tx-container">
+            <div className="tx-section-head tx-video-head tx-reveal is-visible">
+              <span className="hero-eyebrow-tag">
+                <span className="tx-eyebrow-dot" aria-hidden="true" />
+                INSIDE THE ARENA
+              </span>
+              <h2 className="tx-section-title">Consistency is built one problem at a time.</h2>
+              <p className="tx-section-desc">
+                See how Top-X brings daily practice, verified submissions, and healthy campus competition together.
+              </p>
+            </div>
 
-              {/* Center Play Icon when paused */}
-              {!isVideoPlaying && (
-                <button
-                  type="button"
-                  className="tx-video-play-center"
+            <div className="tx-video-wrapper tx-reveal is-visible">
+              <div className="tx-video-card">
+                <video
+                  ref={videoRef}
+                  className="tx-video-element"
+                  src="/topx-intro.mp4"
+                  autoPlay
+                  muted
+                  defaultMuted
+                  playsInline
+                  loop
+                  preload="auto"
                   onClick={toggleVideoPlay}
-                  aria-label="Play video"
-                >
-                  <Play size={30} fill="#ffffff" color="#ffffff" style={{ marginLeft: '4px' }} />
-                </button>
-              )}
+                  onPlay={() => setIsVideoPlaying(true)}
+                  onPause={() => setIsVideoPlaying(false)}
+                />
 
-              {/* Exactly 2 options for user: Pause/Play and Unmute/Mute */}
-              <div className="tx-video-controls-bar">
-                <button
-                  type="button"
-                  className="tx-video-btn"
-                  onClick={toggleVideoPlay}
-                  aria-label={isVideoPlaying ? 'Pause video' : 'Play video'}
-                >
-                  {isVideoPlaying ? <Pause size={16} /> : <Play size={16} fill="currentColor" />}
-                  <span>{isVideoPlaying ? 'Pause' : 'Play'}</span>
-                </button>
+                {/* Center Play Icon when paused */}
+                {!isVideoPlaying && (
+                  <button
+                    type="button"
+                    className="tx-video-play-center"
+                    onClick={toggleVideoPlay}
+                    aria-label="Play video"
+                  >
+                    <Play size={28} fill="#ffffff" color="#ffffff" style={{ marginLeft: '3px' }} />
+                  </button>
+                )}
 
-                <button
-                  type="button"
-                  className="tx-video-btn"
-                  onClick={toggleVideoMute}
-                  aria-label={isVideoMuted ? 'Unmute video' : 'Mute video'}
-                >
-                  {isVideoMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                  <span>{isVideoMuted ? 'Unmute' : 'Mute'}</span>
-                </button>
+                {/* Exactly 2 options for user: Pause/Play and Unmute/Mute */}
+                <div className="tx-video-controls-bar">
+                  <button
+                    type="button"
+                    className="tx-video-btn"
+                    onClick={toggleVideoPlay}
+                    aria-label={isVideoPlaying ? 'Pause video' : 'Play video'}
+                  >
+                    {isVideoPlaying ? <Pause size={15} /> : <Play size={15} fill="currentColor" />}
+                    <span>{isVideoPlaying ? 'Pause' : 'Play'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="tx-video-btn"
+                    onClick={toggleVideoMute}
+                    aria-label={isVideoMuted ? 'Unmute video' : 'Mute video'}
+                  >
+                    {isVideoMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+                    <span>{isVideoMuted ? 'Unmute' : 'Mute'}</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -109,24 +109,11 @@ export function useAuth() {
     setGlobalState({ error: err || '' });
   }, []);
 
-  const authenticate = useCallback(async ({ name, email, password }) => {
-    setError('');
-    try {
-      const endpoint = authMode === 'register' ? '/api/auth/register' : '/api/auth/login';
-      const result = await api(endpoint, {
-        method: 'POST',
-        body: JSON.stringify({ name, email, password })
-      });
-      if (typeof window !== 'undefined' && typeof window.replayTopxIntro === 'function') {
-        window.replayTopxIntro();
-      }
-      setGlobalState({ user: result.user, loading: false, error: '' });
-      return result.user;
-    } catch (e) {
-      setError(e.message || 'Authentication failed');
-      throw e;
-    }
-  }, [authMode, setError]);
+  const authenticate = useCallback(async () => {
+    const msg = 'Email and password authentication has been disabled. Please sign in with your Google account.';
+    setError(msg);
+    throw new Error(msg);
+  }, [setError]);
 
   const loginWithGoogle = useCallback(async () => {
     setError('');
