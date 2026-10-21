@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CalendarDays, ExternalLink, MapPin, UsersRound } from 'lucide-react';
+import { CalendarDays, ExternalLink, Linkedin, MapPin, UsersRound } from 'lucide-react';
 import AppHeader from '../legacy-src/components/shell/AppHeader.jsx';
 import AppFooter from '../legacy-src/components/shell/AppFooter.jsx';
 import styles from './EventRegistration.module.css';
@@ -27,6 +27,8 @@ type PublicEvent = {
   eventUrl?: string;
   eventLinkType?: 'linkedin' | 'custom';
   eventLinkLabel?: string;
+  status?: 'open' | 'closed';
+  showOnWebsite?: boolean;
   fields: EventField[];
 };
 
@@ -126,25 +128,86 @@ export default function EventRegistration() {
             <article className={styles.eventCard} key={event.id}>
               <div className={styles.eventImage}>
                 {event.imageData || event.imageUrl ? (
-                  <img src={event.imageData || event.imageUrl} alt={`${event.title} event`} loading="lazy" onError={imageError => { imageError.currentTarget.hidden = true; }} />
+                  <img
+                    className={styles.eventImg}
+                    src={event.imageData || event.imageUrl}
+                    alt={`${event.title} event`}
+                    loading="lazy"
+                    onError={imageError => {
+                      imageError.currentTarget.style.display = 'none';
+                      const placeholder = imageError.currentTarget.parentElement?.querySelector(`.${styles.imagePlaceholder}`);
+                      if (placeholder) (placeholder as HTMLElement).style.display = 'flex';
+                    }}
+                  />
                 ) : null}
-                <span className={styles.imagePlaceholder}><CalendarDays size={34} /><span>TOP-X COMMUNITY EVENT</span></span>
+                <span
+                  className={styles.imagePlaceholder}
+                  style={{ display: (event.imageData || event.imageUrl) ? 'none' : 'flex' }}
+                >
+                  <CalendarDays size={36} />
+                  <span>TOP-X COMMUNITY EVENT</span>
+                </span>
+                <div className={styles.eventBadgeOverlay}>
+                  {event.status === 'closed' ? (
+                    <span className={styles.badgeClosed}>Closed</span>
+                  ) : (
+                    <span className={styles.badgeOpen}>
+                      <span className={styles.dotPulse} /> Open
+                    </span>
+                  )}
+                </div>
               </div>
               <div className={styles.eventCardBody}>
-                <h3>{event.title}</h3>
-                {event.description ? <p className={styles.description}>{event.description}</p> : null}
-                <div className={styles.eventMeta}>
-                  {event.startsAt ? <span><CalendarDays size={15} /> {new Date(event.startsAt).toLocaleString()}</span> : null}
-                  {event.location ? <span><MapPin size={15} /> {event.location}</span> : null}
+                <div>
+                  <div className={styles.eventMetaChips}>
+                    {event.startsAt ? (
+                      <span className={styles.metaChip}>
+                        <CalendarDays size={14} /> {new Date(event.startsAt).toLocaleString()}
+                      </span>
+                    ) : null}
+                    {event.location ? (
+                      <span className={styles.metaChip}>
+                        <MapPin size={14} /> {event.location}
+                      </span>
+                    ) : null}
+                  </div>
+                  <h3>{event.title}</h3>
+                  {event.description ? <p className={styles.description}>{event.description}</p> : null}
                 </div>
                 <div className={styles.cardActions}>
-                  <button type="button" className={styles.registerButton} onClick={() => startRegistration(event)}>
-                    Register for event <span aria-hidden="true">→</span>
-                  </button>
+                  {event.status === 'closed' ? (
+                    <button type="button" className={`${styles.registerButton} ${styles.disabledButton}`} disabled>
+                      Registration closed
+                    </button>
+                  ) : (
+                    <button type="button" className={styles.registerButton} onClick={() => startRegistration(event)}>
+                      Register for event <span aria-hidden="true">→</span>
+                    </button>
+                  )}
                   {event.eventUrl ? (
-                    <a className={styles.eventLink} href={event.eventUrl} target="_blank" rel="noopener noreferrer">
-                      {event.eventLinkType === 'linkedin' ? 'LinkedIn profile' : event.eventLinkLabel || 'Event details'} <ExternalLink size={15} />
-                    </a>
+                    event.eventLinkType === 'linkedin' || event.eventUrl.toLowerCase().includes('linkedin') ? (
+                      <a
+                        className={styles.linkedinLink}
+                        href={event.eventUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="LinkedIn profile"
+                      >
+                        <Linkedin size={16} className={styles.linkedinIcon} />
+                        <span>{event.eventLinkType === 'linkedin' ? 'LinkedIn profile' : (event.eventLinkLabel || 'LinkedIn profile')}</span>
+                        <ExternalLink size={12} style={{ opacity: 0.65 }} />
+                      </a>
+                    ) : (
+                      <a
+                        className={styles.eventLink}
+                        href={event.eventUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span>{event.eventLinkLabel || 'Event details'}</span>
+                        <ExternalLink size={14} />
+                      </a>
+                    )
                   ) : null}
                 </div>
               </div>

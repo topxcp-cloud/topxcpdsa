@@ -150,6 +150,7 @@ export interface EventRecord {
   eventLinkType?: 'linkedin' | 'custom';
   eventLinkLabel?: string;
   status: 'open' | 'closed';
+  showOnWebsite?: boolean;
   fields: EventField[];
   registrationCount?: number;
   createdAt?: string;

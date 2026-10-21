@@ -26,22 +26,6 @@ function setGlobalState(updates) {
   notifyListeners();
 }
 
-function initSession() {
-  if (initialized || typeof window === 'undefined') return;
-  initialized = true;
-
-  api('/api/auth/me')
-    .then(({ user: current }) => {
-      setGlobalState({ user: current, loading: false, error: '' });
-    })
-    .catch(error => {
-      setGlobalState({
-        user: null,
-        loading: false,
-        error: error.status === 401 ? '' : (error.message || 'Could not connect to the database.')
-      });
-    });
-
 let googleAuthPromise = null;
 async function syncGoogleUser(fbUser) {
   if (globalUser) return globalUser;
@@ -67,6 +51,22 @@ async function syncGoogleUser(fbUser) {
   })();
   return googleAuthPromise;
 }
+
+function initSession() {
+  if (initialized || typeof window === 'undefined') return;
+  initialized = true;
+
+  api('/api/auth/me')
+    .then(({ user: current }) => {
+      setGlobalState({ user: current, loading: false, error: '' });
+    })
+    .catch(error => {
+      setGlobalState({
+        user: null,
+        loading: false,
+        error: error.status === 401 ? '' : (error.message || 'Could not connect to the database.')
+      });
+    });
 
   // Firebase auth observer if configured
   if (auth && isFirebaseConfigured) {
@@ -117,6 +117,9 @@ export function useAuth() {
         method: 'POST',
         body: JSON.stringify({ name, email, password })
       });
+      if (typeof window !== 'undefined' && typeof window.replayTopxIntro === 'function') {
+        window.replayTopxIntro();
+      }
       setGlobalState({ user: result.user, loading: false, error: '' });
       return result.user;
     } catch (e) {
@@ -134,7 +137,11 @@ export function useAuth() {
     }
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      return await syncGoogleUser(result.user);
+      const user = await syncGoogleUser(result.user);
+      if (user && typeof window !== 'undefined' && typeof window.replayTopxIntro === 'function') {
+        window.replayTopxIntro();
+      }
+      return user;
     } catch (err) {
       let message = err.message || 'Google sign-in failed.';
       if (err.code === 'auth/popup-closed-by-user') {

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { AdminLayout } from '../../src/components/AdminLayout';
-import { exportEventRegistrations, getEventRegistrations, getEvents, saveEvent } from '../../src/services/api';
+import { exportEventRegistrations, getEventRegistrations, getEvents, saveEvent, deleteEvent } from '../../src/services/api';
 import { EventField, EventFieldType, EventRecord, EventRegistration } from '../../src/types';
-import { CalendarDays, Check, CircleAlert, Download, Plus, Search, X } from 'lucide-react';
+import { CalendarDays, Check, CircleAlert, Download, Plus, Search, Trash2, X } from 'lucide-react';
 import styles from './events.module.css';
 
 const defaultFields: EventField[] = [
@@ -24,11 +24,25 @@ type EventForm = {
   eventLinkType: 'linkedin' | 'custom';
   eventLinkLabel: string;
   status: 'open' | 'closed';
+  showOnWebsite: boolean;
   fields: EventField[];
 };
 
 function blankEvent(): EventForm {
-  return { title: '', description: '', location: '', startsAt: '', imageUrl: '', imageData: '', eventUrl: '', eventLinkType: 'custom', eventLinkLabel: 'Event details', status: 'open', fields: defaultFields.map(field => ({ ...field })) };
+  return {
+    title: '',
+    description: '',
+    location: '',
+    startsAt: '',
+    imageUrl: '',
+    imageData: '',
+    eventUrl: '',
+    eventLinkType: 'custom',
+    eventLinkLabel: 'Event details',
+    status: 'open',
+    showOnWebsite: true,
+    fields: defaultFields.map(field => ({ ...field }))
+  };
 }
 
 function eventToForm(event: EventRecord): EventForm {
@@ -42,7 +56,8 @@ function eventToForm(event: EventRecord): EventForm {
     eventUrl: event.eventUrl || '',
     eventLinkType: event.eventLinkType === 'linkedin' ? 'linkedin' : 'custom',
     eventLinkLabel: event.eventLinkLabel || 'Event details',
-    status: event.status,
+    status: event.status || 'open',
+    showOnWebsite: event.showOnWebsite !== false,
     fields: event.fields.map(field => ({ ...field, options: [...(field.options || [])] }))
   };
 }
@@ -56,6 +71,7 @@ export default function EventsAdminPage() {
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [loadingRegistrations, setLoadingRegistrations] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [compressingImage, setCompressingImage] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState('');
@@ -218,6 +234,34 @@ export default function EventsAdminPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!selectedId || !selectedEvent) return;
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${selectedEvent.title}"?\n\nThis will permanently delete this event and its registrations.`
+    );
+    if (!confirmed) return;
+
+    setDeleting(true);
+    setError('');
+    setNotice('');
+    try {
+      await deleteEvent(selectedId);
+      const remainingEvents = events.filter(item => item.id !== selectedId);
+      setEvents(remainingEvents);
+      if (remainingEvents.length) {
+        setSelectedId(remainingEvents[0].id);
+        setForm(eventToForm(remainingEvents[0]));
+      } else {
+        startNewEvent();
+      }
+      setNotice(`Event "${selectedEvent.title}" has been deleted.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not delete the event.');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleExport = async () => {
     if (!selectedId || !selectedEvent) return;
     setError('');
@@ -303,8 +347,18 @@ export default function EventsAdminPage() {
                 <label className={styles.control}>
                   <span>Registration</span>
                   <select value={form.status} onChange={event => setForm({ ...form, status: event.target.value as 'open' | 'closed' })}>
-                    <option value="open">Open</option>
-                    <option value="closed">Closed</option>
+                    <option value="open">Open (accepting entries)</option>
+                    <option value="closed">Closed (no new entries)</option>
+                  </select>
+                </label>
+                <label className={styles.control}>
+                  <span>Website visibility</span>
+                  <select
+                    value={form.showOnWebsite ? 'visible' : 'hidden'}
+                    onChange={event => setForm({ ...form, showOnWebsite: event.target.value === 'visible' })}
+                  >
+                    <option value="visible">Show on website</option>
+                    <option value="hidden">Hide from website (admin panel only)</option>
                   </select>
                 </label>
                 <label className={`${styles.control} ${styles.fullWidth}`}>
@@ -414,7 +468,19 @@ export default function EventsAdminPage() {
               </div>
               <p className={styles.helpText}>Email is required to identify each registration.</p>
               <div className={styles.formActions}>
-                <button className={styles.primaryButton} type="submit" disabled={saving || loadingEvents || compressingImage}>
+                {selectedId ? (
+                  <button
+                    className={styles.dangerButton}
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={deleting || saving || loadingEvents}
+                    title="Permanently delete this event and all its registrations"
+                  >
+                    <Trash2 size={15} />
+                    {deleting ? 'Deleting…' : 'Delete event'}
+                  </button>
+                ) : <div />}
+                <button className={styles.primaryButton} type="submit" disabled={saving || deleting || loadingEvents || compressingImage}>
                   {compressingImage ? 'Preparing image…' : saving ? 'Saving…' : selectedId ? 'Save event' : 'Create event'}
                 </button>
               </div>

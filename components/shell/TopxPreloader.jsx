@@ -9,6 +9,7 @@ export default function TopxPreloader() {
   const [wordStep, setWordStep] = useState(0);
   const [logoRevealed, setLogoRevealed] = useState(false);
   const [statusText, setStatusText] = useState('WORKSPACE // STARTING CODING ARENA...');
+  const [cycle, setCycle] = useState(0);
 
   const exitTimeoutRef = useRef(null);
 
@@ -21,10 +22,12 @@ export default function TopxPreloader() {
       setProgress(0);
       setWordStep(0);
       setLogoRevealed(false);
+      setStatusText('WORKSPACE // STARTING CODING ARENA...');
       if (exitTimeoutRef.current) {
         window.clearTimeout(exitTimeoutRef.current);
         exitTimeoutRef.current = null;
       }
+      setCycle((prev) => prev + 1);
       setActive(true);
       document.body.style.overflow = 'hidden';
     };
@@ -116,7 +119,7 @@ export default function TopxPreloader() {
       clearTimeout(tExit);
       clearInterval(progInterval);
     };
-  }, [active, triggerExit]);
+  }, [active, cycle, triggerExit]);
 
   // Keyboard shortcut listener (ESC to skip)
   useEffect(() => {

@@ -126,6 +126,7 @@ export const saveEvent = (event: {
   eventLinkType: 'linkedin' | 'custom';
   eventLinkLabel: string;
   status: 'open' | 'closed';
+  showOnWebsite?: boolean;
   fields: EventField[];
 }, id?: string) =>
   request<{ event: EventRecord }>(id
@@ -134,6 +135,12 @@ export const saveEvent = (event: {
       method: id ? 'PUT' : 'POST',
       body: JSON.stringify(event)
     });
+
+export const deleteEvent = (id: string) =>
+  request<{ success: boolean; deletedId: string }>(
+    `/api/admin/events/${encodeURIComponent(id)}`,
+    { method: 'DELETE' }
+  );
 
 export const getEventRegistrations = (id: string, query = '') => {
   const qs = query ? `?q=${encodeURIComponent(query)}` : '';

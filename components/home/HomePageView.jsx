@@ -23,7 +23,11 @@ import {
   Zap,
   Shield,
   Layers,
-  ChevronRight
+  ChevronRight,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 
 const TOPX_SNIPPETS = [
@@ -109,6 +113,41 @@ export default function HomePageView() {
   const [typingState, setTypingState] = useState('typing'); // 'typing' | 'pausing' | 'erasing' | 'switching'
   const containerRef = useRef(null);
 
+  // Home Page Spotlight Video (Autoplays muted, user has only pause/play and unmute/mute)
+  const videoRef = useRef(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => setIsVideoPlaying(true))
+        .catch(() => setIsVideoPlaying(false));
+    }
+  }, []);
+
+  const toggleVideoPlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
+    } else {
+      video.pause();
+      setIsVideoPlaying(false);
+    }
+  };
+
+  const toggleVideoMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsVideoMuted(video.muted);
+  };
+
   // Random typing, pausing, erasing, and switching between the 3 .topx snippets
   useEffect(() => {
     const activeSnippet = TOPX_SNIPPETS[snippetIndex];
@@ -164,7 +203,7 @@ export default function HomePageView() {
           setTopMembers(data.members.slice(0, 3));
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // Scroll reveal observer for silky, lightweight transitions (Locomotive standard)
@@ -231,11 +270,6 @@ export default function HomePageView() {
             <div className="tx-hero-grid">
               {/* LEFT COLUMN: Community Introduction */}
               <div className="tx-hero-left tx-reveal is-visible">
-                <div className="tx-index-eyebrow">
-                  <span className="num">00</span>
-                  <span>// STUDENT CODING COMMUNITY</span>
-                </div>
-
                 <h1 className="tx-hero-headline">
                   Show up. Solve problems. <br />
                   <em>Become unstoppable.</em>
@@ -358,15 +392,70 @@ export default function HomePageView() {
         </section>
 
         {/* =================================================================
+            COMMUNITY SPOTLIGHT VIDEO SECTION (CINEMATIC FULL-SCREEN CARD)
+            ================================================================= */}
+        <section className="tx-video-section">
+          <div className="tx-video-container">
+            <div className="tx-video-card tx-reveal is-visible">
+              <video
+                ref={videoRef}
+                className="tx-video-element"
+                src="/topx-intro.mp4"
+                autoPlay
+                muted
+                defaultMuted
+                playsInline
+                loop
+                preload="auto"
+                onClick={toggleVideoPlay}
+                onPlay={() => setIsVideoPlaying(true)}
+                onPause={() => setIsVideoPlaying(false)}
+              />
+
+              {/* Center Play Icon when paused */}
+              {!isVideoPlaying && (
+                <button
+                  type="button"
+                  className="tx-video-play-center"
+                  onClick={toggleVideoPlay}
+                  aria-label="Play video"
+                >
+                  <Play size={30} fill="#ffffff" color="#ffffff" style={{ marginLeft: '4px' }} />
+                </button>
+              )}
+
+              {/* Exactly 2 options for user: Pause/Play and Unmute/Mute */}
+              <div className="tx-video-controls-bar">
+                <button
+                  type="button"
+                  className="tx-video-btn"
+                  onClick={toggleVideoPlay}
+                  aria-label={isVideoPlaying ? 'Pause video' : 'Play video'}
+                >
+                  {isVideoPlaying ? <Pause size={16} /> : <Play size={16} fill="currentColor" />}
+                  <span>{isVideoPlaying ? 'Pause' : 'Play'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="tx-video-btn"
+                  onClick={toggleVideoMute}
+                  aria-label={isVideoMuted ? 'Unmute video' : 'Mute video'}
+                >
+                  {isVideoMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                  <span>{isVideoMuted ? 'Unmute' : 'Mute'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =================================================================
             COMMUNITY BENEFITS SECTION (#community) - ARCHITECTURAL GRID
             ================================================================= */}
         <section className="tx-section" id="community">
           <div className="tx-container">
             <div className="tx-section-head tx-reveal">
-              <div className="tx-index-eyebrow">
-                <span className="num">01</span>
-                <span>// COMMUNITY ECOSYSTEM</span>
-              </div>
               <h2 className="tx-section-title">Built for Serious Problem Solvers</h2>
               <p className="tx-section-desc">
                 Top-X is about more than solving isolated problems: it is about consistent practice,
@@ -378,26 +467,26 @@ export default function HomePageView() {
               {/* Pillar 1 */}
               <article className="tx-pillar-card">
                 <div className="tx-pillar-head">
-                  <h3 className="tx-pillar-title">Daily Consistency</h3>
+                  <h3 className="tx-pillar-title">Curated Problem Vault</h3>
                   <span className="tx-pillar-icon" aria-hidden="true">
-                    <Flame size={26} />
+                    <Layers size={26} />
                   </span>
                 </div>
                 <p className="tx-pillar-desc">
-                  Build a sustainable daily habit. Solving two problems each day compounds faster than occasional all-nighters before contest deadlines.
+                  Practice handpicked, pattern-focused DSA problems categorized by topic — from two pointers and sliding window to graphs and dynamic programming.
                 </p>
               </article>
 
               {/* Pillar 2 */}
               <article className="tx-pillar-card">
                 <div className="tx-pillar-head">
-                  <h3 className="tx-pillar-title">DSA &amp; CP Mastery</h3>
+                  <h3 className="tx-pillar-title">Guided DSA Roadmaps</h3>
                   <span className="tx-pillar-icon" aria-hidden="true">
-                    <Code2 size={26} />
+                    <Zap size={26} />
                   </span>
                 </div>
                 <p className="tx-pillar-desc">
-                  Strengthen data structure and algorithm fundamentals spanning binary search, dynamic programming, trees, graphs, and competitive invariants.
+                  Follow structured skill tracks designed to guide you step-by-step from fundamental language syntax to advanced contest-level intuition.
                 </p>
               </article>
 
@@ -410,33 +499,33 @@ export default function HomePageView() {
                   </span>
                 </div>
                 <p className="tx-pillar-desc">
-                  Learn alongside motivated peers across First, Second, Third, and Final years, spanning CSE, IT, Electrical, Mechanical, and Core branches.
+                  Learn alongside motivated peers across First, Second, Third, and Final years, spanning CSE, IT, CSBS, and all college branches.
                 </p>
               </article>
 
               {/* Pillar 4 */}
               <article className="tx-pillar-card">
                 <div className="tx-pillar-head">
-                  <h3 className="tx-pillar-title">Unified Progress Tracking</h3>
+                  <h3 className="tx-pillar-title">Automated Task Verification</h3>
                   <span className="tx-pillar-icon" aria-hidden="true">
-                    <Target size={26} />
+                    <CheckCircle2 size={26} />
                   </span>
                 </div>
                 <p className="tx-pillar-desc">
-                  Bring your LeetCode DSA solves, Codeforces rating, and CodeChef contest challenges together into one verified, live college profile.
+                  Complete daily coding challenges with automatic verification across LeetCode, Codeforces, and CodeChef to validate genuine effort.
                 </p>
               </article>
 
               {/* Pillar 5 */}
               <article className="tx-pillar-card">
                 <div className="tx-pillar-head">
-                  <h3 className="tx-pillar-title">Healthy College Leaderboard</h3>
+                  <h3 className="tx-pillar-title">Campus Contests &amp; Events</h3>
                   <span className="tx-pillar-icon" aria-hidden="true">
-                    <Trophy size={26} />
+                    <Sparkles size={26} />
                   </span>
                 </div>
                 <p className="tx-pillar-desc">
-                  Compare rankings with classmates and section peers in a transparent atmosphere that recognizes daily streaks just as much as absolute totals.
+                  Register for live college workshops, hackathons, and algorithmic competitions with instant seat reservations and attendee tracking.
                 </p>
               </article>
 
@@ -449,7 +538,7 @@ export default function HomePageView() {
                   </span>
                 </div>
                 <p className="tx-pillar-desc">
-                  Turn sustained coding momentum into tangible community milestones, verified badges, and streak reward qualifications.
+                  Turn sustained coding momentum into tangible recognition with verified milestone badges, streak tiers, and TOP-X Pro qualification.
                 </p>
               </article>
             </div>
@@ -462,10 +551,6 @@ export default function HomePageView() {
         <section className="tx-section" id="rewards">
           <div className="tx-container">
             <div className="tx-section-head tx-reveal">
-              <div className="tx-index-eyebrow">
-                <span className="num">02</span>
-                <span>// REWARDS ROADMAP</span>
-              </div>
               <h2 className="tx-section-title">Streak Rewards Roadmap</h2>
               <p className="tx-section-desc">
                 Sustained consistency unlocks tangible community recognition. Track your consecutive qualifying days and reach these milestones.
@@ -529,10 +614,6 @@ export default function HomePageView() {
           <section className="tx-section home-podium-preview" style={{ background: 'var(--surface-alt)' }}>
             <div className="tx-container">
               <div className="tx-section-head tx-reveal">
-                <div className="tx-index-eyebrow">
-                  <span className="num">03</span>
-                  <span>// LEADERBOARD CHAMPIONS</span>
-                </div>
                 <h2 className="tx-section-title">Active Streak Champions</h2>
                 <p className="tx-section-desc">Real students currently leading the college consistency streak.</p>
               </div>
@@ -635,39 +716,41 @@ export default function HomePageView() {
         {/* =================================================================
             CALL TO ACTION SECTION
             ================================================================= */}
-        <section className="tx-section">
-          <div className="tx-container">
-            <div
-              className="tx-reveal"
-              style={{
-                textAlign: 'center',
-                padding: 'clamp(44px, 6vw, 76px) 24px',
-                borderRadius: '8px',
-                background: '#ffffff',
-                border: '2px solid #0d0d0f',
-                boxShadow: '8px 8px 0 #0d0d0f',
-                backgroundImage: 'linear-gradient(rgba(255, 122, 26, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 122, 26, 0.08) 1px, transparent 1px)',
-                backgroundSize: '28px 28px'
-              }}
-            >
-              <h2 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 'clamp(28px, 3.6vw, 42px)', fontWeight: 850, letterSpacing: '-0.03em', margin: '0 0 14px', color: '#0d0d0f' }}>
-                Ready to build your <em style={{ fontStyle: 'normal', color: 'var(--ac, #ff7a1a)' }}>coding habit</em>?
-              </h2>
-              <p style={{ color: '#4a515e', fontSize: '16.5px', maxWidth: '640px', margin: '0 auto 32px', lineHeight: 1.65 }}>
-                Join fellow students tracking their competitive programming progress and consistent daily streak today.
-              </p>
-              <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <Link href="/profile" className="tx-btn-primary">
-                  <span>Create Free Profile</span>
-                  <ArrowRight size={15} />
-                </Link>
-                <Link href="/leaderboard" className="tx-btn-secondary">
-                  <span>Explore Leaderboard</span>
-                </Link>
+        {!auth.user && (
+          <section className="tx-section">
+            <div className="tx-container">
+              <div
+                className="tx-reveal"
+                style={{
+                  textAlign: 'center',
+                  padding: 'clamp(44px, 6vw, 76px) 24px',
+                  borderRadius: '8px',
+                  background: '#ffffff',
+                  border: '2px solid #0d0d0f',
+                  boxShadow: '8px 8px 0 #0d0d0f',
+                  backgroundImage: 'linear-gradient(rgba(255, 122, 26, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 122, 26, 0.08) 1px, transparent 1px)',
+                  backgroundSize: '28px 28px'
+                }}
+              >
+                <h2 style={{ fontFamily: 'var(--font-display, sans-serif)', fontSize: 'clamp(28px, 3.6vw, 42px)', fontWeight: 850, letterSpacing: '-0.03em', margin: '0 0 14px', color: '#0d0d0f' }}>
+                  Ready to build your <em style={{ fontStyle: 'normal', color: 'var(--ac, #ff7a1a)' }}>coding habit</em>?
+                </h2>
+                <p style={{ color: '#4a515e', fontSize: '16.5px', maxWidth: '640px', margin: '0 auto 32px', lineHeight: 1.65 }}>
+                  Join fellow students tracking their competitive programming progress and consistent daily streak today.
+                </p>
+                <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <Link href="/profile" className="tx-btn-primary">
+                    <span>Create Free Profile</span>
+                    <ArrowRight size={15} />
+                  </Link>
+                  <Link href="/leaderboard" className="tx-btn-secondary">
+                    <span>Explore Leaderboard</span>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
 
       <AppFooter />

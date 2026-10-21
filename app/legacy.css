@@ -1865,22 +1865,188 @@ header.app-header {
 /* ==========================================================================
    GLOBAL FOOTER
    ========================================================================== */
+footer.apple-footer,
+footer.tx-footer-root,
 footer.app-footer {
-  border-top: 1px solid var(--line);
-  padding: 36px var(--pad);
+  background: #f5f5f7;
+  color: #1d1d1f;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.33337;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  padding: 0 0 28px;
+  border-top: 1px solid #d2d2d7;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.apple-footer-content {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Footnotes / Top disclaimer (Apple signature) */
+.apple-footer-disclaimer {
+  padding: 17px 0 11px;
+  border-bottom: 1px solid #d2d2d7;
+  color: #6e6e73;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.apple-footer-disclaimer p {
+  margin: 0 0 8px;
+}
+
+.apple-footer-disclaimer p:last-child {
+  margin-bottom: 0;
+}
+
+/* 5-Column Navigation Grid */
+.apple-footer-directory {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: space-between;
+  padding: 24px 0 20px;
+}
+
+.apple-footer-column {
+  flex: 1 1 170px;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.apple-footer-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.apple-footer-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1d1d1f;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+  text-transform: capitalize;
+}
+
+.apple-footer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.apple-footer-list a {
+  color: #424245;
+  text-decoration: none;
+  font-size: 12px;
+  line-height: 1.35;
+  transition: color 0.15s ease;
+  display: inline-block;
+}
+
+.apple-footer-list a:hover {
+  color: #1d1d1f;
+  text-decoration: underline;
+}
+
+.apple-footer-list-static {
+  color: #6e6e73;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+/* Secondary notice row */
+.apple-footer-shop-notice {
+  padding: 14px 0 18px;
+  border-bottom: 1px solid #d2d2d7;
+  color: #6e6e73;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.apple-footer-shop-notice a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.apple-footer-shop-notice a:hover {
+  text-decoration: underline;
+}
+
+/* Bottom Legal & Copyright Row */
+.apple-footer-legal {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  color: var(--mute);
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+  padding-top: 14px;
+  font-size: 12px;
+  color: #6e6e73;
 }
-.footer-links {
+
+.apple-footer-legal-copyright {
+  margin-right: 20px;
+}
+
+.apple-footer-legal-links {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
 }
-.footer-links a:hover { color: var(--ink); }
+
+.apple-footer-legal-links a {
+  color: #424245;
+  text-decoration: none;
+}
+
+.apple-footer-legal-links a:hover {
+  color: #1d1d1f;
+  text-decoration: underline;
+}
+
+.apple-footer-legal-sep {
+  color: #d2d2d7;
+}
+
+.apple-footer-locale {
+  color: #6e6e73;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+/* Responsive */
+@media (max-width: 820px) {
+  .apple-footer-directory {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .apple-footer-column {
+    border-bottom: 1px solid #d2d2d7;
+    padding-bottom: 12px;
+  }
+  .apple-footer-column:last-child {
+    border-bottom: none;
+  }
+  .apple-footer-legal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .apple-footer-locale {
+    margin-left: 0;
+  }
+}
 
 /* ==========================================================================
    RESPONSIVE DESIGN (TABLETS & PHONES)

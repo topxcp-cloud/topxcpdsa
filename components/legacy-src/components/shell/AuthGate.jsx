@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 /** AuthGate: unified authentication gate supporting Firebase Google sign-in and email/password. */
 export default function AuthGate({
@@ -13,6 +14,7 @@ export default function AuthGate({
   isOpen = true,
   onClose
 }) {
+  const router = useRouter();
   const [googleLoading, setGoogleLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
 
@@ -29,6 +31,18 @@ export default function AuthGate({
     });
   }, []);
 
+  const triggerPostLoginTransition = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      if (typeof window.replayTopxIntro === 'function') {
+        window.replayTopxIntro();
+      }
+      if (typeof onClose === 'function') {
+        onClose();
+      }
+      router.push('/profile');
+    }
+  }, [router, onClose]);
+
   if (isAuthenticated || !isOpen) {
     return null;
   }
@@ -39,7 +53,10 @@ export default function AuthGate({
     if (setError) setError('');
     try {
       if (typeof loginWithGoogle === 'function') {
-        await loginWithGoogle();
+        const user = await loginWithGoogle();
+        if (user) {
+          triggerPostLoginTransition();
+        }
       } else {
         throw new Error('Google Sign-In service is initializing. Please try again.');
       }
@@ -57,11 +74,14 @@ export default function AuthGate({
     if (setError) setError('');
     const form = new FormData(event.currentTarget);
     try {
-      await authenticate({
+      const user = await authenticate({
         name: String(form.get('name') || ''),
         email: String(form.get('email') || ''),
         password: String(form.get('password') || '')
       });
+      if (user) {
+        triggerPostLoginTransition();
+      }
     } catch (err) {
       // error handled by authenticate
     } finally {
