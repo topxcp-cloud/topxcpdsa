@@ -1,0 +1,33 @@
+{
+  "name": "top-x",
+  "version": "3.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "tsc --noEmit",
+    "check": "node --check lib/next-api-bridge.cjs && node --check lib/api/route-registry.cjs && node --test tests/react-source.test.js tests/next-api-migration.test.js tests/next-api-router.test.cjs tests/ssr-browser-api.test.cjs tests/cron-sync-policy.test.cjs tests/cron-hardening.test.cjs",
+    "test": "node --test tests/*.test.js tests/*.test.cjs",
+    "vercel-build": "npm run build"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "@types/pg": "^8.23.1",
+    "firebase": "^9.14.0",
+    "lucide-react": "^0.468.0",
+    "next": "^16.4.2",
+    "pg": "^8.23.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
