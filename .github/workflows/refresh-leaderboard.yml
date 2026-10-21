@@ -1,0 +1,67 @@
+name: Daily Leaderboard Refresh
+on:
+  schedule:
+    # 22:00 UTC = 3:30 AM India Standard Time (IST)
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+    inputs:
+      batch_size:
+        description: 'Maximum users to attempt per request (safe range 1-10)'
+        required: false
+        default: '10'
+
+# Keep scheduled/manual runs from overlapping and duplicating provider API calls.
+concurrency:
+  group: topx-leaderboard-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Trigger TOP-X Leaderboard Refresh
+        env:
+          APP_ORIGIN: ${{ secrets.APP_ORIGIN || secrets.VERCEL_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          BATCH_SIZE: ${{ github.event.inputs.batch_size || '10' }}
+        run: |
+          set -euo pipefail
+          if [ -z "$APP_ORIGIN" ] || [ -z "$CRON_SECRET" ]; then
+            echo "APP_ORIGIN and CRON_SECRET must be configured in GitHub Repository Secrets."
+            exit 1
+          fi
+
+          BASE_URL="${APP_ORIGIN%/}"
+          if [[ ! "$BASE_URL" =~ ^https?:// ]]; then BASE_URL="https://$BASE_URL"; fi
+          REMAINING=1
+          BATCH=1
+          MAX_BATCHES=1000
+          while [ "$REMAINING" -gt 0 ] && [ "$BATCH" -le "$MAX_BATCHES" ]; do
+            echo "--- Leaderboard batch $BATCH ---"
+            RESPONSE=$(curl --silent --show-error --max-time 55 -w "
+HTTP_STATUS:%{http_code}" -X POST \
+              "$BASE_URL/api/cron/refresh-leaderboard?limit=$BATCH_SIZE" \
+              -H "Authorization: Bearer $CRON_SECRET" -H "Content-Type: application/json")
+            HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+            HTTP_STATUS=$(echo "$RESPONSE" | tail -n1 | cut -d':' -f2)
+            echo "HTTP status: $HTTP_STATUS"
+            if [ "$HTTP_STATUS" = "409" ]; then
+              echo "Another refresh owns the database lease; retrying shortly."
+              sleep 20
+              continue
+            fi
+            if [ "$HTTP_STATUS" != "200" ]; then
+              echo "Leaderboard batch failed. Response body: $HTTP_BODY"
+              exit 1
+            fi
+            REMAINING=$(node -e "try { const r = JSON.parse(process.argv[1]); if (!Number.isFinite(Number(r.remaining))) process.exit(2); console.log(Math.max(0, Number(r.remaining))); } catch { process.exit(2); }" "$HTTP_BODY")
+            echo "Pending due users: $REMAINING"
+            BATCH=$((BATCH + 1))
+            if [ "$REMAINING" -gt 0 ]; then sleep 2; fi
+          done
+          if [ "$REMAINING" -gt 0 ]; then
+            echo "Reached MAX_BATCHES with $REMAINING due users remaining. A manual rerun is required."
+            exit 1
+          fi
+          echo "Leaderboard refresh completed; retry-deferred accounts will be retried on a later run."

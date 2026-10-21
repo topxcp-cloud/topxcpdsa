@@ -1,0 +1,32 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Static checks and React source tests
+        run: npm run check
+      - name: Production React build
+        run: npm run build
+      - name: PostgreSQL API integration tests
+        env:
+          DATABASE_URL: ${{ secrets.TOPX_TEST_DATABASE_URL }}
+          ADMIN_KEY: ci-admin-key-that-is-long-enough-123456
+          SESSION_SECRET: ci-session-secret-that-is-long-enough-123456789
+          NODE_ENV: test
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "TOPX_TEST_DATABASE_URL is not configured; PostgreSQL integration tests are skipped."
+            exit 0
+          fi
+          npm test
