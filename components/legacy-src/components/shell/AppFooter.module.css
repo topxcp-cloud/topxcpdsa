@@ -1,95 +1,91 @@
 .footer {
-  border-top: 1px solid var(--line, #e8e8e4);
-  background: #ffffff;
-  color: var(--ink, #0d0d0f);
-  padding: 56px var(--pad, 24px) 28px;
+  border-top: 1px solid #000000;
+  background: var(--bg, #FAFAF8);
+  color: #0d0d0f;
+  padding: 52px 24px 28px;
   width: 100%;
   box-sizing: border-box;
-  font-family: var(--font-body, 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif);
+  font-family: var(--font-body, 'Inter', -apple-system, BlinkMacSystemFont, sans-serif);
 }
 
 .container {
-  max-width: 1240px;
+  max-width: 1200px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
 }
 
-/* --- UPPER SECTION: BRAND & STRUCTURED COLUMNS --- */
-.upperGrid {
+/* 4-column layout on desktop */
+.grid {
   display: grid;
-  grid-template-columns: 1.3fr 0.9fr 0.9fr 0.9fr;
-  gap: 44px;
+  grid-template-columns: 1.35fr 1fr 1fr 1fr;
+  gap: 48px;
   align-items: flex-start;
 }
 
+/* Column 1 - Brand */
 .brandCol {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: flex-start;
   max-width: 380px;
 }
 
-.brandHeader {
+.brandLink {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 9px;
   text-decoration: none;
+  color: #0d0d0f;
+  cursor: pointer;
 }
 
-.brandSvgLogo {
-  width: 32px;
-  height: 20px;
+.brandLogo {
+  width: 28px;
+  height: 17px;
   overflow: visible;
   flex-shrink: 0;
 }
 
-.brandTitle {
-  font-family: var(--font-display, sans-serif);
+.brandName {
+  font-family: var(--font-display, 'Space Grotesk', -apple-system, sans-serif);
   font-size: 17px;
-  font-weight: 850;
-  letter-spacing: -0.02em;
-  color: var(--ink, #0d0d0f);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #0d0d0f;
+  line-height: 1;
 }
 
-.brandBadge {
-  font-family: var(--font-mono, monospace);
-  font-size: 10px;
+.tagline {
+  margin-top: 14px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
   font-weight: 750;
-  letter-spacing: 0.06em;
-  padding: 2px 6px;
-  background: var(--surface-alt, #f3f3f0);
-  border: 1px solid var(--line, #e8e8e4);
-  border-radius: 4px;
-  color: var(--mute, #6b717a);
+  letter-spacing: 0.05em;
+  color: var(--orange, #ff7a1a);
+  text-transform: uppercase;
 }
 
-.brandDesc {
+.description {
+  margin: 10px 0 0;
   font-size: 13.5px;
-  line-height: 1.6;
+  line-height: 1.55;
   color: #525866;
-  margin: 0;
-}
-
-.statusWrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 4px;
+  font-weight: 450;
 }
 
 .statusBadge {
+  margin-top: 18px;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   padding: 4px 10px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 650;
-  color: #15803d;
+  background: #ffffff;
+  border: 1.5px solid #000000;
+  border-radius: 5px;
+  box-shadow: 2.5px 2.5px 0px #000000;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #0d0d0f;
+  width: fit-content;
 }
 
 .statusDot {
@@ -97,36 +93,25 @@
   height: 6.5px;
   border-radius: 50%;
   background: #16a34a;
-  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
   display: inline-block;
+  flex-shrink: 0;
 }
 
-/* Column titles */
+/* Columns 2, 3, 4 */
 .column {
   display: flex;
   flex-direction: column;
-  gap: 14px;
 }
 
-.colHeader {
-  font-family: var(--font-mono, monospace);
-  font-size: 11px;
-  font-weight: 750;
+.colTitle {
+  font-family: var(--font-display, 'Space Grotesk', -apple-system, sans-serif);
+  font-size: 12px;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink, #0d0d0f);
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.colHeaderDot {
-  width: 5px;
-  height: 5px;
-  border-radius: 1px;
-  background: var(--orange, #ff7a1a);
-  display: inline-block;
+  color: #0d0d0f;
+  margin: 0 0 16px;
+  line-height: 1;
 }
 
 .linkList {
@@ -135,7 +120,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .linkItem {
@@ -144,47 +129,31 @@
   font-size: 13.5px;
   font-weight: 500;
   line-height: 1.4;
-  transition: color 0.16s ease, transform 0.16s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
   width: fit-content;
+  transition: color 0.15s ease;
 }
 
 .linkItem:hover {
   color: var(--orange, #ff7a1a);
-  transform: translateX(2px);
 }
 
-.linkStatic {
-  color: #717684;
-  font-size: 13.5px;
-  font-weight: 450;
-  line-height: 1.4;
-}
-
-/* --- BOTTOM BAR --- */
+/* Bottom bar */
 .bottomRow {
-  border-top: 1px solid var(--line, #e8e8e4);
+  margin-top: 44px;
   padding-top: 22px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
+}
+
+.copyright {
   font-size: 12.5px;
-  color: var(--mute, #717684);
-}
-
-.bottomLeft {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.bottomLeft strong {
-  color: var(--ink, #0d0d0f);
-  font-weight: 700;
+  font-weight: 450;
+  color: #6b7280;
+  margin: 0;
 }
 
 .bottomRight {
@@ -193,58 +162,67 @@
   gap: 16px;
 }
 
-.motto {
-  font-weight: 550;
-  color: #525866;
-}
-
-.backToTop {
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--mute, #717684);
-  cursor: pointer;
+.verifiedBadge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  transition: color 0.16s ease;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--orange, #ff7a1a);
+  border-radius: 4px;
+  background: transparent;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #0d0d0f;
 }
 
-.backToTop:hover {
+.shieldIcon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
   color: var(--orange, #ff7a1a);
 }
 
-/* --- RESPONSIVE --- */
+.locationLabel {
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #0d0d0f;
+  text-transform: uppercase;
+}
+
+/* Responsive behavior:
+   Desktop: four columns.
+   Tablet: two columns.
+   Mobile: one column with comfortable spacing and no horizontal overflow.
+*/
 @media (max-width: 992px) {
-  .upperGrid {
+  .grid {
     grid-template-columns: 1fr 1fr;
-    gap: 36px;
+    gap: 36px 32px;
   }
   .brandCol {
     max-width: 100%;
-    grid-column: 1 / -1;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .footer {
     padding: 40px 18px 24px;
   }
-  .upperGrid {
+  .grid {
     grid-template-columns: 1fr;
     gap: 28px;
   }
   .bottomRow {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 14px;
   }
   .bottomRight {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 }
